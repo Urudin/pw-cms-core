@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Filament\Resources\PageResource\Pages;
+namespace App\Filament\Resources\BlockResource\Pages;
 
-use App\Filament\Resources\PageResource;
+use App\Filament\Resources\BlockResource;
+use App\Http\Livewire\MediaPicker;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Livewire\Livewire;
 
-class EditPage extends EditRecord
+class EditBlock extends EditRecord
 {
-    protected static string $resource = PageResource::class;
+    protected static string $resource = BlockResource::class;
 
     protected function getHeaderActions(): array
     {

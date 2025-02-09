@@ -4,15 +4,15 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\BlockResource\Pages;
 use App\Filament\Resources\BlockResource\RelationManagers;
+use Filament\Forms\Components\View;
 use App\Models\Block;
 use Filament\Forms;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use FilamentTiptapEditor\TiptapEditor;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class BlockResource extends Resource
 {
@@ -24,12 +24,19 @@ class BlockResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')->label('Név')->required(),
-                TiptapEditor::make('content')
-                    ->label('Tartalom')
-                    ->extraAttributes(['style' => 'min-height: 800px;'])
-                    ->required()
-                    ->columnSpanFull(),
+                Grid::make(1)
+                    ->schema([
+                        // 📷 Egyedi gomb a kép beillesztésére
+                        View::make('components.image-button')
+                            ->columnSpan(1),
+
+                        // ✏️ Tiptap szerkesztő maga
+                        TiptapEditor::make('content')
+                            ->extraAttributes(['id' => 'tiptap-editor'])
+                            ->id('tiptap-editor')
+                            ->profile('simple')
+//                            ->tools(['bold', 'italic', 'strike', 'underline', 'link']), // Kép nincs, mert saját gombot használunk
+                    ]),
             ]);
     }
 
