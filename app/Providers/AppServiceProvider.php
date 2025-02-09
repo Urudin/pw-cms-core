@@ -26,6 +26,8 @@ class AppServiceProvider extends ServiceProvider
     {
         Livewire::component('media-picker', MediaPicker::class);
 
+        \URL::forceScheme('https');
+
         FilamentAsset::register([
             Css::make('custom', __DIR__ . '/../../resources/css/custom.css'),
             Js::make('custom', __DIR__ . '/../../resources/js/custom.js'),
