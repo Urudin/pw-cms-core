@@ -160,12 +160,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Urudin/filament-menu-builder.git",
-                "reference": "f5b18ec1e97eeae5635509959b166c802d4fcd0d"
+                "reference": "7941f7ce286cf723150b8e16ce6b83dceb12ffd4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Urudin/filament-menu-builder/zipball/f5b18ec1e97eeae5635509959b166c802d4fcd0d",
-                "reference": "f5b18ec1e97eeae5635509959b166c802d4fcd0d",
+                "url": "https://api.github.com/repos/Urudin/filament-menu-builder/zipball/7941f7ce286cf723150b8e16ce6b83dceb12ffd4",
+                "reference": "7941f7ce286cf723150b8e16ce6b83dceb12ffd4",
                 "shasum": ""
             },
             "require": {
@@ -256,7 +256,7 @@
                     "url": "https://github.com/Biostate"
                 }
             ],
-            "time": "2024-12-12T16:37:35+00:00"
+            "time": "2025-02-09T14:32:31+00:00"
         },
         {
             "name": "blade-ui-kit/blade-heroicons",
