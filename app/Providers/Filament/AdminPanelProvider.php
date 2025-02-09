@@ -2,10 +2,16 @@
 
 namespace App\Providers\Filament;
 
+use App\Models\Page;
+use Biostate\FilamentMenuBuilder\FilamentMenuBuilder;
+use Biostate\FilamentMenuBuilder\FilamentMenuBuilderPlugin;
+use Biostate\FilamentMenuBuilder\Models\Menu;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\MenuItem;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -36,17 +42,17 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Pages\Dashboard::class,
             ])
-            ->plugin(
-                FilamentCMSPlugin::make()
-                    ->useCategory()
-                    ->usePost()
-                    ->allowExport()
-                    ->allowImport()
-            )
+            ->plugins([
+                FilamentMenuBuilderPlugin::make(),
+                \TomatoPHP\FilamentMediaManager\FilamentMediaManagerPlugin::make(),
+            ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
+            ])
+            ->userMenuItems([
+                MenuItem::make()->label('AAAA')
             ])
             ->middleware([
                 EncryptCookies::class,

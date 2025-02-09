@@ -5,13 +5,24 @@
     "description": "The skeleton application for the Laravel framework.",
     "keywords": ["laravel", "framework"],
     "license": "MIT",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/Urudin/filament-menu-builder.git"
+        }
+    ],
     "require": {
         "php": "^8.2",
+        "awcodes/filament-tiptap-editor": "^3.5",
+        "biostate/filament-menu-builder": "dev-main",
         "filament/filament": "^3.2",
+        "kalnoy/nestedset": "^6.0",
         "laravel/breeze": "^2.3",
         "laravel/framework": "^11.31",
         "laravel/tinker": "^2.9",
-        "tomatophp/filament-cms": "^1.0"
+        "spatie/laravel-package-tools": "^1.15.0",
+        "spatie/laravel-sluggable": "^3.6",
+        "tomatophp/filament-media-manager": "^1.1"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
