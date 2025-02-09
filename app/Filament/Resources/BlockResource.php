@@ -26,6 +26,7 @@ class BlockResource extends Resource
             ->schema([
                 Grid::make(1)
                     ->schema([
+                        Forms\Components\TextInput::make('name')->label('Name')->required(),
                         // 📷 Egyedi gomb a kép beillesztésére
                         View::make('components.image-button')
                             ->columnSpan(1),
