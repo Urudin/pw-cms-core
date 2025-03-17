@@ -24,6 +24,7 @@ class PageResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->label('Név')
+                    ->unique(ignoreRecord: true)
                     ->required(),
                 Forms\Components\TextInput::make('title')
                     ->label('Title')
@@ -39,14 +40,28 @@ class PageResource extends Resource
                     ->label('Meta description'),
                 Repeater::make('pageBlocks')
                     ->relationship()
+                    ->label('Sections')
                     ->schema([
-                        Select::make('block_id')
-                            ->relationship('block', 'name')
+                        Forms\Components\TextInput::make('group_id')
+                            ->label('Group ID')
+                            ->required(),
+                        Forms\Components\TextInput::make('group_classes')
+                            ->label('CSS Classes')
+                            ->required(),
+                        Repeater::make('blocks') // Itt kezeljük az egy csoportba tartozó blokkokat
+                        ->relationship('blocks')
+                            ->schema([
+                                Select::make('block_id')
+                                    ->relationship('block', 'name')
+                                    ->label('Blokk')
+                                    ->required(),
+                            ])
+                            ->orderColumn('order')
+                            ->reorderable(),
                     ])
                     ->columnSpanFull()
                     ->orderColumn('order')
-                    ->reorderableWithButtons()
-                    ->reorderable(),
+                    ->reorderable()
             ]);
     }
 
