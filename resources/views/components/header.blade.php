@@ -10,34 +10,42 @@
 
     // Logo URL
     $logoUrl = asset('images/gloszlogo.png');
+
+    $menu = \App\Models\Menu::query()->where('id', 1)->with('menu_items', fn($q) => $q->whereNull('parent_id')->with('children'))->first();
 @endphp
 
-<div class="relative container mx-auto max-w-screen-xl bg-no-repeat bg-top bg-cover h-[250px] md:h-[308px] flex flex-col justify-between px-6"
-     style="background-image: url('{{ $url }}');">
+<div
+    class="relative container mx-auto max-w-screen-xl bg-no-repeat bg-top bg-cover h-[250px] md:h-[308px] flex flex-col justify-between px-6"
+    style="background-image: url('{{ $url }}');">
 
     <!-- Logo -->
-    <div class="absolute top-[40px] top-sm-[60px] top-md-[80px] top-lg-[100px] left-[20px] left-sm-[40px] left-md-[60px] left-lg-[80px]">
+    <div
+        class="absolute top-[40px] top-sm-[60px] top-md-[80px] top-lg-[100px] left-[20px] left-sm-[40px] left-md-[60px] left-lg-[80px]">
         <img src="{{ $logoUrl }}" alt="Logo" class="h-[30px] w-auto sm:h-[50px] xs:h-[60px]">
     </div>
 
     <!-- Navigáció (asztali) -->
     <nav id="menu" class="absolute bottom-0 left-6 text-xl text-white flex space-x-4 items-center sm:flex hidden">
-        <div class="relative group">
-            <a href="#" class="hover:text-gray-400">Főoldal</a>
-
-            <!-- Lenyíló Almenü -->
-            <div id="submenu" style="background-color: #004070;" class="text-white absolute hidden opacity-0 left-0 rounded-md shadow-lg py-2 w-48 z-10 transition-opacity duration-300">
-                <a href="#" class="block px-4 py-2 hover:text-yellow-500">Almenü 1</a>
-                <a href="#" class="block px-4 py-2 hover:text-yellow-500">Almenü 2</a>
-            </div>
-        </div>
-
-        <span class="text-yellow-400">|</span>
-        <a href="#" class="hover:text-gray-400">Szolgáltatások</a>
-        <span class="text-yellow-400">|</span>
-        <a href="#" class="hover:text-gray-400">Rólunk</a>
-        <span class="text-yellow-400">|</span>
-        <a href="#" class="hover:text-gray-400">Kapcsolat</a>
+        @foreach($menu->menu_items as $menuItem)
+            @if($menuItem->children->count())
+                <div class="relative group">
+                    <a target="{{$menuItem->target}}" href="{{$menuItem->url}}"
+                       class="hover:text-gray-400">{{$menuItem->name}}</a>
+                    <!-- Lenyíló Almenü -->
+                    <div id="submenu" style="background-color: #004070;"
+                         class="text-white absolute hidden opacity-0 left-0 rounded-md shadow-lg py-2 w-48 z-10 transition-opacity duration-300">
+                        @foreach($menuItem->children as $subMenuItem)
+                            <a target="{{$subMenuItem->target}}" href="{{$subMenuItem->url}}"
+                               class="block px-4 py-2 hover:text-yellow-500">{{$subMenuItem->name}}</a>
+                        @endforeach
+                    </div>
+                </div>
+            @else
+                <a target="{{$menuItem->target}}" href="{{$menuItem->url}}"
+                   class="hover:text-gray-400">{{$menuItem->name}}</a>
+            @endempty
+            <span class="text-yellow-400">|</span>
+        @endforeach
     </nav>
 
 
@@ -62,7 +70,8 @@
     <!-- Hamburger Menü (bal alsó sarok) -->
     <div class="absolute bottom-0 left-6 sm:hidden">
         <button id="menu-toggle" class="text-white focus:outline-none flex items-center space-x-2">
-            <svg class="h-8 w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="h-8 w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                 stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
             </svg>
             <span>Menüpontok</span>
@@ -74,10 +83,34 @@
 <div id="mobile-menu"
      style="background-color: #004070;"
      class="left-0 w-full bg-gradient-to-r text-white flex flex-col pl-6 py-4 sm:hidden transition-all duration-300 ease-in-out opacity-0 scale-y-0 origin-top hidden">
-    <a href="#" class="py-2 text-lg hover:text-gray-400">Főoldal</a>
-    <a href="#" class="py-2 text-lg hover:text-gray-400">Szolgáltatások</a>
-    <a href="#" class="py-2 text-lg hover:text-gray-400">Rólunk</a>
-    <a href="#" class="py-2 text-lg hover:text-gray-400">Kapcsolat</a>
+
+    @foreach($menu->menu_items as $menuItem)
+        @if($menuItem->children->count())
+            <div class="flex flex-col">
+                <!-- Főmenü + Nyitó ikon egy sorban -->
+                <div class="flex justify-between items-center pr-6">
+                    <a href="#" class="py-2 text-lg hover:text-gray-400">{{$menuItem->name}}</a>
+                    <button id="mobile-menu-toggle" class="focus:outline-none">
+                        <svg id="mobile-menu-icon" class="h-5 w-5 transform transition-transform duration-300"
+                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Almenü -->
+                <div id="mobile-submenu" class="hidden pl-4 transition-all duration-300">
+                    @foreach($menuItem->children as $subMenuItem)
+                        <a target="{{$subMenuItem->target}}" href="{{$subMenuItem->url}}"
+                           class="block py-2 text-lg hover:text-gray-400">{{$subMenuItem->name}}</a>
+                    @endforeach
+                </div>
+            </div>
+        @else
+            <a href="{{$menuItem->url}}" class="py-2 text-lg hover:text-gray-400">{{$menuItem->name}}</a>
+        @endempty
+    @endforeach
+
 </div>
 
 <!-- JavaScript a hamburger menühöz -->
@@ -126,6 +159,22 @@
                 submenu.classList.add("hidden");
                 submenu.classList.remove("opacity-100");
             }, 300);
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        let menuToggle = document.getElementById("mobile-menu-toggle");
+        let submenu = document.getElementById("mobile-submenu");
+        let menuIcon = document.getElementById("mobile-menu-icon");
+
+        menuToggle.addEventListener("click", function () {
+            submenu.classList.toggle("hidden");
+
+            if (!submenu.classList.contains("hidden")) {
+                menuIcon.classList.add("rotate-180");
+            } else {
+                menuIcon.classList.remove("rotate-180");
+            }
         });
     });
 </script>
