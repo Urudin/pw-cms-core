@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Filament\Resources\BlockResource\Pages;
 use App\Filament\Resources\BlockResource\RelationManagers;
 use Filament\Forms\Components\View;
@@ -32,10 +33,9 @@ class BlockResource extends Resource
                             ->columnSpan(1),
 
                         // ✏️ Tiptap szerkesztő maga
-                        TiptapEditor::make('content')
-                            ->extraAttributes(['id' => 'tiptap-editor'])
-                            ->id('tiptap-editor')
-                            ->profile('simple')
+                        MonacoEditor::make('content')
+                            ->language('html')
+                            ->previewHeadEndContent("<script src='https://cdn.tailwindcss.com'></script><script defer src='https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js'></script>"),
 //                            ->tools(['bold', 'italic', 'strike', 'underline', 'link']), // Kép nincs, mert saját gombot használunk
                     ]),
             ]);
