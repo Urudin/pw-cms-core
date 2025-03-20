@@ -1,35 +1,63 @@
+
 document.addEventListener('DOMContentLoaded', function() {
     if (typeof window.Livewire !== 'undefined' && typeof window.Livewire.dispatch === 'function') {
         console.log("✅ Livewire 3 betöltődött!");
-        initializeTiptapMedia();
+        initializeMonacoMedia();
     } else {
         console.warn("⚠️ Livewire nincs teljesen betöltve, újrapróbálkozás...");
         setTimeout(arguments.callee, 200);
     }
 });
 
-function initializeTiptapMedia() {
-    console.log("🚀 Livewire események inicializálása...");
+function getMonacoEditorInstance(retries = 10) {
+    const editors = monaco.editor.getEditors();
 
-    // Livewire 3.x eseményküldés
+    if (editors.length > 0) {
+        return editors[0]; // Ha már létezik egy editor, visszaadjuk
+    } else if (retries > 0) {
+        console.warn(`⌛ Monaco Editor még nem elérhető, újrapróbálás (${retries})`);
+        return new Promise((resolve) => {
+            setTimeout(() => resolve(getMonacoEditorInstance(retries - 1)), 500);
+        });
+    } else {
+        console.error("❌ Monaco Editor nem található!");
+        return null;
+    }
+}
+
+function initializeMonacoMedia() {
+    console.log("🚀 Livewire események inicializálása Monaco Editorhoz...");
+
+    // Livewire eseményküldés (Médiatár megnyitása)
     document.getElementById('insertImageBtn')?.addEventListener('click', function() {
         console.log("📸 Kép hozzáadása gomb megnyomva!");
-        window.Livewire.dispatch('openMediaPicker'); // Livewire 3.x kompatibilis
+        window.Livewire.dispatch('openMediaPicker');
     });
 
-    // Meghallgatja az eseményt és beilleszti a képet a Tiptap szerkesztőbe
-    document.addEventListener('insert-image', function(event) {
+    // Meghallgatja az eseményt és beilleszti az <img> taget a Monaco Editorba
+    document.addEventListener('insert-image', async function(event) {
         const url = event.detail.url;
-        const editorElement = document.querySelector('.ProseMirror');
+        console.log(`🖼️ Kép beillesztése: ${url}`);
 
-        if (editorElement) {
-            const tiptapInstance = editorElement.__tiptapEditor; // Filament így tárolhatja az instance-t
-            console.log(tiptapInstance);
-        }
+        const editor = await getMonacoEditorInstance();
 
-        if (editorElement && editorElement.__tiptapEditor) {
-            console.log(`🖼️ Kép beillesztése: ${url}`);
-            editorElement.__tiptapEditor.chain().focus().setImage({ src: url }).run();
+        if (editor) {
+            const imgTag = `<img src="${url}" alt="Image">`;
+
+            editor.focus();
+            const position = editor.getPosition();
+            editor.executeEdits("", [{
+                range: new monaco.Range(position.lineNumber, position.column, position.lineNumber, position.column),
+                text: imgTag,
+                forceMoveMarkers: true
+            }]);
+
+            console.log("✅ Kép beillesztve a Monaco szerkesztőbe!");
+        } else {
+            console.error("❌ Monaco Editor továbbra sem található!2");
         }
     });
 }
+
+// Győződj meg róla, hogy az oldal betöltésekor inicializálódik
+document.addEventListener("DOMContentLoaded", initializeMonacoMedia);

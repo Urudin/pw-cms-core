@@ -31,12 +31,9 @@ class BlockResource extends Resource
                         // 📷 Egyedi gomb a kép beillesztésére
                         View::make('components.image-button')
                             ->columnSpan(1),
-
-                        // ✏️ Tiptap szerkesztő maga
                         MonacoEditor::make('content')
                             ->language('html')
                             ->previewHeadEndContent("<script src='https://cdn.tailwindcss.com'></script><script defer src='https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js'></script>"),
-//                            ->tools(['bold', 'italic', 'strike', 'underline', 'link']), // Kép nincs, mert saját gombot használunk
                     ]),
             ]);
     }
