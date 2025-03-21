@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', function() {
     if (typeof window.Livewire !== 'undefined' && typeof window.Livewire.dispatch === 'function') {
         console.log("✅ Livewire 3 betöltődött!");
@@ -28,6 +27,13 @@ function getMonacoEditorInstance(retries = 10) {
 function initializeMonacoMedia() {
     console.log("🚀 Livewire események inicializálása Monaco Editorhoz...");
 
+    // Ellenőrizzük, hogy már hozzáadtuk-e az eseményfigyelőt
+    if (window.__monacoMediaInitialized) {
+        console.warn("⚠️ Monaco Media már inicializálva!");
+        return;
+    }
+    window.__monacoMediaInitialized = true; // Megjelöljük, hogy inicializáltuk
+
     // Livewire eseményküldés (Médiatár megnyitása)
     document.getElementById('insertImageBtn')?.addEventListener('click', function() {
         console.log("📸 Kép hozzáadása gomb megnyomva!");
@@ -54,10 +60,7 @@ function initializeMonacoMedia() {
 
             console.log("✅ Kép beillesztve a Monaco szerkesztőbe!");
         } else {
-            console.error("❌ Monaco Editor továbbra sem található!2");
+            console.error("❌ Monaco Editor továbbra sem található!");
         }
     });
 }
-
-// Győződj meg róla, hogy az oldal betöltésekor inicializálódik
-document.addEventListener("DOMContentLoaded", initializeMonacoMedia);

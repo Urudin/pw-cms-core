@@ -29,29 +29,40 @@
         @foreach($menu->menu_items as $menuItem)
             @if($menuItem->children->count())
                 <div class="relative group">
-                    <a target="{{$menuItem->target}}" href="{{$menuItem->url}}"
-                       class="hover:text-gray-400">{{$menuItem->name}}</a>
+                    <a target="{{$menuItem->target}}" href="{{$menuItem->url}}" class="hover:text-gray-400">
+                        {{$menuItem->name}}
+                    </a>
                     <!-- Lenyíló Almenü -->
                     <div id="submenu" style="background-color: #004070;"
                          class="text-white absolute hidden opacity-0 left-0 rounded-md shadow-lg py-2 w-48 z-10 transition-opacity duration-300">
                         @foreach($menuItem->children as $subMenuItem)
-                            <a target="{{$subMenuItem->target}}" href="{{$subMenuItem->url}}"
-                               class="block px-4 py-2 hover:text-yellow-500">{{$subMenuItem->name}}</a>
+                            <a target="{{$subMenuItem->target}}" href="{{$subMenuItem->url}}" class="block px-4 py-2 hover:text-yellow-500">
+                                {{$subMenuItem->name}}
+                            </a>
                         @endforeach
                     </div>
                 </div>
             @else
-                <a target="{{$menuItem->target}}" href="{{$menuItem->url}}"
-                   class="hover:text-gray-400">{{$menuItem->name}}</a>
-            @endempty
-            <span class="text-yellow-400">|</span>
+                <a target="{{$menuItem->target}}" href="{{$menuItem->url}}" class="hover:text-gray-400">
+                    {{$menuItem->name}}
+                </a>
+            @endif
+
+            @if(!$loop->last)
+                <span class="text-yellow-400">|</span>
+            @endif
         @endforeach
     </nav>
 
 
     <!-- Sub-Header -->
     <div class="absolute bottom-[65px] sm:bottom-[60px] md:bottom-[65px] lg:bottom-[70px]
-            left-[25px] sm:left-[25px] md:left-[25px] lg:left-[25px] flex items-center space-x-4">
+        left-[25px] sm:left-[25px] md:left-[25px] lg:left-[25px] flex flex-col md:flex-row-reverse md:items-center md:justify-between w-full max-w-screen-xl">
+
+        <!-- Kép a szöveg mellett (Asztali nézetben jobbra húzva) -->
+        <div class="hidden md:block mr-[40px]">
+            <img src="{{ asset('images/30.png') }}" alt="Dekoratív kép" class="h-[40px] md:h-full object-contain">
+        </div>
 
         <!-- Szövegblokk -->
         <div class="text-lg sm:text-xl md:text-2xl lg:text-3xl text-white font-bold leading-tight">
@@ -60,11 +71,12 @@
         </div>
 
         <!-- Kép a szöveg mellett -->
-        <div>
+        <div class="md:hidden">
             <img src="{{ asset('images/30.png') }}" alt="Dekoratív kép" class="h-[40px] md:h-full object-contain">
         </div>
 
     </div>
+
 
 
     <!-- Hamburger Menü (bal alsó sarok) -->

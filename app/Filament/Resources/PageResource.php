@@ -22,48 +22,83 @@ class PageResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->label('Név')
-                    ->unique(ignoreRecord: true)
-                    ->required(),
-                Forms\Components\TextInput::make('title')
-                    ->label('Title')
-                    ->required(),
-                Forms\Components\TextInput::make('slug')
-                    ->label('URL')
-                    ->unique(ignoreRecord: true),
-                Forms\Components\TextInput::make('meta_title')
-                    ->label('Meta title'),
-                Forms\Components\Textarea::make('meta_keywords')
-                    ->label('Meta keywords'),
-                Forms\Components\Textarea::make('meta_description')
-                    ->label('Meta description'),
+                // Alapadatok
+                Forms\Components\Fieldset::make('Alapadatok')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Név')
+                            ->unique(ignoreRecord: true)
+                            ->required(),
+                        Forms\Components\TextInput::make('title')
+                            ->label('Title')
+                            ->required(),
+                        Forms\Components\TextInput::make('slug')
+                            ->label('URL')
+                            ->unique(ignoreRecord: true),
+                    ])
+                    ->columns(2),
+
+                // SEO Beállítások
+                Forms\Components\Fieldset::make('SEO Beállítások')
+                    ->schema([
+                        Forms\Components\TextInput::make('meta_title')
+                            ->label('Meta title'),
+                        Forms\Components\Textarea::make('meta_keywords')
+                            ->label('Meta keywords'),
+                        Forms\Components\Textarea::make('meta_description')
+                            ->label('Meta description'),
+                    ])
+                    ->columns(2),
+
+                // Szekciók kezelése különálló kártyákban
                 Repeater::make('pageBlocks')
                     ->relationship()
-                    ->label('Sections')
+                    ->label('Szekciók')
                     ->schema([
-                        Forms\Components\TextInput::make('group_id')
-                            ->label('Group ID')
-                            ->required(),
-                        Forms\Components\TextInput::make('group_classes')
-                            ->label('CSS Classes')
-                            ->required(),
-                        Repeater::make('blocks') // Itt kezeljük az egy csoportba tartozó blokkokat
-                        ->relationship('blocks')
-                            ->schema([
-                                Select::make('block_id')
-                                    ->relationship('block', 'name')
-                                    ->label('Blokk')
-                                    ->required(),
-                            ])
-                            ->orderColumn('order')
-                            ->reorderable(),
+                        Forms\Components\Card::make() // Minden egyes szekció egy külön kártya
+                        ->schema([
+                            Forms\Components\TextInput::make('group_id')
+                                ->label('Csoport ID')
+                                ->required(),
+                            Forms\Components\TextInput::make('group_classes')
+                                ->label('CSS Osztályok')
+                                ->required(),
+                            Forms\Components\TextInput::make('wrap_section_start')
+                                ->label('Szakasz kezdete')
+                                ->required(),
+                            Forms\Components\TextInput::make('wrap_section_close')
+                                ->label('Szakasz lezárása')
+                                ->required(),
+
+                            // Blokkok külön kártyában, de a szekción belül
+                            Forms\Components\Card::make()
+                                ->schema([
+                                    Repeater::make('blocks')
+                                        ->relationship('blocks')
+                                        ->schema([
+                                            Select::make('block_id')
+                                                ->relationship('block', 'name')
+                                                ->label('Blokk')
+                                                ->required(),
+                                        ])
+                                        ->orderColumn('order')
+                                        ->reorderable(),
+                                ])
+                                ->label('Blokkok')
+                                ->heading('Blokkok')
+                                ->collapsible()
+                                ->collapsed(), // Blokkok is alapból csukva
+                        ])
+                            ->heading(fn ($record) => "Szekció: {$record->group_id}") // Group ID mindig látszódjon
+                            ->collapsible() // Szekciók külön-külön összehajthatók
+                            ->collapsed(), // Alapból ÖSSZECSUKVA!
                     ])
                     ->columnSpanFull()
                     ->orderColumn('order')
-                    ->reorderable()
+                    ->reorderable(),
             ]);
     }
+
 
     public static function table(Tables\Table $table): Tables\Table
     {

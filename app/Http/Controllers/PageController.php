@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Page;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
 class PageController extends Controller
@@ -26,5 +27,11 @@ class PageController extends Controller
 
         $page = Page::create($request->all());
         return response()->json($page);
+    }
+
+    public function show(string $slug): View
+    {
+        $page = Page::query()->firstWhere('slug', $slug);
+        return view('page', ['page' => $page]);
     }
 }

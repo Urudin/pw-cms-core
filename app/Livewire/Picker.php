@@ -27,7 +27,10 @@ class Picker extends Component
         $this->dispatch('insert-image', url: $imageUrl);
         $this->showModal = false; // Bezárjuk a modált
     }
-
+    public function testClick()
+    {
+        dd("Livewire működik!");
+    }
     public function render()
     {
         return view('livewire.picker', [

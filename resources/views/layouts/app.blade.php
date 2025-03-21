@@ -22,7 +22,7 @@
 </header>
 
 <!-- Main Content Wrapper with Full Width on Small Screens -->
-<main class="bg-white w-full py-10 overflow-hidden">
+<main class="bg-gray-200 w-full py-10 overflow-hidden">
     <div class="w-full max-w-screen-xl mx-auto px-4 sm:px-6">
         @yield('content')
     </div>
