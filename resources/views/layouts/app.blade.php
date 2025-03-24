@@ -29,11 +29,11 @@
 </main>
 
 <!-- Footer -->
-<footer class="w-full py-6 bg-gray-900 text-white overflow-hidden">
-    <div class="w-full max-w-screen-xl mx-auto px-4 sm:px-6">
+{{--<footer class="w-full py-6 bg-gray-900 text-white overflow-hidden">--}}
+{{--    <div class="w-full max-w-screen-xl mx-auto px-4 sm:px-6">--}}
         @include('components.footer')
-    </div>
-</footer>
+{{--    </div>--}}
+{{--</footer>--}}
 
 </body>
 </html>
