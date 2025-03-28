@@ -5,6 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    @if(isset($page))
+        <title>{{ $page->meta_title ?? \App\Models\UserSetting::getValueByName('header-sub-title-row-1') . ' ' . \App\Models\UserSetting::getValueByName('header-sub-title-row-2') }}</title>
+        <meta property="og:title"
+              content="{{ $page->meta_title ?? \App\Models\UserSetting::getValueByName('header-sub-title-row-1') . ' ' . \App\Models\UserSetting::getValueByName('header-sub-title-row-2') }}">
+        @if(!empty($page->meta_description))
+            <meta name="description" content="{{ $page->meta_description }}">
+            <meta property="og:description" content="{{ $page->meta_description }}">
+        @endif
+        @if(!empty($page->meta_keywords))
+            <meta name="keywords" content="{{ $page->meta_keywords }}">
+        @endif
+
+        <!-- Open Graph Meta Tags -->
+        <meta property="og:type" content="website">
+        <meta property="og:image" content="{{ \App\Models\UserSetting::getHeaderUrl() }}">
+        <meta property="og:url" content="{{ url()->current() }}">
+
+    @endif
+
     <title>{{ config('app.name', 'Innováció Menedzsment') }}</title>
 
     <!-- Fonts -->
@@ -31,7 +50,7 @@
 <!-- Footer -->
 {{--<footer class="w-full py-6 bg-gray-900 text-white overflow-hidden">--}}
 {{--    <div class="w-full max-w-screen-xl mx-auto px-4 sm:px-6">--}}
-        @include('components.footer')
+@include('components.footer')
 {{--    </div>--}}
 {{--</footer>--}}
 

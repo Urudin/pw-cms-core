@@ -1,12 +1,6 @@
 @php
     /** @var \TomatoPHP\FilamentMediaManager\Models\Media $mediaRecord */
-    $mediaRecord = \TomatoPHP\FilamentMediaManager\Models\Media::query()
-        ->where('collection_name', 'headers')
-        ->where('file_name', \App\Models\UserSetting::query()->firstWhere('name', 'header-background')->value)
-        ->first();
-
-    // Check if media record exists, otherwise use a fallback image
-    $url = $mediaRecord ? asset('storage/' . $mediaRecord->model_id . '/' . $mediaRecord->file_name) : asset('images/default-header.jpg');
+    $url = \App\Models\UserSetting::getHeaderUrl();
 
     // Logo URL
     $logoUrl = asset('images/gloszlogo.png');
@@ -29,21 +23,30 @@
         @foreach($menu->menu_items as $menuItem)
             @if($menuItem->children->count())
                 <div class="relative group">
-                    <a target="{{$menuItem->target}}" href="{{$menuItem->url}}" class="hover:text-gray-400">
+                    <a target="{{$menuItem->target}}"
+                       href="{{$menuItem->url}}"
+                       class="hover:text-gray-400"
+                       title="{{ $menuItem->link_title ?? $menuItem->name }}">
                         {{$menuItem->name}}
                     </a>
                     <!-- Lenyíló Almenü -->
                     <div id="submenu" style="background-color: #004070;"
                          class="text-white absolute hidden opacity-0 left-0 rounded-md shadow-lg py-2 w-48 z-10 transition-opacity duration-300">
                         @foreach($menuItem->children as $subMenuItem)
-                            <a target="{{$subMenuItem->target}}" href="{{$subMenuItem->url}}" class="block px-4 py-2 hover:text-yellow-500">
+                            <a target="{{$subMenuItem->target}}"
+                               href="{{$subMenuItem->url}}"
+                               class="block px-4 py-2 hover:text-yellow-500"
+                               title="{{ $subMenuItem->link_title ?? $subMenuItem->name }}">
                                 {{$subMenuItem->name}}
                             </a>
                         @endforeach
                     </div>
                 </div>
             @else
-                <a target="{{$menuItem->target}}" href="{{$menuItem->url}}" class="hover:text-gray-400">
+                <a target="{{$menuItem->target}}"
+                   href="{{$menuItem->url}}"
+                   class="hover:text-gray-400"
+                   title="{{ $menuItem->link_title ?? $menuItem->name }}">
                     {{$menuItem->name}}
                 </a>
             @endif
@@ -53,7 +56,6 @@
             @endif
         @endforeach
     </nav>
-
 
     <!-- Sub-Header -->
     <div class="absolute bottom-[65px] sm:bottom-[60px] md:bottom-[65px] lg:bottom-[70px]
@@ -101,7 +103,7 @@
             <div class="flex flex-col">
                 <!-- Főmenü + Nyitó ikon egy sorban -->
                 <div class="flex justify-between items-center pr-6">
-                    <a href="#" class="py-2 text-lg hover:text-gray-400">{{$menuItem->name}}</a>
+                    <a href="#" class="py-2 text-lg hover:text-gray-400" title="{{ $menuItem->link_title ?? $menuItem->name }}">{{$menuItem->name}}</a>
                     <button id="mobile-menu-toggle" class="focus:outline-none">
                         <svg id="mobile-menu-icon" class="h-5 w-5 transform transition-transform duration-300"
                              xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -114,7 +116,9 @@
                 <div id="mobile-submenu" class="hidden pl-4 transition-all duration-300">
                     @foreach($menuItem->children as $subMenuItem)
                         <a target="{{$subMenuItem->target}}" href="{{$subMenuItem->url}}"
-                           class="block py-2 text-lg hover:text-gray-400">{{$subMenuItem->name}}</a>
+                           class="block py-2 text-lg hover:text-gray-400"
+                           title="{{ $subMenuItem->link_title ?? $subMenuItem->name }}"
+                        >{{$subMenuItem->name}}</a>
                     @endforeach
                 </div>
             </div>

@@ -1,3 +1,4 @@
+{{--TODO MOBILE VIEW--}}
 <footer class="w-full bg-[#e6e7eb] text-sm text-gray-800">
     <div class="w-full bg-[#004070] py-3 text-center text-white text-base border-t-[#B58E03]">
         <p>
