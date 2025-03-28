@@ -59,16 +59,16 @@ class PageResource extends Resource
                         ->schema([
                             Forms\Components\TextInput::make('group_id')
                                 ->label('Csoport ID')
-                                ->required(),
+                                ->nullable(),
                             Forms\Components\TextInput::make('group_classes')
                                 ->label('CSS Osztályok')
-                                ->required(),
+                                ->nullable(),
                             Forms\Components\TextInput::make('wrap_section_start')
                                 ->label('Szakasz kezdete')
-                                ->required(),
+                                ->nullable(),
                             Forms\Components\TextInput::make('wrap_section_close')
                                 ->label('Szakasz lezárása')
-                                ->required(),
+                                ->nullable(),
 
                             // Blokkok külön kártyában, de a szekción belül
                             Forms\Components\Card::make()
@@ -94,8 +94,9 @@ class PageResource extends Resource
                             ->collapsed(), // Alapból ÖSSZECSUKVA!
                     ])
                     ->columnSpanFull()
+                    ->deletable()
                     ->orderColumn('order')
-                    ->reorderable(),
+                    ->reorderable()
             ]);
     }
 
