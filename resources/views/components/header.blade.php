@@ -24,7 +24,7 @@
             @if($menuItem->children->count())
                 <div class="relative group">
                     <a target="{{$menuItem->target}}"
-                       href="{{$menuItem->url}}"
+                       href="{{!empty($menuItem->menuable) ? route('pages.show', ['slug' => $menuItem->menuable->slug]) : $menuItem->url}}"
                        class="hover:text-gray-400"
                        title="{{ $menuItem->link_title ?? $menuItem->name }}">
                         {{$menuItem->name}}
@@ -34,7 +34,7 @@
                          class="text-white absolute hidden opacity-0 left-0 rounded-md shadow-lg py-2 w-48 z-10 transition-opacity duration-300">
                         @foreach($menuItem->children as $subMenuItem)
                             <a target="{{$subMenuItem->target}}"
-                               href="{{$subMenuItem->url}}"
+                               href="{{!empty($subMenuItem->menuable) ? route('pages.show', ['slug' => $subMenuItem->menuable->slug]) : $subMenuItem->url}}"
                                class="block px-4 py-2 hover:text-yellow-500"
                                title="{{ $subMenuItem->link_title ?? $subMenuItem->name }}">
                                 {{$subMenuItem->name}}
@@ -44,7 +44,7 @@
                 </div>
             @else
                 <a target="{{$menuItem->target}}"
-                   href="{{$menuItem->url}}"
+                   href="{{!empty($menuItem->menuable) ? route('pages.show', ['slug' => $menuItem->menuable->slug]) : $menuItem->url}}"
                    class="hover:text-gray-400"
                    title="{{ $menuItem->link_title ?? $menuItem->name }}">
                     {{$menuItem->name}}
@@ -103,7 +103,7 @@
             <div class="flex flex-col">
                 <!-- Főmenü + Nyitó ikon egy sorban -->
                 <div class="flex justify-between items-center pr-6">
-                    <a href="#" class="py-2 text-lg hover:text-gray-400" title="{{ $menuItem->link_title ?? $menuItem->name }}">{{$menuItem->name}}</a>
+                    <a href="{{!empty($menuItem->menuable) ? route('pages.show', ['slug' => $menuItem->menuable->slug]) : $menuItem->url}}" class="py-2 text-lg hover:text-gray-400" title="{{ $menuItem->link_title ?? $menuItem->name }}">{{$menuItem->name}}</a>
                     <button id="mobile-menu-toggle" class="focus:outline-none">
                         <svg id="mobile-menu-icon" class="h-5 w-5 transform transition-transform duration-300"
                              xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -115,7 +115,7 @@
                 <!-- Almenü -->
                 <div id="mobile-submenu" class="hidden pl-4 transition-all duration-300">
                     @foreach($menuItem->children as $subMenuItem)
-                        <a target="{{$subMenuItem->target}}" href="{{$subMenuItem->url}}"
+                        <a target="{{$subMenuItem->target}}" href="{{!empty($subMenuItem->menuable) ? route('pages.show', ['slug' => $subMenuItem->menuable->slug]) : $subMenuItem->url}}"
                            class="block py-2 text-lg hover:text-gray-400"
                            title="{{ $subMenuItem->link_title ?? $subMenuItem->name }}"
                         >{{$subMenuItem->name}}</a>
@@ -123,7 +123,7 @@
                 </div>
             </div>
         @else
-            <a href="{{$menuItem->url}}" class="py-2 text-lg hover:text-gray-400">{{$menuItem->name}}</a>
+            <a href="{{!empty($menuItem->menuable) ? route('pages.show', ['slug' => $menuItem->menuable->slug]) : $menuItem->url}}" class="py-2 text-lg hover:text-gray-400">{{$menuItem->name}}</a>
         @endempty
     @endforeach
 
