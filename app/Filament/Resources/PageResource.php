@@ -89,7 +89,7 @@ class PageResource extends Resource
                                 ->collapsible()
                                 ->collapsed(), // Blokkok is alapból csukva
                         ])
-                            ->heading(fn ($record) => "Szekció: {$record->group_id}") // Group ID mindig látszódjon
+                            ->heading(fn ($record) => "Szekció: {$record?->group_id}") // Group ID mindig látszódjon
                             ->collapsible() // Szekciók külön-külön összehajthatók
                             ->collapsed(), // Alapból ÖSSZECSUKVA!
                     ])
