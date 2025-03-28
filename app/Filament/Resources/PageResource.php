@@ -33,7 +33,7 @@ class PageResource extends Resource
                             ->label('Title')
                             ->required(),
                         Forms\Components\TextInput::make('slug')
-                            ->label('URL')
+                            ->label('Slug')
                             ->unique(ignoreRecord: true),
                     ])
                     ->columns(2),
@@ -107,7 +107,7 @@ class PageResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')->label('Név'),
                 Tables\Columns\TextColumn::make('title')->label('Title'),
-                Tables\Columns\TextColumn::make('slug')->label('URL'),
+                Tables\Columns\TextColumn::make('slug')->label('Slug'),
                 Tables\Columns\TextColumn::make('meta_title')->label('Meta title'),
             ])
             ->filters([]);
