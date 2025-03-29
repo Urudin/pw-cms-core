@@ -21,7 +21,7 @@
 
     <!-- Navigáció (asztali) -->
     <nav id="menu"
-         class="absolute bottom-0 md:bottom-[0] left-6 text-[21px] font-bold text-white md:tracking-[2px] flex items-center sm:flex hidden">
+         class="absolute bottom-0 md:bottom-[0] left-6 text-[17px] font-bold text-white md:tracking-[1px] flex items-center sm:flex hidden">
         @foreach($menu->menu_items as $index => $menuItem)
             @if($menuItem->children->count())
                 <div class="relative menu-item">
