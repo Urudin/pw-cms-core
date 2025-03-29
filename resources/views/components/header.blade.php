@@ -21,14 +21,14 @@
 
     <!-- Navigáció (asztali) -->
     <nav id="menu"
-         class="absolute bottom-0 md:bottom-[0] left-6 text-[17px] font-bold text-white md:tracking-[1px] flex items-center sm:flex hidden">
+         class="absolute bottom-0 md:bottom-[0] left-6 text-[15px] lg:text-[17px] font-bold text-white md:tracking-[1px] flex items-center sm:flex hidden">
         @foreach($menu->menu_items as $index => $menuItem)
             @if($menuItem->children->count())
                 <div class="relative menu-item">
                     <div class="md:pb-[5px] lg:pb-[10px]">
                         <a target="{{$menuItem->target}}"
                            href="{{!empty($menuItem->menuable) ? route('pages.show', ['slug' => $menuItem->menuable->slug]) : $menuItem->url}}"
-                           class="hover:text-gray-400 sm:px-[15px] lg:px-[25px] relative @if(!$loop->last) border-r-2 border-[#B58E03] @endif"
+                           class="hover:text-gray-400 sm:px-[10px] lg:px-[25px] relative @if(!$loop->last) border-r-2 border-[#B58E03] @endif"
                            title="{{ $menuItem->link_title ?? $menuItem->name }}">
                             {{$menuItem->name}}
                         </a>
@@ -55,7 +55,7 @@
                     <div class="md:pb-[5px] lg:pb-[10px]">
                         <a target="{{$menuItem->target}}"
                            href="{{!empty($menuItem->menuable) ? route('pages.show', ['slug' => $menuItem->menuable->slug]) : $menuItem->url}}"
-                           class="hover:text-gray-400 sm:px-[15px] lg:px-[25px] relative @if(!$loop->last) border-r-2 border-[#B58E03] transition-all @endif"
+                           class="hover:text-gray-400 sm:px-[10px] lg:px-[25px] relative @if(!$loop->last) border-r-2 border-[#B58E03] transition-all @endif"
                            title="{{ $menuItem->link_title ?? $menuItem->name }}">
                             {{$menuItem->name}}
                         </a>
