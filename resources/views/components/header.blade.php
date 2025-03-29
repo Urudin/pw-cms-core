@@ -11,31 +11,31 @@
 <div
     class="relative container mx-auto max-w-screen-xl bg-no-repeat bg-top bg-cover h-[250px] md:h-[334px] flex flex-col justify-between px-6"
     style="background-image: url('{{ $url }}');">
-    <a href="/" class="absolute inset-0 z-0"></a> <!-- Az egész fejléc kattinthatóvá tétele -->
+    <a href="/" class="absolute inset-0 z-[20] block"></a>
 
     <!-- Logo -->
     <div
-        class="absolute top-[40px] top-sm-[60px] top-md-[80px] top-lg-[100px] left-[20px] left-sm-[40px] left-md-[60px] left-lg-[80px] z-10">
+        class="absolute top-[40px] top-sm-[60px] top-md-[80px] top-lg-[100px] left-sm-[40px] left-md-[60px] left-lg-[80px] z-10">
         <img src="{{ $logoUrl }}" alt="Logo" class="h-[30px] w-auto sm:h-[50px] xs:h-[60px]">
     </div>
 
     <!-- Navigáció (asztali) -->
     <nav id="menu"
-         class="absolute bottom-0 md:bottom-[0] left-6 text-[15px] lg:text-[17px] font-bold text-white md:tracking-[1px] flex items-center sm:flex hidden">
+         class="absolute bottom-0 md:bottom-[0] xl:text-[21px] lg:text-[18px] text-[13px] font-bold text-white md:tracking-[1px] xl:tracking-[2px] flex items-center md:flex hidden z-[30]">
         @foreach($menu->menu_items as $index => $menuItem)
             @if($menuItem->children->count())
                 <div class="relative menu-item">
-                    <div class="md:pb-[5px] lg:pb-[10px]">
+                    <div class="md:pb-[12px] lg:pb-[11px]">
                         <a target="{{$menuItem->target}}"
                            href="{{!empty($menuItem->menuable) ? route('pages.show', ['slug' => $menuItem->menuable->slug]) : $menuItem->url}}"
-                           class="hover:text-gray-400 sm:px-[10px] md:px-[10px] lg:px-[15px] xl:px-[20px] relative @if(!$loop->last) border-r-2 border-[#B58E03] @endif"
+                           class="hover:text-gray-400 relative @if(!$loop->first) sm:pl-[10px] md:pl-[10px] lg:pl-[15px] xl:pl-[20px] @endif @if(!$loop->last) sm:pr-[10px] md:pr-[10px] lg:pr-[15px] xl:pr-[20px] border-r-2 border-[#B58E03] @endif"
                            title="{{ $menuItem->link_title ?? $menuItem->name }}">
                             {{$menuItem->name}}
                         </a>
                     </div>
                     @if(!$loop->last)
                     <!-- Border Connector -->
-                    <div class="border-connector absolute top-full left-[100%] -mt-[13px] -ml-[2px] w-[2px] bg-[#B58E03]" style="height: 0; transition: height 0.1s;"></div>
+                    <div class="border-connector absolute top-full left-[100%] -mt-[14px] -ml-[2px] w-[2px] bg-[#B58E03]" style="height: 0; transition: height 0.1s;"></div>
                     @endif
                     <!-- Dropdown Menu -->
                     <div class="dropdown-menu text-white absolute hidden"
@@ -52,7 +52,7 @@
                 </div>
             @else
                 <div class="relative menu-item">
-                    <div class="md:pb-[5px] lg:pb-[10px]">
+                    <div class="md:pb-[12px] lg:pb-[10px]">
                         <a target="{{$menuItem->target}}"
                            href="{{!empty($menuItem->menuable) ? route('pages.show', ['slug' => $menuItem->menuable->slug]) : $menuItem->url}}"
                            class="hover:text-gray-400 sm:px-[10px] md:px-[10px] lg:px-[15px] xl:px-[20px] relative @if(!$loop->last) border-r-2 border-[#B58E03] @endif"
@@ -68,8 +68,8 @@
 
 
     <!-- Sub-Header -->
-    <div class="absolute bottom-[65px] sm:bottom-[60px] md:bottom-[65px] lg:bottom-[70px]
-        left-[25px] sm:left-[25px] md:left-[25px] lg:left-[25px] flex flex-col md:flex-row-reverse md:items-center md:justify-between w-full max-w-screen-xl z-10">
+    <div class="absolute bottom-[65px] sm:bottom-[60px] md:bottom-[70px] lg:bottom-[75px]
+        left-[25px] sm:left-[25px] md:left-[25px] lg:left-[25px] flex flex-col md:flex-row-reverse md:items-center md:justify-between w-full max-w-screen-xl z-[30]">
 
         <!-- Kép a szöveg mellett (Asztali nézetben jobbra húzva) -->
         <div class="hidden md:block mr-[40px]">
@@ -77,21 +77,22 @@
         </div>
 
         <!-- Szövegblokk Kattinthatóvá Tétele (SEO Barát Módon) -->
-        <a href="/" class="no-underline block text-lg sm:text-xl md:text-2xl lg:text-3xl text-white font-bold leading-tight z-10 hover:no-underline">
-            <div>{{ \App\Models\UserSetting::query()->firstWhere('name', 'header-sub-title-row-1')->value }}</div>
-            <div>{{ \App\Models\UserSetting::query()->firstWhere('name', 'header-sub-title-row-2')->value }}</div>
-        </a>
-
-        <!-- Kép a szöveg mellett -->
-        <div class="md:hidden">
-            <img src="{{ asset('images/30.png') }}" alt="Dekoratív kép" class="h-[40px] md:h-full object-contain">
+        <div class="flex gap-8">
+            <a href="/"
+               class="no-underline block text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-[1.875rem] text-white xl:leading-[2.5rem] z-[30] hover:no-underline">
+                {{ \App\Models\UserSetting::query()->firstWhere('name', 'header-sub-title-row-1')->value }}
+                <br/>
+                {{ \App\Models\UserSetting::query()->firstWhere('name', 'header-sub-title-row-2')->value }}
+            </a>
+            <div class="md:hidden">
+                <img src="{{ asset('images/30.png') }}" alt="Dekoratív kép" class="h-[40px] md:h-full object-contain">
+            </div>
         </div>
-
     </div>
 
 
     <!-- Hamburger Menü (bal alsó sarok) -->
-    <div class="absolute bottom-0 left-6 sm:hidden">
+    <div class="absolute bottom-0 left-6 md:hidden z-[30]">
         <button id="menu-toggle" class="text-white focus:outline-none flex items-center space-x-2">
             <svg class="h-8 w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                  stroke="currentColor">
@@ -105,7 +106,7 @@
 <!-- Mobilmenü (header közvetlen alá) -->
 <div id="mobile-menu"
      style="background-color: #004070;"
-     class="left-0 w-full bg-gradient-to-r text-white flex flex-col pl-6 py-4 sm:hidden transition-all duration-300 ease-in-out opacity-0 scale-y-0 origin-top hidden">
+     class="left-0 w-full bg-gradient-to-r text-white flex flex-col pl-6 py-4 md:hidden transition-all duration-300 ease-in-out opacity-0 scale-y-0 origin-top hidden">
 
     @foreach($menu->menu_items as $menuItem)
         @if($menuItem->children->count())
