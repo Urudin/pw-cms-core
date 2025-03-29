@@ -9,33 +9,41 @@
 @endphp
 
 <div
-    class="relative container mx-auto max-w-screen-xl bg-no-repeat bg-top bg-cover h-[250px] md:h-[308px] flex flex-col justify-between px-6"
+    class="relative container mx-auto max-w-screen-xl bg-no-repeat bg-top bg-cover h-[250px] md:h-[334px] flex flex-col justify-between px-6"
     style="background-image: url('{{ $url }}');">
+    <a href="/" class="absolute inset-0 z-0"></a> <!-- Az egész fejléc kattinthatóvá tétele -->
 
     <!-- Logo -->
     <div
-        class="absolute top-[40px] top-sm-[60px] top-md-[80px] top-lg-[100px] left-[20px] left-sm-[40px] left-md-[60px] left-lg-[80px]">
+        class="absolute top-[40px] top-sm-[60px] top-md-[80px] top-lg-[100px] left-[20px] left-sm-[40px] left-md-[60px] left-lg-[80px] z-10">
         <img src="{{ $logoUrl }}" alt="Logo" class="h-[30px] w-auto sm:h-[50px] xs:h-[60px]">
     </div>
 
     <!-- Navigáció (asztali) -->
-    <nav id="menu" class="absolute bottom-0 left-6 text-xl text-white flex space-x-4 items-center sm:flex hidden">
-        @foreach($menu->menu_items as $menuItem)
+    <nav id="menu"
+         class="absolute bottom-0 md:bottom-[0] left-6 text-[21px] font-bold text-white md:tracking-[2px] flex items-center sm:flex hidden">
+        @foreach($menu->menu_items as $index => $menuItem)
             @if($menuItem->children->count())
-                <div class="relative group">
-                    <a target="{{$menuItem->target}}"
-                       href="{{!empty($menuItem->menuable) ? route('pages.show', ['slug' => $menuItem->menuable->slug]) : $menuItem->url}}"
-                       class="hover:text-gray-400"
-                       title="{{ $menuItem->link_title ?? $menuItem->name }}">
-                        {{$menuItem->name}}
-                    </a>
-                    <!-- Lenyíló Almenü -->
-                    <div id="submenu" style="background-color: #004070;"
-                         class="text-white absolute hidden opacity-0 left-0 rounded-md shadow-lg py-2 w-48 z-10 transition-opacity duration-300">
+                <div class="relative menu-item">
+                    <div class="md:pb-[5px] lg:pb-[10px]">
+                        <a target="{{$menuItem->target}}"
+                           href="{{!empty($menuItem->menuable) ? route('pages.show', ['slug' => $menuItem->menuable->slug]) : $menuItem->url}}"
+                           class="hover:text-gray-400 sm:px-[15px] lg:px-[25px] relative @if(!$loop->last) border-r-2 border-[#B58E03] @endif"
+                           title="{{ $menuItem->link_title ?? $menuItem->name }}">
+                            {{$menuItem->name}}
+                        </a>
+                    </div>
+                    @if(!$loop->last)
+                    <!-- Border Connector -->
+                    <div class="border-connector absolute top-full left-[100%] -mt-[13px] -ml-[2px] w-[2px] bg-[#B58E03]" style="height: 0; transition: height 0.1s;"></div>
+                    @endif
+                    <!-- Dropdown Menu -->
+                    <div class="dropdown-menu text-white absolute hidden"
+                         style="display: none; background-color: #004070; border-top: 3px solid #B58E03; min-width: 200px; white-space: nowrap; overflow-x: auto; position: absolute; top: 100%; left: 0;">
                         @foreach($menuItem->children as $subMenuItem)
                             <a target="{{$subMenuItem->target}}"
                                href="{{!empty($subMenuItem->menuable) ? route('pages.show', ['slug' => $subMenuItem->menuable->slug]) : $subMenuItem->url}}"
-                               class="block px-4 py-2 hover:text-yellow-500"
+                               class="block px-4 py-2 hover:text-yellow-500 truncate"
                                title="{{ $subMenuItem->link_title ?? $subMenuItem->name }}">
                                 {{$subMenuItem->name}}
                             </a>
@@ -43,34 +51,36 @@
                     </div>
                 </div>
             @else
-                <a target="{{$menuItem->target}}"
-                   href="{{!empty($menuItem->menuable) ? route('pages.show', ['slug' => $menuItem->menuable->slug]) : $menuItem->url}}"
-                   class="hover:text-gray-400"
-                   title="{{ $menuItem->link_title ?? $menuItem->name }}">
-                    {{$menuItem->name}}
-                </a>
-            @endif
-
-            @if(!$loop->last)
-                <span class="text-yellow-400">|</span>
+                <div class="relative menu-item">
+                    <div class="md:pb-[5px] lg:pb-[10px]">
+                        <a target="{{$menuItem->target}}"
+                           href="{{!empty($menuItem->menuable) ? route('pages.show', ['slug' => $menuItem->menuable->slug]) : $menuItem->url}}"
+                           class="hover:text-gray-400 sm:px-[15px] lg:px-[25px] relative @if(!$loop->last) border-r-2 border-[#B58E03] transition-all @endif"
+                           title="{{ $menuItem->link_title ?? $menuItem->name }}">
+                            {{$menuItem->name}}
+                        </a>
+                    </div>
+                </div>
             @endif
         @endforeach
     </nav>
 
+
+
     <!-- Sub-Header -->
     <div class="absolute bottom-[65px] sm:bottom-[60px] md:bottom-[65px] lg:bottom-[70px]
-        left-[25px] sm:left-[25px] md:left-[25px] lg:left-[25px] flex flex-col md:flex-row-reverse md:items-center md:justify-between w-full max-w-screen-xl">
+        left-[25px] sm:left-[25px] md:left-[25px] lg:left-[25px] flex flex-col md:flex-row-reverse md:items-center md:justify-between w-full max-w-screen-xl z-10">
 
         <!-- Kép a szöveg mellett (Asztali nézetben jobbra húzva) -->
         <div class="hidden md:block mr-[40px]">
             <img src="{{ asset('images/30.png') }}" alt="Dekoratív kép" class="h-[40px] md:h-full object-contain">
         </div>
 
-        <!-- Szövegblokk -->
-        <div class="text-lg sm:text-xl md:text-2xl lg:text-3xl text-white font-bold leading-tight">
-            <span>{{ \App\Models\UserSetting::query()->firstWhere('name', 'header-sub-title-row-1')->value }}</span><br>
-            <span>{{ \App\Models\UserSetting::query()->firstWhere('name', 'header-sub-title-row-2')->value }}</span>
-        </div>
+        <!-- Szövegblokk Kattinthatóvá Tétele (SEO Barát Módon) -->
+        <a href="/" class="no-underline block text-lg sm:text-xl md:text-2xl lg:text-3xl text-white font-bold leading-tight z-10 hover:no-underline">
+            <div>{{ \App\Models\UserSetting::query()->firstWhere('name', 'header-sub-title-row-1')->value }}</div>
+            <div>{{ \App\Models\UserSetting::query()->firstWhere('name', 'header-sub-title-row-2')->value }}</div>
+        </a>
 
         <!-- Kép a szöveg mellett -->
         <div class="md:hidden">
@@ -78,7 +88,6 @@
         </div>
 
     </div>
-
 
 
     <!-- Hamburger Menü (bal alsó sarok) -->
@@ -103,7 +112,9 @@
             <div class="flex flex-col">
                 <!-- Főmenü + Nyitó ikon egy sorban -->
                 <div class="flex justify-between items-center pr-6">
-                    <a href="{{!empty($menuItem->menuable) ? route('pages.show', ['slug' => $menuItem->menuable->slug]) : $menuItem->url}}" class="py-2 text-lg hover:text-gray-400" title="{{ $menuItem->link_title ?? $menuItem->name }}">{{$menuItem->name}}</a>
+                    <a href="{{!empty($menuItem->menuable) ? route('pages.show', ['slug' => $menuItem->menuable->slug]) : $menuItem->url}}"
+                       class="py-2 text-lg hover:text-gray-400"
+                       title="{{ $menuItem->link_title ?? $menuItem->name }}">{{$menuItem->name}}</a>
                     <button id="mobile-menu-toggle" class="focus:outline-none">
                         <svg id="mobile-menu-icon" class="h-5 w-5 transform transition-transform duration-300"
                              xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -115,7 +126,8 @@
                 <!-- Almenü -->
                 <div id="mobile-submenu" class="hidden pl-4 transition-all duration-300">
                     @foreach($menuItem->children as $subMenuItem)
-                        <a target="{{$subMenuItem->target}}" href="{{!empty($subMenuItem->menuable) ? route('pages.show', ['slug' => $subMenuItem->menuable->slug]) : $subMenuItem->url}}"
+                        <a target="{{$subMenuItem->target}}"
+                           href="{{!empty($subMenuItem->menuable) ? route('pages.show', ['slug' => $subMenuItem->menuable->slug]) : $subMenuItem->url}}"
                            class="block py-2 text-lg hover:text-gray-400"
                            title="{{ $subMenuItem->link_title ?? $subMenuItem->name }}"
                         >{{$subMenuItem->name}}</a>
@@ -123,7 +135,8 @@
                 </div>
             </div>
         @else
-            <a href="{{!empty($menuItem->menuable) ? route('pages.show', ['slug' => $menuItem->menuable->slug]) : $menuItem->url}}" class="py-2 text-lg hover:text-gray-400">{{$menuItem->name}}</a>
+            <a href="{{!empty($menuItem->menuable) ? route('pages.show', ['slug' => $menuItem->menuable->slug]) : $menuItem->url}}"
+               class="py-2 text-lg hover:text-gray-400">{{$menuItem->name}}</a>
         @endempty
     @endforeach
 
@@ -193,7 +206,32 @@
             }
         });
     });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const menuItems = document.querySelectorAll('.menu-item');
+
+        menuItems.forEach(item => {
+            const dropdown = item.querySelector('.dropdown-menu');
+            const connector = item.querySelector('.border-connector');
+
+            item.addEventListener('mouseenter', () => {
+                if (dropdown) {
+                    dropdown.style.display = 'block';
+                }
+                if (connector) {
+                    connector.style.height = '15px'; // Show connector
+                }
+            });
+
+            item.addEventListener('mouseleave', () => {
+                if (dropdown) {
+                    dropdown.style.display = 'none';
+                }
+                if (connector) {
+                    connector.style.height = '0'; // Hide connector
+                }
+            });
+        });
+    });
 </script>
-
-
 

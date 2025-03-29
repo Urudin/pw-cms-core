@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Page;
 use App\Models\UserSetting;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class PageController extends Controller
@@ -30,10 +31,13 @@ class PageController extends Controller
         return response()->json($page);
     }
 
-    public function show(?string $slug = null): View
+    public function show(?string $slug = null): View|RedirectResponse
     {
+        $startPageSlug = UserSetting::query()->where('name', 'startingPage')->first()->value;
         if(!$slug) {
-            $slug = UserSetting::query()->where('name', 'startingPage')->first()->value;
+            $slug = $startPageSlug;
+        } else if($slug == $startPageSlug) {
+            return redirect()->route('home');
         }
         $page = Page::query()->firstWhere('slug', $slug);
         if(!$page) {
