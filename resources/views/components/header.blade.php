@@ -28,7 +28,7 @@
                     <div class="md:pb-[5px] lg:pb-[10px]">
                         <a target="{{$menuItem->target}}"
                            href="{{!empty($menuItem->menuable) ? route('pages.show', ['slug' => $menuItem->menuable->slug]) : $menuItem->url}}"
-                           class="hover:text-gray-400 sm:px-[10px] lg:px-[25px] relative @if(!$loop->last) border-r-2 border-[#B58E03] @endif"
+                           class="hover:text-gray-400 sm:px-[10px] md:px-[10px] lg:px-[25px] relative @if(!$loop->last) border-r-2 border-[#B58E03] @endif"
                            title="{{ $menuItem->link_title ?? $menuItem->name }}">
                             {{$menuItem->name}}
                         </a>
@@ -55,7 +55,7 @@
                     <div class="md:pb-[5px] lg:pb-[10px]">
                         <a target="{{$menuItem->target}}"
                            href="{{!empty($menuItem->menuable) ? route('pages.show', ['slug' => $menuItem->menuable->slug]) : $menuItem->url}}"
-                           class="hover:text-gray-400 sm:px-[10px] lg:px-[25px] relative @if(!$loop->last) border-r-2 border-[#B58E03] transition-all @endif"
+                           class="hover:text-gray-400 sm:px-[10px] md:px-[10px] lg:px-[25px] relative @if(!$loop->last) border-r-2 border-[#B58E03] @endif"
                            title="{{ $menuItem->link_title ?? $menuItem->name }}">
                             {{$menuItem->name}}
                         </a>
