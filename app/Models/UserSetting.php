@@ -27,11 +27,10 @@ class UserSetting extends Model
 
     public static function getHeaderUrl(): string
     {
-        $mediaRecord = \TomatoPHP\FilamentMediaManager\Models\Media::query()
+        $mediaRecord = Media::query()
             ->where('collection_name', 'headers')
-            ->where('file_name', \App\Models\UserSetting::query()->firstWhere('name', 'header-background')->value)
+            ->where('file_name', self::query()->firstWhere('name', 'header-background')->value)
             ->first();
-
         // Check if media record exists, otherwise use a fallback image
         return $mediaRecord ? asset('storage/' . $mediaRecord->model_id . '/' . $mediaRecord->file_name) : asset('images/default-header.jpg');
     }
