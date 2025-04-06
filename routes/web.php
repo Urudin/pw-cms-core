@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PageController::class, 'show'])->name('home');
 
-Route::any('/koszonjuk', fn() => view('success'))->name('success-page');
 Route::get('/{slug}', [PageController::class, 'show'])->name('pages.show');
 
 Route::get('/dashboard', function () {

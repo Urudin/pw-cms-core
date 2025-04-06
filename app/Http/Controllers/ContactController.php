@@ -26,6 +26,6 @@ class ContactController
             ->send(new ContactMessage($validated));
 
         // Continue with your form handling logic
-        return redirect(route('success-page'));
+        return redirect(route('pages.show', ['page' => 'koszonjuk-erdeklodeset']));
     }
 }
