@@ -14,6 +14,7 @@
     "require": {
         "php": "^8.2",
         "abdelhamiderrahmouni/filament-monaco-editor": "^0.2.5",
+        "anhskohbo/no-captcha": "^3.7",
         "awcodes/filament-tiptap-editor": "^3.5",
         "biostate/filament-menu-builder": "dev-main",
         "filament/filament": "^3.2",

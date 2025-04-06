@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="recaptcha-sitekey" content="{{ config('services.nocaptcha.sitekey') }}">
+    @csrf
 
     @if(isset($page))
         <title>{{ $page->meta_title ?? \App\Models\UserSetting::getValueByName('header-sub-title-row-1') . ' ' . \App\Models\UserSetting::getValueByName('header-sub-title-row-2') }}</title>
@@ -23,6 +25,14 @@
         <meta property="og:url" content="{{ url()->current() }}">
 
     @endif
+    <script src='https://cdn.tailwindcss.com'></script>
+    <script defer src='https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js'></script>
+    <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.nocaptcha.sitekey') }}"></script>
+    <style>
+        .custom-label input:checked + svg {
+            display: block !important;
+        }
+    </style>
 
     <title>{{ config('app.name', 'Innováció Menedzsment') }}</title>
 
