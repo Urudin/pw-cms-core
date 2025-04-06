@@ -3,7 +3,8 @@
 @section('content')
     <style>
         .pageContainer p{
-            margin-bottom: 0.5%;
+            margin-bottom: 1%;
+            font-size: 19px;
         }
 
         .pageContainer ul{
@@ -21,6 +22,7 @@
             border: 0;
             height: 1px;
             background-color: #ccc;
+            margin-bottom: 10px;
         }
 
         .pageContainer a {
@@ -44,7 +46,12 @@
             color: #666666;
         }
 
+        .pageContainer table td, .pageContainer table th{
+                vertical-align: top;
+        }
+
         .pageContainer h2 {
+            margin-top: 2%;
             font-size: 180%; /* Usually 24px */
             color:#666666;
             margin-bottom: 1%;
