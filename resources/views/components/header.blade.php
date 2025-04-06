@@ -54,8 +54,7 @@
                 <div class="relative menu-item">
                     <div class="md:pb-[12px] lg:pb-[10px]">
                         <a target="{{$menuItem->target}}"
-{{--                           href="{{!empty($menuItem->menuable) ? route('pages.show', ['slug' => $menuItem->menuable->slug]) : $menuItem->url}}"--}}
-                           href="{{route('success-page')}}"
+                           href="{{!empty($menuItem->menuable) ? route('pages.show', ['slug' => $menuItem->menuable->slug]) : $menuItem->url}}"
                            class="hover:text-gray-400 sm:px-[10px] md:px-[10px] lg:px-[15px] xl:px-[20px] relative @if(!$loop->last) border-r-2 border-[#B58E03] @endif"
                            title="{{ $menuItem->link_title ?? $menuItem->name }}">
                             {{$menuItem->name}}
