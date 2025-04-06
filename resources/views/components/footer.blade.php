@@ -1,5 +1,8 @@
 {{--TODO MOBILE VIEW--}}
 <footer class="w-full bg-[#e6e7eb] text-sm text-gray-800">
+    @if(\App\Models\Block::query()->where('name', 'PreFooter')->exists())
+        {!! \App\Models\Block::query()->firstWhere('name', 'PreFooter')->content !!}
+    @else
     <div class="w-full bg-[#004070] py-3 text-center text-white text-base border-t-[#B58E03]">
         <p>
             Glósz és Társa Kft. • 1051 Budapest, Arany János u. 15. III. lph III./5. • Telefon: (+36 1) 302 4443 •
@@ -7,6 +10,7 @@
             <a href="http://www.glosz.hu" class="underline hover:text-gray-100" target="_blank">www.glosz.hu</a>
         </p>
     </div>
+    @endif
 
     <div class="w-full max-w-screen-xl mx-auto px-4 flex flex-col md:flex-row py-8">
         <!-- Left image full height -->
@@ -36,6 +40,9 @@
 
             <div class="border-t border-[#004070] pb-6"></div>
 
+            @if(\App\Models\Block::query()->where('name', 'Footer')->exists())
+                {!! \App\Models\Block::query()->firstWhere('name', 'Footer')->content !!}
+            @else
             <div class="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-8 pt-6">
                 <!-- Szolgáltatásaink -->
                 <div class="flex flex-col">
@@ -72,10 +79,15 @@
                     </ul>
                 </div>
             </div>
+            @endif
         </div>
     </div>
 
+    @if(\App\Models\Block::query()->firstWhere('name', 'PostFooter')->exists())
+        {!! \App\Models\Block::query()->firstWhere('name', 'PostFooter')->content !!}
+    @else
     <div class="w-full bg-[#004070] py-3 text-center text-white text-base">
         <p>© 2019 - 2025 • Glósz és Társa Kft. • Innováció, kutatás-fejlesztés, szellemi termék, innovációmenedzsment • Minden jog fenntartva!</p>
     </div>
+    @endif
 </footer>

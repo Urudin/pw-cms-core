@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Anhskohbo\NoCaptcha\NoCaptcha;
 use App\Http\Requests\FormSubmitRequest;
 use App\Mail\ContactMessage;
 use App\Mail\MessageReceived;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
 class ContactController
