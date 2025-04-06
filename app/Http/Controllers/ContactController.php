@@ -17,7 +17,7 @@ class ContactController
         $validated = $request->validated();
 
         $customerEmail = $validated['email'];
-        $administratorEmails = ['kirtap9408@gmail.com', 'kirtap94-@hotmail.com'];
+        $administratorEmails = ['glosz@glosz.hu', 'baccbela@gmail.com'];
 
         Mail::to($customerEmail)
             ->send(new MessageReceived($validated));
