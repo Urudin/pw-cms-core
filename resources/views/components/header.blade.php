@@ -79,7 +79,7 @@
         <!-- Szövegblokk Kattinthatóvá Tétele (SEO Barát Módon) -->
         <div class="flex gap-8">
             <a href="/"
-               class="no-underline block text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-[1.875rem] text-white xl:leading-[2.5rem] z-[30] hover:no-underline">
+               class="no-underline block text-[0.95rem] sm:text-xl md:text-2xl lg:text-3xl xl:text-[1.875rem] text-white xl:leading-[2.5rem] z-[30] hover:no-underline">
                 {{ \App\Models\UserSetting::query()->firstWhere('name', 'header-sub-title-row-1')->value }}
                 <br/>
                 {{ \App\Models\UserSetting::query()->firstWhere('name', 'header-sub-title-row-2')->value }}
