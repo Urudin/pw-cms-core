@@ -33,7 +33,24 @@
             display: block !important;
         }
     </style>
+    <style>
+        /* Force the badge to be smaller and within the viewport */
+        /*.grecaptcha-badge {*/
+        /*    width: 80px !important;*/
+        /*    height: 60px !important;*/
+        /*    position: fixed !important;*/
+        /*    bottom: 10px !important;*/
+        /*    right: 10px !important;*/
+        /*    overflow: hidden !important;*/
+        /*    z-index: 9999 !important;*/
+        /*    transition: none !important;*/
+        /*}*/
 
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+        }
+    </style>
     <title>{{ config('app.name', 'Innováció Menedzsment') }}</title>
 
     <!-- Fonts -->
