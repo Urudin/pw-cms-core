@@ -1,3 +1,79 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* resources/css/app.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* resources/css/app.css */
+.pageContainer {
+    @apply text-[19px];
+}
+
+.pageContainer p {
+    @apply mb-[1%];
+}
+
+.pageContainer ul {
+    @apply list-disc pl-6;
+}
+
+.pageContainer ol {
+    @apply list-decimal pl-6;
+}
+
+.pageContainer hr {
+    @apply w-full border-0 h-px bg-gray-300 mb-[10px];
+}
+
+.pageContainer a {
+    @apply text-[#39a7cc] cursor-pointer;
+}
+
+.pageContainer a:hover {
+    @apply text-[#B58E03];
+}
+
+/* Headings - only apply defaults if no class is specified */
+.pageContainer h1:not([class]),
+.pageContainer h2:not([class]),
+.pageContainer h3:not([class]),
+.pageContainer h4:not([class]),
+.pageContainer h5:not([class]),
+.pageContainer h6:not([class]) {
+    @apply font-bold leading-[1.2];
+}
+
+/* Individual heading styles (when no class is used) */
+.pageContainer h1:not([class]) {
+    @apply text-[250%] mb-[2%] text-[#666];
+}
+
+.pageContainer h2:not([class]) {
+    @apply text-[180%] mb-[1%] mt-[2%] text-[#666];
+}
+
+.pageContainer h3:not([class]) {
+    @apply text-[130%] mb-[1%] text-[#666];
+}
+
+.pageContainer h4:not([class]) {
+    @apply text-[1em];
+}
+
+.pageContainer h5:not([class]) {
+    @apply text-[0.83em];
+}
+
+.pageContainer h6:not([class]) {
+    @apply text-[0.67em];
+}
+
+/* Table cell alignment */
+.pageContainer table td,
+.pageContainer table th {
+    @apply align-top;
+}
+

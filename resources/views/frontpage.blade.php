@@ -10,7 +10,6 @@
     </div>
 
     <div class="w-full mx-auto pt-2 md:pt-[14rem] pb-5 left-[25px] sm:left-[25px] md:left-[25px] lg:left-[25px]">
-
         <div class="flex flex-wrap w-full pl-[25px] pb-[3rem] md:w-[60%] text-white text-center">
             <!-- 1. Vállalati Pénzügyi -->
             <div class="relative w-[40%] p-6 flex flex-col bg-[#024071] hover:bg-[#113a5e] opacity-[0.729] hover:opacity-[0.9] items-center justify-center rounded-tl-3xl overflow-hidden">
