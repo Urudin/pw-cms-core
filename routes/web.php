@@ -6,6 +6,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PageController::class, 'show'])->name('home');
 
+if(rand(1,2) === 2){
+    Route::get('/foobar', fn() => 'You won');
+}
+
+
 Route::get('/{slug}', [PageController::class, 'show'])->name('pages.show');
 
 Route::get('/dashboard', function () {
