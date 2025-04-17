@@ -12,7 +12,7 @@
     @apply text-[19px];
 }
 
-.pageContainer p {
+.pageContainer p:not([class]) {
     @apply mb-[1%];
 }
 
@@ -28,7 +28,7 @@
     @apply w-full border-0 h-px bg-gray-300 mb-[10px];
 }
 
-.pageContainer a {
+.pageContainer a:not([class]) {
     @apply text-[#39a7cc] cursor-pointer;
 }
 
