@@ -5,6 +5,13 @@
         'penzugyi-szolgaltatasok' => 'Pénzügyi szolgáltatások',
         'iparjogvedelem' => 'Iparjogvédelem',
     ];
+
+    $altTitle = [
+        'innovaciomenedzsment' => 'Referenciánk - Innovációmenedzsment',
+        'innovaciomenedzsment-oktatas' => 'Referenciánk - Innovációmenedzsment képzés',
+        'penzugyi-szolgaltatasok' => 'Referenciánk - Vállalati pénzügyi tanácsadás',
+        'iparjogvedelem' => 'Referenciánk - Iparjogvédelem, szellemi tulajdon védelem',
+    ];
 @endphp
 
 <div class="pageContainer">
@@ -40,14 +47,14 @@
                                 class="absolute inset-0 backface-hidden transform rotate-y-0 flex items-center justify-center">
                                 <img src="{{ asset("storage/referenciak/$key/" . $file->getFilename()) }}"
                                      class="max-w-full max-h-full object-contain filter grayscale brightness-[0.93]"
-                                     alt="Image"/>
+                                     alt="{{$altTitle[$key]}}" title="{{$altTitle[$key]}}"/>
                             </div>
                             <!-- Back (color) -->
                             <div
                                 class="absolute inset-0 backface-hidden transform rotate-y-180 flex items-center justify-center">
                                 <img src="{{ asset("storage/referenciak/$key/" . $file->getFilename()) }}"
                                      class="max-w-full max-h-full object-contain"
-                                     alt="Image Colored"/>
+                                     alt="{{$altTitle[$key]}}" title="{{$altTitle[$key]}}"/>
                             </div>
                         </div>
                     </div>
