@@ -20,7 +20,7 @@ class PageBlock extends Model
 
     public function blocks()
     {
-        return $this->hasMany(PageBlockItem::class);
+        return $this->hasMany(PageBlockItem::class)->orderBy('order');
     }
 
     public function block(): BelongsTo

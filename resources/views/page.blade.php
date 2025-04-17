@@ -5,7 +5,11 @@
         @foreach($page->pageBlocks as $section)
             {!!$section?->wrap_section_start ?? '' !!}
             @foreach($section->blocks as $item)
-                {!!$item->block->content!!}
+                @if($item->block->name === 'referenciaink-partnereink')
+                    @include('references')
+                @else
+                    {!!$item->block->content!!}
+                @endif
             @endforeach
             {!!$section?->wrap_section_close ?? '' !!}
         @endforeach
