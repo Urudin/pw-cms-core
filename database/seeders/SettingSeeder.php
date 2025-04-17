@@ -19,10 +19,7 @@ class SettingSeeder extends Seeder
             ['name' => 'header-sub-title-row-1', 'value' => 'INNOVÁCIÓMENEDZSMENT'],
             ['name' => 'header-sub-title-row-2', 'value' => 'SZOLGÁLTATÁSOK'],
             ['name' => 'startingPage', 'value' => '#'],
-            ['name' => 'footer-opening', 'value' => 'Glósz és Társa Kft. • 1051 Budapest, Arany János u. 15. III. lph III./5. • Telefon: (+36 1) 302 4443 •
-            E-mail: <a href="mailto:glosz@glosz.hu?subject=info" class="underline hover:text-gray-100">glosz@glosz.hu</a> •
-            <a href="http://www.glosz.hu" class="underline hover:text-gray-100" target="_blank">www.glosz.hu</a>'],
-            ['name' => 'footer-closing', 'value' => '#'],
+            ['name' => 'contact-form-block-id', 'value' => 1],
         ];
 
         foreach ($settings as $setting) {

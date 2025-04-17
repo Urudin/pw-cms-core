@@ -77,3 +77,27 @@
     @apply align-top;
 }
 
+.perspective {
+    perspective: 1000px;
+}
+
+.flip-card-inner {
+    transform-style: preserve-3d;
+    transition: transform 0.8s;
+}
+
+.flip-card:hover .flip-card-inner {
+    transform: rotateY(180deg);
+}
+
+.backface-hidden {
+    backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+    transform: rotateY(180deg);
+}
+
+.rotate-y-0 {
+    transform: rotateY(0deg);
+}
