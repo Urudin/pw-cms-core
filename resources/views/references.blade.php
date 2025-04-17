@@ -14,7 +14,6 @@
     ];
 @endphp
 
-<div class="pageContainer">
     <div class="px-[25px] pb-[25px] bg-white" x-data="{ activeTab: '{{ array_key_first($folders) }}' }">
         <!-- Tabok -->
         <div class="flex border-b-[2px]  border-[#B58E03] ">
@@ -62,5 +61,3 @@
             </div>
         @endforeach
         </div>
-    </div>
-
