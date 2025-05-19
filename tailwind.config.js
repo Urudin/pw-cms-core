@@ -9,6 +9,7 @@ export default {
         './app/Filament/**/*.php', // Fontos a Filament miatt!
         './vendor/filament/**/*.blade.php',
         './resources/views/**/*.blade.php',
+        './storage/tailwind-blocks/**/*.blade.php',
     ],
 
     theme: {

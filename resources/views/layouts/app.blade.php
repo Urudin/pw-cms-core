@@ -35,17 +35,6 @@
         }
     </style>
     <style>
-        /* Force the badge to be smaller and within the viewport */
-        /*.grecaptcha-badge {*/
-        /*    width: 80px !important;*/
-        /*    height: 60px !important;*/
-        /*    position: fixed !important;*/
-        /*    bottom: 10px !important;*/
-        /*    right: 10px !important;*/
-        /*    overflow: hidden !important;*/
-        /*    z-index: 9999 !important;*/
-        /*    transition: none !important;*/
-        /*}*/
 
         html, body {
             overflow-x: hidden;
@@ -76,11 +65,8 @@
 </main>
 
 <!-- Footer -->
-{{--<footer class="w-full py-6 bg-gray-900 text-white overflow-hidden">--}}
-{{--    <div class="w-full max-w-screen-xl mx-auto px-4 sm:px-6">--}}
 @include('components.footer')
-{{--    </div>--}}
-{{--</footer>--}}
+
 
 </body>
 </html>

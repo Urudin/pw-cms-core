@@ -4,7 +4,7 @@
         <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl p-6">
                 <div class="flex justify-between items-center border-b pb-2 mb-4">
-                    <h2 class="text-xl font-bold text-gray-800">Médiatár – Képek2</h2>
+                    <h2 class="text-xl font-bold text-gray-800">Médiatár – Képek</h2>
                     <button wire:click="$set('showModal', false)" class="text-gray-500 hover:text-gray-700">
                         ✖
                     </button>

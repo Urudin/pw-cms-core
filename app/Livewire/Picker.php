@@ -2,8 +2,8 @@
 
 namespace App\Livewire;
 
+use App\Models\Media;
 use Livewire\Component;
-use TomatoPHP\FilamentMediaManager\Models\Media;
 
 class Picker extends Component
 {
