@@ -16,7 +16,7 @@
     <!-- Logo -->
     <div
         class="absolute top-[40px] top-sm-[60px] top-md-[80px] top-lg-[100px] left-sm-[40px] left-md-[60px] left-lg-[80px] z-10">
-        <img src="{{ $logoUrl }}" alt="Logo" class="h-[30px] w-auto sm:h-[50px] xs:h-[60px]">
+        <img src="{{ $logoUrl }}" alt="Logo" class="h-[33px] w-auto sm:h-[50px] xs:h-[60px]">
     </div>
 
     <!-- Navigáció (asztali) -->
@@ -77,22 +77,22 @@
         </div>
 
         <!-- Szövegblokk Kattinthatóvá Tétele (SEO Barát Módon) -->
-        <div class="flex gap-8">
+        <div class="flex gap-4">
             <a href="/"
-               class="no-underline block text-[0.95rem] sm:text-xl md:text-2xl lg:text-3xl xl:text-[1.875rem] text-white xl:leading-[2.5rem] z-[30] hover:no-underline">
+               class="no-underline block text-[1.05rem] sm:text-xl md:text-2xl lg:text-3xl xl:text-[1.875rem] text-white xl:leading-[2.5rem] z-[30] hover:no-underline">
                 {{ \App\Models\UserSetting::query()->firstWhere('name', 'header-sub-title-row-1')->value }}
                 <br/>
                 {{ \App\Models\UserSetting::query()->firstWhere('name', 'header-sub-title-row-2')->value }}
             </a>
             <div class="md:hidden">
-                <img src="{{ asset('images/30.png') }}" alt="Dekoratív kép" class="h-[40px] md:h-full object-contain">
+                <img src="{{ asset('images/30.png') }}" alt="Dekoratív kép" class="h-[45px] md:h-full object-contain">
             </div>
         </div>
     </div>
 
 
     <!-- Hamburger Menü (bal alsó sarok) -->
-    <div class="absolute bottom-0 left-6 md:hidden z-[30]">
+    <div class="absolute bottom-[4px] left-6 md:hidden z-[30]">
         <button id="menu-toggle" class="text-white focus:outline-none flex items-center space-x-2">
             <svg class="h-8 w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                  stroke="currentColor">
