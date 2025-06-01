@@ -16,7 +16,8 @@
         <!-- Left image full height -->
         <div class="w-full md:w-[240px] flex-shrink-0 pr-4 flex justify-center md:justify-end">
             <img src="{{asset('images/footer/glosz-innovaciomenedzsment.jpeg')}}"
-                 alt="Innováció, kutatás-fejlesztés - Glósz és Társa System"
+                 alt="Glósz és Tsa System - vállalati szolgáltatások"
+                 title="Glósz és Tsa System - vállalati szolgáltatások"
                  class="h-full w-[50%] md:w-[100%] object-cover rounded">
         </div>
 
@@ -30,14 +31,14 @@
 
                 <!-- Social Icons -->
                 <div class="flex space-x-2 mt-4 md:mt-0 mx-auto md:mx-0 md:ml-auto">
-                    <a href="https://www.facebook.com/GloszesTarsa?ref=hl" target="_blank">
-                        <img src="{{asset('images/footer/fb-footer.png')}}" alt="Facebook" class="h-6">
+                    <a href="https://www.facebook.com/GloszesTarsa?ref=hl" title="Glósz és Tsa Kft. Facebook oldal" target="_blank">
+                        <img src="{{asset('images/footer/fb-footer.png')}}" title="Glósz és Tsa Kft. Facebook oldal" alt="Glósz és Tsa Kft. Facebook oldal" class="h-6">
                     </a>
-                    <a href="https://twitter.com/i/flow/login?redirect_after_login=%2FGlosz_es_Tarsa" target="_blank">
-                        <img src="{{asset('images/footer/twitter-lablec.png')}}" alt="Twitter" class="h-6">
+                    <a href="https://twitter.com/i/flow/login?redirect_after_login=%2FGlosz_es_Tarsa" title="Glósz és Tsa Kft. X oldal" target="_blank">
+                        <img src="{{asset('images/footer/twitter-lablec.png')}}" title="Glósz és Tsa Kft. X oldal" alt="Glósz és Tsa Kft. X oldal" class="h-6">
                     </a>
-                    <a href="https://hu.linkedin.com/company/gl%C3%B3sz-%C3%A9s-%C3%A1rsa-kft." target="_blank">
-                        <img src="{{asset('images/footer/in-footer.png')}}" alt="LinkedIn" class="h-6">
+                    <a href="https://hu.linkedin.com/company/gl%C3%B3sz-%C3%A9s-%C3%A1rsa-kft." title="Glósz és Tsa Kft. LinkedIn oldal" target="_blank">
+                        <img src="{{asset('images/footer/in-footer.png')}}" title="Glósz és Tsa Kft. LinkedIn oldal" alt="Glósz és Tsa Kft. LinkedIn oldal" class="h-6">
                     </a>
                 </div>
             </div>
