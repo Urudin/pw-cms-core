@@ -78,7 +78,7 @@
 @media only screen and (max-width: 600px) {
     /* Individual heading styles (when no class is used) */
     .pageContainer h1:not([class]) {
-        @apply text-[150%] mb-[2vh] text-[#666];
+        @apply text-[200%] mb-[2vh] text-[#666];
     }
 
     .pageContainer h2:not([class]) {
