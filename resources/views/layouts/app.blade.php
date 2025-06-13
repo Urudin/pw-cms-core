@@ -6,7 +6,11 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="recaptcha-sitekey" content="{{ config('services.nocaptcha.sitekey') }}">
     @csrf
-
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-08TJH768TM"></script>
+    <script>
+        window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-08TJH768TM');
+    </script>
     @if(isset($page))
         <title>{{ $page->meta_title ?? \App\Models\UserSetting::getValueByName('header-sub-title-row-1') . ' ' . \App\Models\UserSetting::getValueByName('header-sub-title-row-2') }}</title>
         <meta property="og:title"
