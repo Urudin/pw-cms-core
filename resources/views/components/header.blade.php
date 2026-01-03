@@ -39,7 +39,7 @@
                     @endif
                     <!-- Dropdown Menu -->
                     <div class="dropdown-menu text-white absolute hidden"
-                         style="display: none; background-color: #004070; border-top: 3px solid #B58E03; min-width: 200px; white-space: nowrap; overflow-x: auto; position: absolute; top: 100%; left: 0;">
+                         style="display: none; background-color: #004070; border-top: 3px solid #B58E03; white-space: nowrap; overflow-x: auto; position: absolute; top: 100%; left: 0;">
                         @foreach($menuItem->children as $subMenuItem)
                             <a target="{{$subMenuItem->target}}"
                                href="{{!empty($subMenuItem->menuable) ? route('pages.show', ['slug' => $subMenuItem->menuable->slug]) : $subMenuItem->url}}"
@@ -211,26 +211,37 @@
     document.addEventListener("DOMContentLoaded", function () {
         const menuItems = document.querySelectorAll('.menu-item');
 
+        function setDropdownWidth(item, dropdown) {
+            const itemRect = item.getBoundingClientRect();
+            const next = item.nextElementSibling; // a következő menüelem (ha van)
+            const nextRect = next ? next.getBoundingClientRect() : null;
+
+            // Alap: legalább a saját szélessége
+            let width = itemRect.width;
+
+            // + a következő elem szélessége, hogy “átlógjon” rá
+            if (nextRect) width += nextRect.width;
+
+            dropdown.style.minWidth = `${Math.ceil(width)}px`;
+        }
+
         menuItems.forEach(item => {
             const dropdown = item.querySelector('.dropdown-menu');
             const connector = item.querySelector('.border-connector');
 
             item.addEventListener('mouseenter', () => {
                 if (dropdown) {
+                    setDropdownWidth(item, dropdown);
                     dropdown.style.display = 'block';
                 }
                 if (connector) {
-                    connector.style.height = '15px'; // Show connector
+                    connector.style.height = '15px';
                 }
             });
 
             item.addEventListener('mouseleave', () => {
-                if (dropdown) {
-                    dropdown.style.display = 'none';
-                }
-                if (connector) {
-                    connector.style.height = '0'; // Hide connector
-                }
+                if (dropdown) dropdown.style.display = 'none';
+                if (connector) connector.style.height = '0';
             });
         });
     });

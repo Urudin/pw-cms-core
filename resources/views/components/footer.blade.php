@@ -26,7 +26,7 @@
             <div class="flex flex-col md:flex-row items-center md:items-start justify-between mb-4">
                 <!-- Logo -->
                 <div class="flex mt-6 md:mt-[0px] items-center space-x-4 mx-auto md:mx-0">
-                    <img src="{{asset('images/footer/logo-kek.png')}}" alt="Pénzügyi és innovációs szolgáltatások" title="Pénzügyi és innovációs szolgáltatások" class="max-h-12">
+                    <img src="{{asset('images/footer/IMA_logo_kek.png')}}" alt="Pénzügyi és innovációs szolgáltatások" title="Pénzügyi és innovációs szolgáltatások" class="max-h-32">
                 </div>
 
                 <!-- Social Icons -->

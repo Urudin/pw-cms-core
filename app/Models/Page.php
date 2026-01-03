@@ -32,9 +32,19 @@ class Page extends Model
         return $this->belongsToMany(Block::class, 'page_blocks')->withPivot('order')->orderBy('order');
     }
 
+    public function tiles()
+    {
+        return $this->belongsToMany(Tile::class, 'page_tiles')->withPivot('order')->orderBy('order');
+    }
+
     public function pageBlocks()
     {
         return $this->hasMany(PageBlock::class);
+    }
+
+    public function pageTiles()
+    {
+        return $this->hasMany(PageTile::class);
     }
 
     public function getMenuLinkAttribute(): string

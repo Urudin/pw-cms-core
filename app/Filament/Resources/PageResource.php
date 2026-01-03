@@ -96,7 +96,23 @@ class PageResource extends Resource
                     ->columnSpanFull()
                     ->deletable()
                     ->orderColumn('order')
+                    ->reorderable(),
+                // Szekciók kezelése különálló kártyákban
+                Repeater::make('pageTiles')
+                    ->relationship()
+                    ->label('Widgetek')
+                    ->schema([
+                        Select::make('tile_id')
+                            ->relationship('tile', 'title')
+                            ->label('Widget')
+                            ->required(),
+                    ])
+                    ->columnSpanFull()
+                    ->deletable()
+                    ->orderColumn('order')
                     ->reorderable()
+                    ->collapsible()
+                    ->collapsed()
             ]);
     }
 
