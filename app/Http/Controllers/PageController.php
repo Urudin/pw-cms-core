@@ -33,8 +33,11 @@ class PageController extends Controller
 
     public function show(?string $slug = null): View|RedirectResponse
     {
-        $startPageSlug = UserSetting::query()->where('name', 'startingPage')->first()->value;
+        $startPageSlug = UserSetting::query()->where('name', 'startingPage')->first()?->value;
         if(!$slug) {
+            if(empty($startPageSlug)) {
+                abort(404);
+            }
             $slug = $startPageSlug;
         } else if($slug == $startPageSlug) {
             return redirect()->route('home');

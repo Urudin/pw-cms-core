@@ -2,26 +2,26 @@
     /** @var \TomatoPHP\FilamentMediaManager\Models\Media $mediaRecord */
     $url = \App\Models\UserSetting::getHeaderUrl();
 
-    // Logo URL
-    $logoUrl = asset('images/gloszlogo.png');
-
     $menu = \App\Models\Menu::query()->where('id', 1)->with('menu_items', fn($q) => $q->whereNull('parent_id')->with('children'))->first();
 @endphp
 
 <div
-    class="relative container mx-auto max-w-screen-xl bg-no-repeat bg-top bg-cover h-[250px] md:h-[334px] flex flex-col justify-between px-6"
-    style="background-image: url('{{ $url }}');">
+    class="relative container mx-auto max-w-screen-xl
+           bg-no-repeat
+           bg-[position:10%_center]
+           bg-cover
+           md:bg-center
+           md:bg-cover
+           h-[250px] md:h-[334px]
+           flex flex-col justify-between px-6"
+    style="background-image: url('{{ $url }}')">
     <a href="/" class="absolute inset-0 z-[20] block"></a>
 
-    <!-- Logo -->
-    <div
-        class="absolute top-[40px] top-sm-[60px] top-md-[80px] top-lg-[100px] left-sm-[40px] left-md-[60px] left-lg-[80px] z-10">
-        <img src="{{ $logoUrl }}" alt="Logo" class="h-[33px] w-auto sm:h-[50px] xs:h-[60px]">
-    </div>
-
     <!-- Navigáció (asztali) -->
+    <div class="absolute bottom-0 md:bottom-[0] left-0 pl-[2%] bg-[#2137D6] w-full z-[30]">
+
     <nav id="menu"
-         class="absolute bottom-0 md:bottom-[0] xl:text-[21px] lg:text-[18px] text-[13px] font-bold text-white md:tracking-[1px] xl:tracking-[2px] flex items-center md:flex hidden z-[30]">
+         class="xl:text-[21px] lg:text-[18px] text-[13px] font-bold text-white md:tracking-[1px] xl:tracking-[2px] flex items-center md:flex hidden w-full">
         @foreach($menu->menu_items as $index => $menuItem)
             @if($menuItem->children->count())
                 <div class="relative menu-item">
@@ -39,8 +39,8 @@
                     @endif
                     <!-- Dropdown Menu -->
                     <div class="dropdown-menu text-white absolute hidden"
-                         style="display: none; background-color: #004070; border-top: 3px solid #B58E03; min-width: 200px; white-space: nowrap; overflow-x: auto; position: absolute; top: 100%; left: 0;">
-                        @foreach($menuItem->children as $subMenuItem)
+                         style="display: none; background-color: #2137D6; border-top: 3px solid #B58E03; white-space: nowrap; overflow-x: auto; position: absolute; top: 100%; left: 0;">
+                    @foreach($menuItem->children as $subMenuItem)
                             <a target="{{$subMenuItem->target}}"
                                href="{{!empty($subMenuItem->menuable) ? route('pages.show', ['slug' => $subMenuItem->menuable->slug]) : $subMenuItem->url}}"
                                class="block px-4 py-2 hover:text-yellow-500 truncate"
@@ -64,29 +64,26 @@
             @endif
         @endforeach
     </nav>
+    </div>
 
 
 
     <!-- Sub-Header -->
-    <div class="absolute bottom-[65px] sm:bottom-[60px] md:bottom-[70px] lg:bottom-[75px]
+    <div class="absolute bottom-[35px] sm:bottom-[30px] md:bottom-[40px] lg:bottom-[45px]
         left-[25px] sm:left-[25px] md:left-[25px] lg:left-[25px] flex flex-col md:flex-row-reverse md:items-center md:justify-between w-full max-w-screen-xl z-[30]">
 
         <!-- Kép a szöveg mellett (Asztali nézetben jobbra húzva) -->
         <div class="hidden md:block mr-[40px]">
-            <img src="{{ asset('images/30.png') }}" alt="Dekoratív kép" class="h-[40px] md:h-full object-contain">
         </div>
 
         <!-- Szövegblokk Kattinthatóvá Tétele (SEO Barát Módon) -->
         <div class="flex gap-4">
             <a href="/"
-               class="no-underline block text-[1.05rem] sm:text-xl md:text-2xl lg:text-3xl xl:text-[1.875rem] text-white xl:leading-[2.5rem] z-[30] hover:no-underline">
+               class="lg:pl-[4%] no-underline block text-[0.95rem] sm:text-xl md:text-2xl xl:text-[1.675rem] text-white xl:leading-[2.2rem] z-[30] hover:no-underline">
                 {{ \App\Models\UserSetting::query()->firstWhere('name', 'header-sub-title-row-1')->value }}
                 <br/>
                 {{ \App\Models\UserSetting::query()->firstWhere('name', 'header-sub-title-row-2')->value }}
             </a>
-            <div class="md:hidden">
-                <img src="{{ asset('images/30.png') }}" alt="Dekoratív kép" class="h-[45px] md:h-full object-contain">
-            </div>
         </div>
     </div>
 
@@ -105,7 +102,7 @@
 </div>
 <!-- Mobilmenü (header közvetlen alá) -->
 <div id="mobile-menu"
-     style="background-color: #004070;"
+     style="background-color: #2137D6;"
      class="left-0 w-full bg-gradient-to-r text-white flex flex-col pl-6 py-4 md:hidden transition-all duration-300 ease-in-out opacity-0 scale-y-0 origin-top hidden">
 
     @foreach($menu->menu_items as $menuItem)
@@ -211,26 +208,37 @@
     document.addEventListener("DOMContentLoaded", function () {
         const menuItems = document.querySelectorAll('.menu-item');
 
+        function setDropdownWidth(item, dropdown) {
+            const itemRect = item.getBoundingClientRect();
+            const next = item.nextElementSibling; // a következő menüelem (ha van)
+            const nextRect = next ? next.getBoundingClientRect() : null;
+
+            // Alap: legalább a saját szélessége
+            let width = itemRect.width;
+
+            // + a következő elem szélessége, hogy “átlógjon” rá
+            if (nextRect) width += nextRect.width;
+
+            dropdown.style.minWidth = `${Math.ceil(width)}px`;
+        }
+
         menuItems.forEach(item => {
             const dropdown = item.querySelector('.dropdown-menu');
             const connector = item.querySelector('.border-connector');
 
             item.addEventListener('mouseenter', () => {
                 if (dropdown) {
+                    setDropdownWidth(item, dropdown);
                     dropdown.style.display = 'block';
                 }
                 if (connector) {
-                    connector.style.height = '15px'; // Show connector
+                    connector.style.height = '15px';
                 }
             });
 
             item.addEventListener('mouseleave', () => {
-                if (dropdown) {
-                    dropdown.style.display = 'none';
-                }
-                if (connector) {
-                    connector.style.height = '0'; // Hide connector
-                }
+                if (dropdown) dropdown.style.display = 'none';
+                if (connector) connector.style.height = '0';
             });
         });
     });
