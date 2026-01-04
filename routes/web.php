@@ -9,7 +9,11 @@ Route::get('/', [PageController::class, 'show'])->name('home');
 
 //Route::get('/referenciaink-partnereink', fn() => view('references'));
 
+use App\Http\Controllers\CourseApplicationController;
 
+Route::get('/innovaciomenedzsment-tanfolyamok', [CourseApplicationController::class, 'index'])->name('course-applications.index');
+Route::get('/jelentkezes-tanfolyamra', [CourseApplicationController::class, 'create'])->name('course-applications.create');
+Route::post('/jelentkezes', [CourseApplicationController::class, 'store'])->name('course-applications.store');
 
 Route::get('/{slug}', [PageController::class, 'show'])->name('pages.show');
 
