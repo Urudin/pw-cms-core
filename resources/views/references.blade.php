@@ -1,20 +1,20 @@
 @php
     $folders = [
-        'innovaciomenedzsment' => 'Innovációmenedzsment',
+//        'innovaciomenedzsment' => 'Innovációmenedzsment',
         'innovaciomenedzsment-oktatas' => 'Innovációmenedzsment képzés',
-        'penzugyi-szolgaltatasok' => 'Pénzügyi szolgáltatások',
-        'iparjogvedelem' => 'Iparjogvédelem',
+//        'penzugyi-szolgaltatasok' => 'Pénzügyi szolgáltatások',
+//        'iparjogvedelem' => 'Iparjogvédelem',
     ];
 
     $altTitle = [
-        'innovaciomenedzsment' => 'Referenciánk - Innovációmenedzsment',
+//        'innovaciomenedzsment' => 'Referenciánk - Innovációmenedzsment',
         'innovaciomenedzsment-oktatas' => 'Referenciánk - Innovációmenedzsment képzés',
-        'penzugyi-szolgaltatasok' => 'Referenciánk - Vállalati pénzügyi tanácsadás',
-        'iparjogvedelem' => 'Referenciánk - Iparjogvédelem, szellemi tulajdon védelem',
+//        'penzugyi-szolgaltatasok' => 'Referenciánk - Vállalati pénzügyi tanácsadás',
+//        'iparjogvedelem' => 'Referenciánk - Iparjogvédelem, szellemi tulajdon védelem',
     ];
 @endphp
 
-<div class="px-[40px] pb-[40px] bg-white" x-data="{ activeTab: '{{ array_key_first($folders) }}' }">
+<div class="px-[40px] pt-[40px] pb-[40px] bg-white" x-data="{ activeTab: '{{ array_key_first($folders) }}' }">
     <!-- Tabok -->
     <div class="flex flex-wrap border-b-[2px] border-[#B58E03]">
         @foreach ($folders as $key => $label)

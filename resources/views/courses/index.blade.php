@@ -123,15 +123,15 @@
 
                                                     <div class="flex flex-wrap gap-3 pt-1">
                                                         <a
-                                                            class="inline-flex items-center justify-between bg-[#143c5a] hover:bg-[#39a7cc] text-white pb-[12px] py-[11px]"
+                                                            class="inline-flex items-center justify-between bg-[#143c5a] hover:bg-[#39a7cc] text-white"
                                                             href="{{ route('course-applications.create', ['tanfolyam' => $course->id]) }}#tanfolyamvalaszto"
                                                         >
                                                             <span class="pr-[24px] pl-[16px] font-medium">Jelentkezem</span>
-                                                            <span class="pl-[16px] pr-[16px] pt-[12px] pb-[12px] border border-[#39a7cc] bg-[#39a7cc]">▸</span>
+                                                            <span class="pl-[16px] pr-[16px] border border-[#39a7cc] bg-[#39a7cc] pt-[12px] pb-[12px]">▸</span>
                                                         </a>
 
                                                         <a
-                                                            class="inline-flex items-center justify-between bg-white hover:bg-gray-50 text-[#143c5a] border border-[#143c5a] pb-[12px] py-[11px]"
+                                                            class="inline-flex items-center justify-between bg-white hover:bg-gray-50 text-[#143c5a] border border-[#143c5a]"
                                                             href="#tovabbi-info"
                                                         >
                                                             <span class="pr-[24px] pl-[16px] font-medium">További információt kérek</span>
@@ -140,7 +140,7 @@
 
                                                         @if(!empty($course->pdf_url))
                                                             <a
-                                                                class="inline-flex items-center justify-between bg-white hover:bg-gray-50 text-[#143c5a] border border-[#143c5a] pb-[12px] py-[11px]"
+                                                                class="inline-flex items-center justify-between bg-white hover:bg-gray-50 text-[#143c5a] border border-[#143c5a]"
                                                                 href="{{ $course->pdf_url }}"
                                                                 target="_blank"
                                                                 rel="noopener"

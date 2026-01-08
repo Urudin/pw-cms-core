@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [PageController::class, 'show'])->name('home');
 
 
-//Route::get('/referenciaink-partnereink', fn() => view('references'));
+//Route::get('/tanfolyami-resztvevo-hallgatoink', fn() => view('references'));
 
 use App\Http\Controllers\CourseApplicationController;
 
