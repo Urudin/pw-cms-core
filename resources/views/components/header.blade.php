@@ -11,7 +11,7 @@
 <div
     class="relative container mx-auto max-w-screen-xl bg-no-repeat bg-top bg-cover h-[250px] md:h-[334px] flex flex-col justify-between px-6"
     style="background-image: url('{{ $url }}');">
-    <a href="/" class="absolute inset-0 z-[20] block"></a>
+    <a href="/" title="Innovációmenedzsment Képzések" class="absolute inset-0 z-[20] block"></a>
 
     <!-- Logo -->
     <div
