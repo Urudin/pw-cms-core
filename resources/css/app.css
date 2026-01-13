@@ -9,7 +9,7 @@
 
 /* resources/css/app.css */
 .pageContainer {
-    @apply text-[19px];
+    @apply text-[17px];
 }
 
 .pageContainer p:not([class]) {
