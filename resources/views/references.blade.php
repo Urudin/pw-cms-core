@@ -18,7 +18,7 @@
         innovációmenedzsment oktatás, képzés területén. Referenciáinkban az elmúlt évek sikeres innovációs projektjeiből szemezgettünk.
     </p>
 
-    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6 mt-6">
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 mt-6">
         @foreach ($files as $file)
             <div class="flip-card aspect-square perspective">
                 <div class="flip-card-inner relative w-full h-full">
