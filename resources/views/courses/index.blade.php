@@ -49,7 +49,7 @@
                                         <div
                                             x-data="{ open: false }"
                                             id="course-{{ $course->id }}"
-                                            class="bg-slate-900 text-white border border-slate-800 shadow-sm transition hover:shadow-md"
+                                            class="bg-slate-700 text-white border border-slate-800 shadow-sm transition hover:shadow-md"
                                             :class="open ? 'ring-1 ring-[#39a7cc]/60' : ''"
                                         >
                                             <div class="border-r-4 border-[#39a7cc]">
