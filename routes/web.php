@@ -3,6 +3,7 @@
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\VideoShopController;
 
 Route::get('/', [PageController::class, 'show'])->name('home');
 
@@ -14,6 +15,7 @@ use App\Http\Controllers\CourseApplicationController;
 Route::get('/innovaciomenedzsment-tanfolyamok', [CourseApplicationController::class, 'index'])->name('course-applications.index');
 Route::get('/jelentkezes-tanfolyamra', [CourseApplicationController::class, 'create'])->name('course-applications.create');
 Route::post('/jelentkezes', [CourseApplicationController::class, 'store'])->name('course-applications.store');
+Route::get('/videos', [VideoShopController::class, 'index'])->name('videos.index');
 
 Route::get('/{slug}', [PageController::class, 'show'])->name('pages.show');
 

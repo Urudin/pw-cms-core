@@ -56,23 +56,20 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-gray-200 overflow-x-hidden"> <!-- Megakadályozza a horizontális scrollt -->
+<body class="bg-gray-200 overflow-x-hidden [--header-h:250px] md:[--header-h:334px]">
 
-<!-- Full-Width Header with Centered Content -->
 <header class="w-full">
     @include('components.header')
 </header>
 
-<!-- Main Content Wrapper with Full Width on Small Screens -->
 <main class="bg-gray-200 w-full overflow-hidden">
     <div class="w-full max-w-screen-xl mx-auto">
         @yield('content')
     </div>
 </main>
 
-<!-- Footer -->
+<x-cart />
+
 @include('components.footer')
-
-
 </body>
 </html>
