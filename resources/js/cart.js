@@ -59,9 +59,11 @@ document.addEventListener('DOMContentLoaded', function () {
         renderCart();
     }
 
-    function formatHuf(n) {
-        // egyszerű MVP formázás
-        return `${Math.round(n)} Ft`;
+    function formatHufAfa(n) {
+        const v = Math.round(Number(n) || 0);
+        // 6 900 formátum
+        const s = v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+        return `${s} Ft+áfa`;
     }
 
     function renderCart() {
@@ -74,26 +76,55 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         cart.forEach(item => {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'flex justify-between items-start mt-4';
-
             const imgSrc = (item.image || '').startsWith('http')
                 ? item.image
                 : (item.image ? `/storage/${item.image}` : '');
 
+            // MVP: fix kedvezmény 2000 → eredeti = current + 2000
+            const current = Number(item.price) || 0;
+            const original = current + 2000;
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'bg-[#efeff2] border border-gray-200 p-3 mb-4';
+
             wrapper.innerHTML = `
-                <div class="flex gap-3">
-                    ${imgSrc ? `<img src="${imgSrc}" class="h-16 w-16 object-cover rounded" alt="">` : ''}
-                    <div>
-                        <p class="text-sm font-medium text-gray-700">${item.name}</p>
-                        <p class="text-xs text-gray-500 mt-1">1 db / videó</p>
+            <div class="relative">
+                ${imgSrc ? `
+                    <img src="${imgSrc}" class="w-full h-[150px] object-cover" alt="">
+                ` : `
+                    <div class="w-full h-[150px] bg-gray-200 flex items-center justify-center text-gray-500">
+                        Nincs kép
+                    </div>
+                `}
+
+                <!-- remove button (piros trash) -->
+                <button type="button"
+                        class="remove absolute top-2 left-2 w-8 h-8 bg-[#ff2b5c] rounded-sm flex items-center justify-center shadow">
+                    <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M3 6h18"></path>
+                        <path d="M8 6V4h8v2"></path>
+                        <path d="M19 6l-1 14H6L5 6"></path>
+                        <path d="M10 11v6"></path>
+                        <path d="M14 11v6"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="pt-3">
+                <div class="text-[#1f4fd6] font-black leading-snug text-[15px]">
+                    ${item.name}
+                </div>
+
+                <div class="mt-2 flex items-end gap-4">
+                    <div class="text-slate-400 line-through font-extrabold text-[14px]">
+                        ${formatHufAfa(original)}
+                    </div>
+                    <div class="text-slate-800 font-extrabold text-[14px]">
+                        ${formatHufAfa(current)}
                     </div>
                 </div>
-                <div class="text-right">
-                    <p class="text-sm text-gray-700 font-semibold">${formatHuf(item.price)}</p>
-                    <button class="remove text-red-500 text-sm mt-1" type="button">Eltávolítás</button>
-                </div>
-            `;
+            </div>
+        `;
 
             wrapper.querySelector('.remove').onclick = () => {
                 cart = cart.filter(i => i.id !== item.id);
@@ -102,6 +133,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
             cartElement.appendChild(wrapper);
         });
+        const total = cart.reduce((sum, i) => sum + (Number(i.price) || 0), 0);
+        const totalEl = document.getElementById('cartTotal');
+        if (totalEl) totalEl.textContent = formatHufAfa(total);
 
         updateCartBadge();
     }

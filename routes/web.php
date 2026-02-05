@@ -16,6 +16,10 @@ Route::get('/innovaciomenedzsment-tanfolyamok', [CourseApplicationController::cl
 Route::get('/jelentkezes-tanfolyamra', [CourseApplicationController::class, 'create'])->name('course-applications.create');
 Route::post('/jelentkezes', [CourseApplicationController::class, 'store'])->name('course-applications.store');
 Route::get('/videos', [VideoShopController::class, 'index'])->name('videos.index');
+Route::get('/penztar', [VideoShopController::class, 'checkout'])->name('checkout');
+Route::post('/rendeles', [VideoShopController::class, 'placeOrder'])->name('placeOrder');
+Route::get('privacy-policy', fn() => 'TODO')->name('privacy-policy');
+Route::get('terms', fn() => 'TODO')->name('terms');
 
 Route::get('/{slug}', [PageController::class, 'show'])->name('pages.show');
 
@@ -29,6 +33,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/sikeres-rendeles', fn() => view('videos.order-successful'))->name('order-successful');
+Route::get('/sikertelen-rendeles', fn() => view('videos.order-failed'))->name('order-failed');
 
 Route::post('/contact', [\App\Http\Controllers\ContactController::class, 'submit'])->name('contact')->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class);
 
