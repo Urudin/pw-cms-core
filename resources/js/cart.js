@@ -4,11 +4,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (!shoppingCart || toggleButtons.length === 0) return;
 
+    const cartElement = document.getElementById('cartContainer');
+    const checkoutButton = document.getElementById('checkout');
+    const addToCartButtons = document.querySelectorAll('.add-to-cart');
+
+    if (!cartElement) return;
+
     const CLOSED_CLASS = 'translate-x-[calc(100%-0.25rem)]';
     const OPEN_CLASS = 'translate-x-0';
 
     function setOpenStyles(isOpen) {
-        // csak nyitva legyen “panel” érzete – ez szünteti meg a csukott csíkot
         shoppingCart.classList.toggle('border-l', isOpen);
         shoppingCart.classList.toggle('border-gray-300', isOpen);
         shoppingCart.classList.toggle('shadow-xl', isOpen);
@@ -33,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
         else openCart();
     }
 
-    // init
+    // init open/close
     if (localStorage.getItem('cartOpen') === 'true') openCart();
     else closeCart();
 
@@ -45,20 +50,25 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    /* ---------------- CART LOGIC ---------------- */
+    /* ---------------- CART STORAGE ---------------- */
 
-    const cartElement = document.getElementById('cartContainer');
-    const checkoutButton = document.getElementById('checkout');
-    const addToCartButtons = document.querySelectorAll('.add-to-cart');
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
 
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    function saveCart() {
+        localStorage.setItem('cart', JSON.stringify(cart));
+        renderCart();
+    }
+
+    function formatHuf(n) {
+        // egyszerű MVP formázás
+        return `${Math.round(n)} Ft`;
+    }
 
     function renderCart() {
         cartElement.innerHTML = '';
-        const imgSrc = (item.image || '').startsWith('http') ? item.image : `/storage/${item.image}`;
 
-        if (cart.length === 0) {
-            cartElement.innerHTML = '<p class="text-gray-600">Your cart is empty.</p>';
+        if (!cart.length) {
+            cartElement.innerHTML = '<p class="text-gray-600">A kosár üres.</p>';
             updateCartBadge();
             return;
         }
@@ -67,36 +77,23 @@ document.addEventListener('DOMContentLoaded', function () {
             const wrapper = document.createElement('div');
             wrapper.className = 'flex justify-between items-start mt-4';
 
+            const imgSrc = (item.image || '').startsWith('http')
+                ? item.image
+                : (item.image ? `/storage/${item.image}` : '');
+
             wrapper.innerHTML = `
                 <div class="flex gap-3">
-                    <img src="${imgSrc}" class="h-16 w-16 object-cover rounded">
+                    ${imgSrc ? `<img src="${imgSrc}" class="h-16 w-16 object-cover rounded" alt="">` : ''}
                     <div>
                         <p class="text-sm font-medium text-gray-700">${item.name}</p>
-                        <div class="flex items-center mt-1">
-                            <button class="dec text-gray-500 px-1">−</button>
-                            <span class="mx-2 text-sm">${item.quantity}</span>
-                            <button class="inc text-gray-500 px-1">+</button>
-                        </div>
+                        <p class="text-xs text-gray-500 mt-1">1 db / videó</p>
                     </div>
                 </div>
                 <div class="text-right">
-                    <p class="text-sm text-gray-600">${item.quantity * item.price} HUF</p>
-                    <button class="remove text-red-500 text-sm mt-1">×</button>
+                    <p class="text-sm text-gray-700 font-semibold">${formatHuf(item.price)}</p>
+                    <button class="remove text-red-500 text-sm mt-1" type="button">Eltávolítás</button>
                 </div>
             `;
-
-            wrapper.querySelector('.inc').onclick = () => {
-                item.quantity++;
-                saveCart();
-            };
-
-            wrapper.querySelector('.dec').onclick = () => {
-                item.quantity--;
-                if (item.quantity <= 0) {
-                    cart = cart.filter(i => i.id !== item.id);
-                }
-                saveCart();
-            };
 
             wrapper.querySelector('.remove').onclick = () => {
                 cart = cart.filter(i => i.id !== item.id);
@@ -109,34 +106,40 @@ document.addEventListener('DOMContentLoaded', function () {
         updateCartBadge();
     }
 
-    function saveCart() {
-        localStorage.setItem('cart', JSON.stringify(cart));
-        renderCart();
-    }
+    /* ---------------- ADD TO CART (1x / video) ---------------- */
 
     addToCartButtons.forEach(button => {
-        button.addEventListener('click', () => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+
             const id = button.dataset.id;
             const name = button.dataset.name;
-            const price = parseFloat(button.dataset.price);
-            const image = button.dataset.image;
+            const price = parseFloat(button.dataset.price || '0');
+            const image = button.dataset.image || '';
 
             const existing = cart.find(i => i.id === id);
+
             if (existing) {
-                existing.quantity++;
-            } else {
-                cart.push({ id, name, price, image, quantity: 1 });
+                // már benne van – csak nyissuk ki
+                openCart();
+                // opcionális: ide később tehetsz toastot
+                return;
             }
 
+            cart.push({ id, name, price, image, quantity: 1 });
             saveCart();
             openCart();
         });
     });
 
+    /* ---------------- CHECKOUT ---------------- */
+
     if (checkoutButton) {
-        checkoutButton.addEventListener('click', () => {
+        checkoutButton.addEventListener('click', (e) => {
+            e.preventDefault();
+
             if (!cart.length) {
-                alert('Your cart is empty.');
+                alert('A kosár üres.');
                 return;
             }
             window.location.href = '/checkout';
@@ -153,7 +156,7 @@ function updateCartBadge() {
     const badge = document.getElementById('cart-badge');
     if (!badge) return;
 
-    const total = cart.reduce((s, i) => s + i.quantity, 0);
+    const total = cart.length; // 1 db / videó → ennyi elem
     if (total > 0) {
         badge.textContent = total;
         badge.classList.remove('hidden');

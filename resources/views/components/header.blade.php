@@ -179,16 +179,19 @@
             }, 300);
         });
 
-        submenu.addEventListener("mouseenter", function () {
-            clearTimeout(timeout);
-        });
+        if(submenu != null)
+        {
+            submenu.addEventListener("mouseenter", function () {
+                clearTimeout(timeout);
+            });
 
-        submenu.addEventListener("mouseleave", function () {
-            timeout = setTimeout(() => {
-                submenu.classList.add("hidden");
-                submenu.classList.remove("opacity-100");
-            }, 300);
-        });
+            submenu.addEventListener("mouseleave", function () {
+                timeout = setTimeout(() => {
+                    submenu.classList.add("hidden");
+                    submenu.classList.remove("opacity-100");
+                }, 300);
+            });
+        }
     });
 
     document.addEventListener("DOMContentLoaded", function () {
