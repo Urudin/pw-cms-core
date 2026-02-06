@@ -53,11 +53,13 @@ class VideoResource extends Resource
 
                     Forms\Components\TextInput::make('username')
                         ->label('Hozzáférés: Felhasználó')
+                        ->required()
                         ->maxLength(40)
                         ->columnSpanFull(),
 
                     Forms\Components\TextInput::make('password')
                         ->label('Hozzáférés: Jelszó')
+                        ->required()
                         ->maxLength(140)
                         ->columnSpanFull(),
 
