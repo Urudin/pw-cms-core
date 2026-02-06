@@ -15,7 +15,7 @@ use App\Http\Controllers\CourseApplicationController;
 Route::get('/innovaciomenedzsment-tanfolyamok', [CourseApplicationController::class, 'index'])->name('course-applications.index');
 Route::get('/jelentkezes-tanfolyamra', [CourseApplicationController::class, 'create'])->name('course-applications.create');
 Route::post('/jelentkezes', [CourseApplicationController::class, 'store'])->name('course-applications.store');
-Route::get('/videos', [VideoShopController::class, 'index'])->name('videos.index');
+Route::get('/online-tartalmak', [VideoShopController::class, 'index'])->name('videos.index');
 Route::get('/penztar', [VideoShopController::class, 'checkout'])->name('checkout');
 Route::post('/rendeles', [VideoShopController::class, 'placeOrder'])->name('placeOrder');
 Route::get('privacy-policy', fn() => 'TODO')->name('privacy-policy');
