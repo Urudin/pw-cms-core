@@ -128,6 +128,7 @@ class PurchaseResource extends Resource
                     ->visible(fn (Purchase $record) => $record->status === 'pending')
                     ->action(function (Purchase $record) {
                         Mail::to($record->personal_email)->send(new PurchaseAccessMail($record));
+                        $record->update(['status' => 'paid']);
 
                         Notification::make()
                             ->title('E-mail elküldve')
