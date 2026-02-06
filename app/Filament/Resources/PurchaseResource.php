@@ -3,12 +3,15 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PurchaseResource\Pages;
+use App\Mail\PurchaseAccessMail;
 use App\Models\Purchase;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Mail;
 
 class PurchaseResource extends Resource
 {
@@ -16,9 +19,9 @@ class PurchaseResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-receipt-percent';
     protected static ?string $navigationGroup = 'Orders';
-    protected static ?string $navigationLabel = 'Purchases';
-    protected static ?string $modelLabel = 'Purchase';
-    protected static ?string $pluralModelLabel = 'Purchases';
+    protected static ?string $navigationLabel = 'Vásárlások';
+    protected static ?string $modelLabel = 'Vásárlás';
+    protected static ?string $pluralModelLabel = 'Vásárlások';
 
     public static function form(Form $form): Form
     {
@@ -56,10 +59,10 @@ class PurchaseResource extends Resource
                     Forms\Components\Select::make('status')
                         ->required()
                         ->options([
-                            'pending' => 'Pending',
-                            'paid' => 'Paid',
-                            'failed' => 'Failed',
-                            'cancelled' => 'Cancelled',
+                            'pending' => 'Várakozik',
+                            'paid' => 'Fizetett',
+                            'failed' => 'Sikertelen',
+                            'cancelled' => 'Megszakított',
                         ])
                         ->default('pending'),
 
@@ -118,6 +121,19 @@ class PurchaseResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('acknowledgePayment')
+                    ->label('Acknowledge payment')
+                    ->icon('heroicon-o-paper-airplane')
+                    ->requiresConfirmation()
+                    ->visible(fn (Purchase $record) => $record->status === 'pending')
+                    ->action(function (Purchase $record) {
+                        Mail::to($record->personal_email)->send(new PurchaseAccessMail($record));
+
+                        Notification::make()
+                            ->title('E-mail elküldve')
+                            ->success()
+                            ->send();
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

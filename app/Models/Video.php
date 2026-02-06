@@ -13,6 +13,10 @@ class Video extends Model
         'price_huf',
         'is_active',
         'thumbnail_url',
+        'username',
+        'password',
+        'original_price_huf',
+        'duration_seconds',
     ];
 
     protected $casts = [

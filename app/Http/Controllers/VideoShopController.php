@@ -158,5 +158,44 @@ class VideoShopController extends Controller
             ->route('order-successful', $purchase) // csinálsz egy route-ot hozzá
             ->with('success', 'Sikeres rendelés! Köszönjük.');
     }
+
+    public function show(Request $request, Video $video)
+    {
+        abort_unless($video->is_active, 404);
+
+        $embedUrl = $this->toYoutubeEmbedUrl($video->video_url);
+
+        return view('videos.show', compact('video', 'embedUrl'));
+    }
+
+    private function toYoutubeEmbedUrl(?string $url): ?string
+    {
+        if (! $url) return null;
+
+        $url = trim($url);
+
+        // ha már embed URL
+        if (str_contains($url, 'youtube.com/embed/')) {
+            return $url;
+        }
+
+        $parts = parse_url($url);
+        $host = $parts['host'] ?? '';
+
+        // youtu.be/VIDEOID
+        if (str_contains($host, 'youtu.be')) {
+            $id = ltrim($parts['path'] ?? '', '/');
+            return $id ? "https://www.youtube.com/embed/{$id}" : null;
+        }
+
+        // youtube.com/watch?v=VIDEOID
+        if (str_contains($host, 'youtube.com') || str_contains($host, 'www.youtube.com')) {
+            parse_str($parts['query'] ?? '', $q);
+            $id = $q['v'] ?? null;
+            return $id ? "https://www.youtube.com/embed/{$id}" : null;
+        }
+
+        return null;
+    }
 }
 

@@ -51,10 +51,85 @@ class VideoResource extends Resource
                         ->url()->maxLength(2048)
                         ->columnSpanFull(),
 
+                    Forms\Components\TextInput::make('username')
+                        ->label('Hozzáférés: Felhasználó')
+                        ->maxLength(40)
+                        ->columnSpanFull(),
+
+                    Forms\Components\TextInput::make('password')
+                        ->label('Hozzáférés: Jelszó')
+                        ->maxLength(140)
+                        ->columnSpanFull(),
+
+                    Forms\Components\TextInput::make('duration_seconds')
+                        ->label('Videó hossza')
+                        ->helperText('Formátum: mm:ss vagy hh:mm:ss (pl. 12:34 vagy 1:02:03)')
+                        ->placeholder('mm:ss vagy hh:mm:ss')
+                        ->dehydrateStateUsing(function (?string $state): ?int {
+                            if ($state === null || trim($state) === '') {
+                                return null;
+                            }
+
+                            $state = trim($state);
+
+                            // támogatott: m:ss / mm:ss / h:mm:ss / hh:mm:ss
+                            if (!preg_match('/^\d{1,2}:\d{2}(:\d{2})?$/', $state)) {
+                                return null; // a validation úgyis megfogja
+                            }
+
+                            $parts = array_map('intval', explode(':', $state));
+
+                            return count($parts) === 2
+                                ? ($parts[0] * 60 + $parts[1])                 // mm:ss
+                                : ($parts[0] * 3600 + $parts[1] * 60 + $parts[2]); // hh:mm:ss
+                        })
+                        ->formatStateUsing(function ($state): ?string {
+                            if ($state === null) {
+                                return null;
+                            }
+
+                            $total = (int) $state;
+                            $h = intdiv($total, 3600);
+                            $m = intdiv($total % 3600, 60);
+                            $s = $total % 60;
+
+                            return $h > 0
+                                ? sprintf('%d:%02d:%02d', $h, $m, $s)
+                                : sprintf('%d:%02d', $m, $s);
+                        })
+//                        ->rules([
+//                            // Validáljuk a formátumot
+//                            'nullable',
+//                            'regex:/^\d{1,2}:\d{2}(:\d{2})?$/',
+//                            // Második és perc ne legyen 60+
+//                            function (string $attribute, $value, \Closure $fail) {
+//                                if (!$value) return;
+//
+//                                $parts = array_map('intval', explode(':', $value));
+//
+//                                if (count($parts) === 2) {
+//                                    [$m, $s] = $parts;
+//                                    if ($s > 59) $fail('A másodperc 0 és 59 között legyen.');
+//                                } else {
+//                                    [$h, $m, $s] = $parts;
+//                                    if ($m > 59 || $s > 59) $fail('A perc és másodperc 0 és 59 között legyen.');
+//                                }
+//                            },
+//                        ])
+                        ->inputMode('numeric'),
 
                     Forms\Components\TextInput::make('price_huf')
                         ->label('Ár (HUF)')
                         ->required()
+                        ->numeric()
+                        ->minValue(0)
+                        ->step(1)
+                        ->suffix('Ft'),
+
+                    Forms\Components\TextInput::make('original_price_huf')
+                        ->label('Eredeti Ár (HUF)')
+                        ->helperText('Akciós ár esetén kell csak megadni')
+                        ->nullable()
                         ->numeric()
                         ->minValue(0)
                         ->step(1)

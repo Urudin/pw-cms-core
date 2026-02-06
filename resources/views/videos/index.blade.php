@@ -4,14 +4,17 @@
     <div class="pageContainer bg-white">
         <div class="lg:flex lg:gap-8">
             <div class="lg:flex-1 min-w-0">
-                <div class="bg-gray-100 p-4 md:p-8 shadow-md w-full mx-auto space-y-12">
+                <div class="bg-gray-100 p-4 md:p-8 shadow-md w-full mx-auto space-y-6">
 
                     {{-- PAGE HEADER --}}
                     <div>
                         <h1 class="text-4xl sm:text-5xl font-black tracking-tight text-slate-900">
-                            Válasszon online video tartalmaink szerint!
+                            Válasszon video tartalmaink szerint!
                         </h1>
                         <div class="mt-3 h-1 w-24 bg-[#5035e6]"></div>
+                        <p class="text-base text-slate-700 mt-6">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur
+                        </p>
                     </div>
 
                     {{-- FILTER --}}
@@ -95,12 +98,12 @@
                     </form>
 
                     {{-- LIST --}}
-                    <div class="space-y-12">
+                    <div class="space-y-6">
                         @foreach($videos as $video)
                             @php
                                 $even = $loop->iteration % 2 === 0;
-                                $original = (int)$video->price_huf;
-                                $current = max(0, $original - 2000);
+                                $original = (int)$video->original_price_huf;
+                                $current = (int)$video->price_huf;
                             @endphp
 
                             <article class="bg-white border border-gray-200 overflow-hidden">
@@ -138,8 +141,12 @@
 
                                         {{-- DESCRIPTION --}}
                                         <div class="absolute left-8 top-16 text-white">
-                                            <p class="text-sm leading-relaxed opacity-95 max-w-[40%] xl:max-w-[260px]">
-                                                {{ \Str::limit(strip_tags($video->description), 240) }}
+                                            <p class="
+                                                text-sm leading-relaxed opacity-95
+                                                max-w-[85%] xl:max-w-[260px]
+                                                line-clamp-3 xl:line-clamp-5
+                                            ">
+                                                {{ $video->description }}
                                             </p>
                                         </div>
                                     </div>
@@ -160,11 +167,22 @@
                                                          fill="currentColor" aria-hidden="true">
                                                         <path d="M8 5v14l11-7z"></path>
                                                     </svg>
-                                                    {{ '06:45' }}
+                                                    @php
+                                                        $total = (int) $video->duration_seconds;
+
+                                                        $h = intdiv($total, 3600);
+                                                        $m = intdiv($total % 3600, 60);
+                                                        $s = $total % 60;
+                                                    @endphp
+                                                    @if ($h > 0)
+                                                        {{ sprintf('%d:%02d:%02d', $h, $m, $s) }}
+                                                    @else
+                                                        {{ sprintf('%d:%02d', $m, $s) }}
+                                                    @endif
                                             </span>
                                             </div>
 
-                                            <h2 class="text-[22px] font-black leading-tight text-[#1f4fd6] max-w-[260px]">
+                                            <h2 class="text-[22px] font-black leading-tight text-[#1f4fd6] max-w-[260px] line-clamp-2">
                                                 {{ $video->title }}
                                             </h2>
 
@@ -184,12 +202,14 @@
                                             </div>
 
                                             <div class="flex items-end gap-4 pt-2">
-                                            <span class="text-lg font-black text-slate-300 line-through">
-                                                {{ number_format($original,0,' ',' ') }} Ft+áfa
-                                            </span>
+                                                @if(!empty($original))
+                                                    <span class="text-lg font-black text-slate-300 line-through">
+                                                        {{ number_format($original,0,' ',' ') }} Ft+áfa
+                                                    </span>
+                                                @endif
                                                 <span class="text-lg font-black text-slate-800">
-                                                {{ number_format($current,0,' ',' ') }} Ft+áfa
-                                            </span>
+                                                    {{ number_format($current,0,' ',' ') }} Ft+áfa
+                                                </span>
                                             </div>
                                         </div>
 
