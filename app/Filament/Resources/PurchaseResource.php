@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\PurchaseResource\Pages;
 use App\Mail\PurchaseAccessMail;
 use App\Models\Purchase;
+use App\Models\Video;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
@@ -18,81 +19,116 @@ class PurchaseResource extends Resource
     protected static ?string $model = Purchase::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-receipt-percent';
-    protected static ?string $navigationGroup = 'Orders';
-    protected static ?string $navigationLabel = 'Vásárlások';
-    protected static ?string $modelLabel = 'Vásárlás';
-    protected static ?string $pluralModelLabel = 'Vásárlások';
+    protected static ?string $navigationGroup = 'Megrendelések';
+    protected static ?string $navigationLabel = 'Megrendelések';
+    protected static ?string $modelLabel = 'Megrendelés';
+    protected static ?string $pluralModelLabel = 'Megrendelések';
 
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\Section::make('Personal')
+            Forms\Components\Section::make('Személyes')
                 ->columns(2)
                 ->schema([
-                    Forms\Components\TextInput::make('personal_last_name')->required()->maxLength(200),
-                    Forms\Components\TextInput::make('personal_first_name')->required()->maxLength(200),
-                    Forms\Components\TextInput::make('personal_phone')->required()->maxLength(50),
-                    Forms\Components\TextInput::make('personal_email')->email()->required()->maxLength(255),
-                    Forms\Components\Textarea::make('personal_note')->columnSpanFull(),
+                    Forms\Components\TextInput::make('personal_last_name')->label('Vezetéknév')->required()->maxLength(200),
+                    Forms\Components\TextInput::make('personal_first_name')->label('Keresztnév')->required()->maxLength(200),
+                    Forms\Components\TextInput::make('personal_phone')->label('Telefonszám')->required()->maxLength(50),
+                    Forms\Components\TextInput::make('personal_email')->label('E-mail cím')->email()->required()->maxLength(255),
+                    Forms\Components\Textarea::make('personal_note')->label('Vásárlói megjegyzés')->columnSpanFull(),
                 ]),
 
-            Forms\Components\Section::make('Billing')
+            Forms\Components\Section::make('Számlázási Adatok')
                 ->columns(2)
                 ->schema([
-                    Forms\Components\TextInput::make('billing_last_name')->required()->maxLength(200),
-                    Forms\Components\TextInput::make('billing_first_name')->required()->maxLength(200),
-                    Forms\Components\TextInput::make('billing_company_name')->maxLength(255),
-                    Forms\Components\TextInput::make('billing_vat_number')->maxLength(100),
-                    Forms\Components\TextInput::make('billing_address')->required()->maxLength(500)->columnSpanFull(),
+                    Forms\Components\TextInput::make('billing_last_name')->label('Vezetéknév')->required()->maxLength(200),
+                    Forms\Components\TextInput::make('billing_first_name')->label('Keresztnév')->required()->maxLength(200),
+                    Forms\Components\TextInput::make('billing_company_name')->label('Cég neve')->maxLength(255),
+                    Forms\Components\TextInput::make('billing_vat_number')->label('Adószám')->maxLength(100),
+                    Forms\Components\TextInput::make('billing_address')->label('Telephely címe')->required()->maxLength(500)->columnSpanFull(),
                 ]),
 
-            Forms\Components\Section::make('Payment & Declarations')
+            Forms\Components\Section::make('Fizetési Adatok')
                 ->columns(2)
                 ->schema([
                     Forms\Components\Select::make('payment_method')
+                        ->label('Fizetési Mód')
                         ->required()
-                        ->options(fn () => collect(config('payment_methods', []))
-                            ->mapWithKeys(fn ($m, $k) => [$k => $m['label'] ?? $k])
+                        ->options(fn() => collect(config('payment_methods', []))
+                            ->mapWithKeys(fn($m, $k) => [$k => $m['label'] ?? $k])
                             ->all()
                         ),
 
                     Forms\Components\Select::make('status')
+                        ->label('Státusz')
                         ->required()
                         ->options([
-                            'pending' => 'Várakozik',
-                            'paid' => 'Fizetett',
+                            'pending' => 'Függőben',
+                            'paid' => 'Fizetve',
                             'failed' => 'Sikertelen',
                             'cancelled' => 'Megszakított',
                         ])
                         ->default('pending'),
-
-                    Forms\Components\Toggle::make('terms_accepted')->disabled(),
-                    Forms\Components\Toggle::make('privacy_accepted')->disabled(),
-                    Forms\Components\Toggle::make('newsletter_opt_in'),
-                    Forms\Components\Toggle::make('new_video_opt_in'),
+//
+//                    Forms\Components\Toggle::make('terms_accepted')->label('Feltételek elfogadva')->disabled(),
+//                    Forms\Components\Toggle::make('privacy_accepted')->label('Adatkezelési tájékoztató elfogadva')->disabled(),
+//                    Forms\Components\Toggle::make('newsletter_opt_in'),
+//                    Forms\Components\Toggle::make('new_video_opt_in'),
                 ]),
 
-            Forms\Components\Section::make('Items')
+            Forms\Components\Section::make('Megvásárolt Videók')
                 ->schema([
-                    Forms\Components\KeyValue::make('items')
-                        ->helperText('JSON items payload (id, quantity, etc.)')
-                        ->columnSpanFull(),
+                    Forms\Components\Repeater::make('items')
+                        ->label('')
+                        ->schema([
+                            Forms\Components\TextInput::make('id')->label('Video ID')->disabled(),
+                            Forms\Components\TextInput::make('quantity')->label('Mennyiség')->numeric()->disabled(),
+                            Forms\Components\TextInput::make('title')->label('Cím')->disabled(),
+                            Forms\Components\TextInput::make('price')->label('Ár')->numeric()->disabled(),
+                        ])
+                        ->afterStateHydrated(function (Forms\Components\Repeater $component, $state) {
+                            // $state: [{"id": 2, "quantity": 1}]
+                            $items = is_array($state) ? $state : [];
+
+                            $ids = collect($items)->pluck('id')->filter()->unique()->values();
+
+                            $videos = Video::query()
+                                ->whereIn('id', $ids)
+                                ->get(['id', 'title', 'price_huf']) // mezők igazítása
+                                ->keyBy('id');
+
+                            $enriched = collect($items)->map(function ($item) use ($videos) {
+                                $video = $videos->get($item['id'] ?? null);
+
+                                return [
+                                    'id'       => $item['id'] ?? null,
+                                    'quantity' => $item['quantity'] ?? 1,
+                                    'title'    => $video?->title ?? '(törölt / nem található)',
+                                    'price'    => $video?->price_huf, // vagy 0
+                                ];
+                            })->values()->all();
+
+                            $component->state($enriched);
+                        })
+                        ->dehydrateStateUsing(function ($state) {
+                            // Mentéskor csak az eredeti struktúrát tartsuk meg
+                            return collect($state ?? [])
+                                ->map(fn ($item) => [
+                                    'id' => $item['id'] ?? null,
+                                    'quantity' => (int) ($item['quantity'] ?? 1),
+                                ])
+                                ->filter(fn ($item) => ! empty($item['id']))
+                                ->values()
+                                ->all();
+                        })
+                        ->disabled()
+                        ->columns(4),
                 ]),
 
-            Forms\Components\Section::make('Totals')
-                ->columns(4)
+            Forms\Components\Section::make('Kereskedői Megjegyzés')
                 ->schema([
-                    Forms\Components\TextInput::make('currency')->disabled(),
-                    Forms\Components\TextInput::make('subtotal')->numeric(),
-                    Forms\Components\TextInput::make('vat_rate')->numeric(),
-                    Forms\Components\TextInput::make('vat_amount')->numeric(),
-                    Forms\Components\TextInput::make('total')->numeric(),
-                ]),
-
-            Forms\Components\Section::make('Meta')
-                ->schema([
-                    Forms\Components\TextInput::make('client_ip')->disabled(),
-                    Forms\Components\Textarea::make('user_agent')->disabled()->columnSpanFull(),
+                    Forms\Components\TextInput::make('client_ip')->hidden()->disabled(),
+                    Forms\Components\Textarea::make('dealer_note')->columnSpanFull(),
+                    Forms\Components\Textarea::make('user_agent')->hidden()->disabled()->columnSpanFull(),
                 ]),
         ]);
     }
@@ -102,33 +138,70 @@ class PurchaseResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('status')->badge()->sortable(),
-                Tables\Columns\TextColumn::make('personal_email')->label('Email')->searchable(),
-                Tables\Columns\TextColumn::make('payment_method')->label('Payment')->sortable(),
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Státusz')
+                    ->badge()
+                    ->formatStateUsing(fn(string $state): string => match ($state) {
+                        'pending' => 'Függőben',
+                        'paid' => 'Fizetve',
+                        'cancelled' => 'Megszakított',
+                        'failed' => 'Sikertelen',
+                        default => $state,
+                    })
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('personal_email')
+                    ->label('Email')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('payment_method')
+                    ->label('Fizetési mód')
+                    ->formatStateUsing(fn(string $state): string => match ($state) {
+                        'forward_payment' => 'Banki átutalás',
+                        'card' => 'Kártyás fizetés',
+                        default => $state,
+                    })
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('total')->money('HUF')->sortable(),
-                Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable(),
+                Tables\Columns\TextColumn::make('created_at')->label('Létrehozva')->dateTime()->sortable(),
             ])
             ->defaultSort('id', 'desc')
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
+                    ->label('Státusz')
                     ->options([
-                        'pending' => 'Pending',
-                        'paid' => 'Paid',
-                        'failed' => 'Failed',
-                        'cancelled' => 'Cancelled',
+                        'pending' => 'Függőben',
+                        'paid' => 'Fizetve',
+                        'failed' => 'Sikertelen',
+                        'cancelled' => 'Megszakított',
+                    ]),
+                Tables\Filters\SelectFilter::make('payment_method')
+                    ->label('Fizetési mód')
+                    ->options([
+                        'forward_payment' => 'Banki átutalás',
+                        'card' => 'Kártyás fizetés',
                     ]),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make('acknowledgePayment')
-                    ->label('Acknowledge payment')
+                    ->label('Fizetve')
+                    ->icon('heroicon-o-banknotes')
+                    ->requiresConfirmation()
+                    ->visible(fn(Purchase $record) => $record->status === 'pending')
+                    ->action(function (Purchase $record) {
+                        $record->update(['status' => 'paid']);
+
+                        Notification::make()
+                            ->title('Státusz frissítve')
+                            ->success()
+                            ->send();
+                    }),
+                Tables\Actions\Action::make('sendAccess')
+                    ->label('Hozzáférés küldése')
                     ->icon('heroicon-o-paper-airplane')
                     ->requiresConfirmation()
-                    ->visible(fn (Purchase $record) => $record->status === 'pending')
                     ->action(function (Purchase $record) {
                         Mail::to($record->personal_email)->send(new PurchaseAccessMail($record));
-                        $record->update(['status' => 'paid']);
 
                         Notification::make()
                             ->title('E-mail elküldve')
@@ -147,8 +220,8 @@ class PurchaseResource extends Resource
     {
         return [
             'index' => Pages\ListPurchases::route('/'),
-            'view'  => Pages\ViewPurchase::route('/{record}'),
-            'edit'  => Pages\EditPurchase::route('/{record}/edit'),
+            'view' => Pages\ViewPurchase::route('/{record}'),
+            'edit' => Pages\EditPurchase::route('/{record}/edit'),
         ];
     }
 }

@@ -15,8 +15,10 @@ class CourseCategoryResource extends Resource
     protected static ?string $model = CourseCategory::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
-    protected static ?string $navigationGroup = 'Képzések';
-
+    protected static ?string $navigationGroup = 'Tanfolyamok';
+    protected static ?string $navigationLabel = 'Kategóriák';
+    protected static ?string $pluralModelLabel = 'Kategóriák';
+    protected static ?string $modelLabel = 'Kategória';
     public static function form(Form $form): Form
     {
         return $form->schema([

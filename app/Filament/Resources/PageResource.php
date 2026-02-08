@@ -17,6 +17,9 @@ class PageResource extends Resource
     protected static ?string $model = Page::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationLabel = 'Oldalak';
+    protected static ?string $pluralModelLabel = 'Oldalak';
+    protected static ?string $modelLabel = 'Oldal';
 
     public static function form(Forms\Form $form): Forms\Form
     {

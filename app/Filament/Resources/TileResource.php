@@ -22,6 +22,10 @@ class TileResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationLabel = 'Widgetek';
+    protected static ?string $pluralModelLabel = 'Widgetek';
+    protected static ?string $modelLabel = 'Widget';
+
     public static function form(Form $form): Form
     {
         return $form

@@ -32,11 +32,11 @@ class PurchaseAccessMail extends Mailable
         $videos = Video::query()->whereIn('id', $videoIds)->get()->keyBy('id');
         $accesses = [];
         foreach($videos as $video) {
-            $password = Str::random(10);
-            $access = VideoAccess::query()->create([
+            $access = VideoAccess::query()->firstOrCreate([
                 'video_id' => $video->id,
-                'password' => $password,
-                'email' => $this->purchase->personal_email
+                'email' => $this->purchase->personal_email,
+            ], [
+                'password' => Str::random(10),
             ]);
             $accesses[$access->video_id] = $access->toArray();
         }

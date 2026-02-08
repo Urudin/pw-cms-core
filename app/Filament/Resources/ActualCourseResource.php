@@ -17,7 +17,10 @@ class ActualCourseResource extends Resource
     protected static ?string $model = ActualCourse::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
-    protected static ?string $navigationGroup = 'Képzések';
+    protected static ?string $navigationGroup = 'Tanfolyamok';
+    protected static ?string $navigationLabel = 'Aktuális Tanfolyamok';
+    protected static ?string $pluralModelLabel = 'Aktuális Tanfolyamok';
+    protected static ?string $modelLabel = 'Aktuális Tanfolyam';
 
     public static function form(Form $form): Form
     {

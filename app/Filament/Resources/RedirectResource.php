@@ -19,6 +19,9 @@ class RedirectResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-arrow-path';
     protected static ?string $navigationGroup = 'Beállítások';
+    protected static ?string $navigationLabel = 'Átirányítások';
+    protected static ?string $pluralModelLabel = 'Átirányítások';
+    protected static ?string $modelLabel = 'Átirányítás';
 
     public static function form(Form $form): Form
     {

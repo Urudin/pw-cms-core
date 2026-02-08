@@ -20,7 +20,9 @@ class BlockResource extends Resource
     protected static ?string $model = Block::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+    protected static ?string $navigationLabel = 'Blokkok';
+    protected static ?string $pluralModelLabel = 'Blokkok';
+    protected static ?string $modelLabel = 'Blokk';
     public static function form(Forms\Form $form): Forms\Form
     {
         return $form

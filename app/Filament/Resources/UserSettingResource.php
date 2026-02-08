@@ -19,6 +19,10 @@ class UserSettingResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationLabel = 'Beállítások';
+    protected static ?string $pluralModelLabel = 'Beállítások';
+    protected static ?string $modelLabel = 'Beállítás';
+
     public static function form(Form $form): Form
     {
         return $form

@@ -15,7 +15,11 @@ class CourseResource extends Resource
     protected static ?string $model = Course::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
-    protected static ?string $navigationGroup = 'Képzések';
+    protected static ?string $navigationGroup = 'Tanfolyamok';
+    protected static ?string $navigationLabel = 'Tanfolyamok';
+    protected static ?string $pluralModelLabel = 'Tanfolyamok';
+    protected static ?string $modelLabel = 'Tanfolyam';
+
 
     public static function form(Form $form): Form
     {
