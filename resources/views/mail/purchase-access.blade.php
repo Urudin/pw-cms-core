@@ -44,8 +44,8 @@
             </p>
 
             <p style="margin: 0;">
-                Felhasználónév: <strong>{{ $video->username }}</strong><br>
-                Jelszó: <strong>{{ $video->password }}</strong>
+                Felhasználónév: <strong>{{ $accesses[$video->id]['email'] }}</strong><br>
+                Jelszó: <strong>{{ $accesses[$video->id]['password'] }}</strong>
             </p>
         </div>
     @endif

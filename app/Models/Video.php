@@ -27,5 +27,5 @@ class Video extends Model
     public function type()   { return $this->belongsTo(VideoType::class, 'video_type_id'); }
     public function topic()  { return $this->belongsTo(VideoTopic::class, 'video_topic_id'); }
     public function domain() { return $this->belongsTo(VideoDomain::class, 'video_domain_id'); }
-
+    public function accesses()  { return $this->hasMany(VideoAccess::class, 'video_id'); }
 }

@@ -4,9 +4,11 @@ namespace App\Mail;
 
 use App\Models\Purchase;
 use App\Models\Video;
+use App\Models\VideoAccess;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Str;
 
 class PurchaseAccessMail extends Mailable
 {
@@ -28,13 +30,23 @@ class PurchaseAccessMail extends Mailable
         })->filter()->unique()->values()->all();
 
         $videos = Video::query()->whereIn('id', $videoIds)->get()->keyBy('id');
-
+        $accesses = [];
+        foreach($videos as $video) {
+            $password = Str::random(10);
+            $access = VideoAccess::query()->create([
+                'video_id' => $video->id,
+                'password' => $password,
+                'email' => $this->purchase->personal_email
+            ]);
+            $accesses[$access->video_id] = $access->toArray();
+        }
         return $this->subject('Digitális tartalmak elérése')
             ->view('mail.purchase-access')
             ->with([
                 'purchase' => $this->purchase,
                 'videos'   => $videos,
                 'items'    => $items,
+                'accesses' => $accesses
             ]);
     }
 }

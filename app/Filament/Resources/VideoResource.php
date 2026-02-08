@@ -51,18 +51,6 @@ class VideoResource extends Resource
                         ->url()->maxLength(2048)
                         ->columnSpanFull(),
 
-                    Forms\Components\TextInput::make('username')
-                        ->label('Hozzáférés: Felhasználó')
-                        ->required()
-                        ->maxLength(40)
-                        ->columnSpanFull(),
-
-                    Forms\Components\TextInput::make('password')
-                        ->label('Hozzáférés: Jelszó')
-                        ->required()
-                        ->maxLength(140)
-                        ->columnSpanFull(),
-
                     Forms\Components\TextInput::make('duration_seconds')
                         ->label('Videó hossza')
                         ->helperText('Formátum: mm:ss vagy hh:mm:ss (pl. 12:34 vagy 1:02:03)')

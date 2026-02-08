@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\Video;
+use App\Models\VideoAccess;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,7 +20,6 @@ class VideoBasicAuth
         /** @var Video|null $video */
         $video = $request->route('video');
 
-        // ha {id}-vel hívod és nem model binding, akkor:
         if (! $video instanceof Video) {
             $videoId = $request->route('id') ?? $request->route('video');
             $video = Video::query()->find($videoId);
@@ -32,13 +32,9 @@ class VideoBasicAuth
         $user = (string) $request->getUser();
         $pass = (string) $request->getPassword();
 
-        $expectedUser = (string) ($video->username ?? '');
-        $expectedPass = (string) ($video->password ?? '');
+        $access = VideoAccess::query()->where('email', $user)->where('password', $pass)->where('video_id', $video->id)->first();
 
-        $okUser = $expectedUser !== '' && hash_equals($expectedUser, $user);
-        $okPass = $expectedPass !== '' && hash_equals($expectedPass, $pass);
-
-        if (! ($okUser && $okPass)) {
+        if (empty($access)) {
             return response('Unauthorized', 401, [
                 'WWW-Authenticate' => 'Basic realm="Video Access", charset="UTF-8"',
             ]);
