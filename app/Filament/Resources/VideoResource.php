@@ -10,6 +10,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Storage;
 
 class VideoResource extends Resource
 {
@@ -46,9 +47,27 @@ class VideoResource extends Resource
                         ->helperText('Pl. Vimeo/YouTube vagy privát link.')
                         ->columnSpanFull(),
 
-                    Forms\Components\TextInput::make('thumbnail_url')
-                        ->label('Thumbnail URL')
-                        ->url()->maxLength(2048)
+                    Forms\Components\FileUpload::make('thumbnail_url')
+                        ->label('Thumbnail kép')
+                        ->image()
+                        ->directory('thumbnails')
+                        ->disk('public') // vagy 's3'
+                        ->visibility('public')
+                        ->helperText('Ajánlott méret: 1280×720 px (16:9), JPG/PNG.')
+                        ->maxSize(2048)
+                        ->imageEditor()
+                        ->imageCropAspectRatio('16:9')
+                        ->imageResizeTargetWidth('1280')
+                        ->imageResizeTargetHeight('720')
+                        ->getUploadedFileNameForStorageUsing(fn ($file) => uniqid() . '.' . $file->getClientOriginalExtension())
+                        ->saveUploadedFileUsing(function ($file, $record) {
+                            $path = $file->store('thumbnails', 'public');
+
+                            // URL-t mentünk az adatbázisba
+                            return Storage::disk('public')->url($path);
+                        })
+                        // 🔑 Ez a lényeg: csak akkor mentse, ha van új feltöltés
+                        ->dehydrated(fn ($state) => filled($state))
                         ->columnSpanFull(),
 
                     Forms\Components\TextInput::make('duration_seconds')

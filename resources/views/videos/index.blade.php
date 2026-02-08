@@ -8,10 +8,9 @@
 
                     {{-- PAGE HEADER --}}
                     <div>
-                        <h1 class="text-4xl sm:text-5xl font-black tracking-tight text-slate-900">
+                        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900">
                             Válasszon video tartalmaink szerint!
                         </h1>
-                        <div class="mt-3 h-1 w-24 bg-[#5035e6]"></div>
                         <p class="text-base text-slate-700 mt-6">
                             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur
                         </p>
@@ -104,53 +103,40 @@
                                 $even = $loop->iteration % 2 === 0;
                                 $original = (int)$video->original_price_huf;
                                 $current = (int)$video->price_huf;
+                                $CARD_H = 'md:h-[320px]';      // <-- itt állítod a fix magasságot
+                                $IMG_H  = 'h-[240px] md:h-[320px]'; // mobil + desktop
                             @endphp
 
                             <article class="bg-white border border-gray-200 overflow-hidden">
-                                <div class="grid grid-cols-1 md:grid-cols-12">
+                                <div class="grid grid-cols-1 md:grid-cols-12 {{ $CARD_H }}">
 
                                     {{-- THUMB --}}
-                                    <div class="{{ $even ? 'md:order-2' : '' }} md:col-span-8 relative min-h-[300px]">
-                                        <img src="{{ $video->thumbnail_url }}"
-                                             class="absolute inset-0 w-full h-full object-cover">
+                                    <div class="{{ $even ? 'md:order-2' : '' }} md:col-span-8 relative {{ $IMG_H }} overflow-hidden">
+                                        <img
+                                            src="{{ $video->thumbnail_url }}"
+                                            class="absolute inset-0 w-full h-full object-cover"
+                                            alt="Video - {{ $video->title }}"
+                                            title="Video - {{ $video->title }}"
+                                        >
 
-                                        {{-- SOFT OVERLAY --}}
                                         <div class="absolute inset-0 bg-slate-900/60"></div>
 
-                                        {{-- TOP ICONS (play + info, same row) --}}
-                                        <div
-                                            class="absolute top-5 left-8 right-5 flex items-center justify-between pointer-events-none">
-                                            {{-- INFO ICON (moved up) --}}
+                                        <div class="absolute top-5 left-8 right-5 flex items-center justify-between pointer-events-none">
                                             <div class="w-7 h-7 rounded-full flex items-center justify-center">
                                                 <img src="{{ asset('images/info.svg')}}" alt="info"/>
                                             </div>
 
-
-                                            {{-- PLAY ICON --}}
-                                            <svg
-                                                class="w-12 h-12 text-white"
-                                                viewBox="0 0 24 24"
-                                                fill="currentColor"
-                                                aria-hidden="true"
-                                            >
-                                                <path
-                                                    d="M8.2 6.1c0-.8.9-1.3 1.6-.9l8.6 5.1c.7.4.7 1.4 0 1.8l-8.6 5.1c-.7.4-1.6-.1-1.6-.9V6.1z"/>
+                                            <svg class="w-12 h-12 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                                <path d="M8.2 6.1c0-.8.9-1.3 1.6-.9l8.6 5.1c.7.4.7 1.4 0 1.8l-8.6 5.1c-.7.4-1.6-.1-1.6-.9V6.1z"/>
                                             </svg>
                                         </div>
 
-
-                                        {{-- DESCRIPTION --}}
                                         <div class="absolute left-8 top-16 text-white">
-                                            <p class="
-                                                text-sm leading-relaxed opacity-95
-                                                max-w-[85%] xl:max-w-[260px]
-                                                line-clamp-3 xl:line-clamp-5
-                                            ">
+                                            <p class="text-sm leading-relaxed opacity-95 max-w-[85%] xl:max-w-[260px] line-clamp-4">
                                                 {{ $video->description }}
                                             </p>
                                         </div>
                                     </div>
-
                                     {{-- TEXT --}}
                                     <div
                                         class="{{ $even ? 'md:order-1' : '' }} md:col-span-4 bg-[#efeff2] p-6 flex flex-col justify-between">
@@ -203,11 +189,11 @@
 
                                             <div class="flex items-end gap-4 pt-2">
                                                 @if(!empty($original))
-                                                    <span class="text-lg font-black text-slate-300 line-through">
+                                                    <span class="text-base font-black text-slate-300 line-through">
                                                         {{ number_format($original,0,' ',' ') }} Ft+áfa
                                                     </span>
                                                 @endif
-                                                <span class="text-lg font-black text-slate-800">
+                                                <span class="text-base font-black text-slate-800">
                                                     {{ number_format($current,0,' ',' ') }} Ft+áfa
                                                 </span>
                                             </div>
@@ -242,7 +228,7 @@
                         @endforeach
                     </div>
 
-                    {{ $videos->links() }}
+                    {{ $videos->links('vendor.pagination.custom') }}
 
                 </div>
             </div>

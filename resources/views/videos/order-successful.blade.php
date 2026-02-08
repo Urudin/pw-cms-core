@@ -97,13 +97,6 @@
             {{-- INFO BAR --}}
             <div class="bg-[{{ $cardBg }}] border-b-2 px-6 py-5 space-y-3" style="border-color: {{ $accentPink }};">
                 <div class="flex flex-col items-center gap-2 text-slate-700 text-sm leading-relaxed text-center">
-{{--                <span class="mt-0.5">--}}
-{{--                    --}}{{-- info icon --}}
-{{--                    <svg class="w-5 h-5" style="color: {{ $accentPink }};" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">--}}
-{{--                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25h1.5v5.25h-1.5v-5.25ZM12 8.25h.007v.008H12V8.25Z" />--}}
-{{--                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />--}}
-{{--                    </svg>--}}
-{{--                </span>--}}
 
                     <div>
                         A szolgáltatás díját kérjük bankszámlánkra <span class="font-black">8 napon belül</span> utalni,
@@ -124,4 +117,21 @@
 
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // ha localStorage-ben van a kosár
+            localStorage.removeItem('cart');
+            localStorage.removeItem('shoppingCart'); // ha több kulcsod van
+
+            // ha sessionStorage-ben van
+            sessionStorage.removeItem('cart');
+
+            // opcionális: ha van globális cart state-ed
+            if (window.cart) {
+                window.cart.clear?.();
+            }
+
+            console.log('Kosár ürítve a köszönő oldalon.');
+        });
+    </script>
 @endsection

@@ -138,6 +138,58 @@ class PurchaseResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('personal_email')
+                    ->label('Megrendelő')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('payment_method')
+                    ->label('Fizetési mód')
+                    ->formatStateUsing(fn(string $state): string => match ($state) {
+                        'forward_payment' => 'Banki átutalás',
+                        'card' => 'Kártyás fizetés',
+                        default => $state,
+                    })
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('items_count')
+                    ->label('Darab')
+                    ->state(function ($record) {
+                        $items = is_array($record->items)
+                            ? $record->items
+                            : json_decode($record->items ?? '[]', true);
+
+                        return collect($items)->sum(fn ($item) => (int) ($item['quantity'] ?? 1));
+                    })
+                    ->alignCenter()
+                    ->sortable(false),
+                Tables\Columns\TextColumn::make('total_calc')
+                    ->label('Összesen')
+                    ->state(function ($record) {
+                        $items = is_array($record->items) ? $record->items : json_decode($record->items ?? '[]', true);
+
+                        $ids = collect($items)->pluck('id')->filter()->unique()->values();
+
+                        if ($ids->isEmpty()) {
+                            return 0;
+                        }
+
+                        $prices = Video::query()
+                            ->whereIn('id', $ids)
+                            ->pluck('price_huf', 'id'); // [id => price]
+
+                        return collect($items)->sum(function ($item) use ($prices) {
+                            $id = $item['id'] ?? null;
+                            $qty = (int) ($item['quantity'] ?? 1);
+                            $price = (int) ($prices[$id] ?? 0);
+
+                            return $qty * $price;
+                        });
+                    })
+                    ->money('HUF')
+                    ->sortable(query: function ($query, string $direction) {
+                        // JSON-os “összesen” számítás DB oldalon nem triviális és DB-függő (MySQL/PG)
+                        // Ezért inkább tiltsuk a sort-ot, vagy csinálunk rá külön persisted oszlopot (B opció).
+                        return $query;
+                    }),
+                Tables\Columns\TextColumn::make('created_at')->label('Dátum')->dateTime()->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->label('Státusz')
                     ->badge()
@@ -149,19 +201,6 @@ class PurchaseResource extends Resource
                         default => $state,
                     })
                     ->sortable(),
-                Tables\Columns\TextColumn::make('personal_email')
-                    ->label('Email')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('payment_method')
-                    ->label('Fizetési mód')
-                    ->formatStateUsing(fn(string $state): string => match ($state) {
-                        'forward_payment' => 'Banki átutalás',
-                        'card' => 'Kártyás fizetés',
-                        default => $state,
-                    })
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('total')->money('HUF')->sortable(),
-                Tables\Columns\TextColumn::make('created_at')->label('Létrehozva')->dateTime()->sortable(),
             ])
             ->defaultSort('id', 'desc')
             ->filters([
@@ -181,7 +220,7 @@ class PurchaseResource extends Resource
                     ]),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+//                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make('acknowledgePayment')
                     ->label('Fizetve')

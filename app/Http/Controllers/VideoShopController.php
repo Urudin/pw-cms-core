@@ -41,12 +41,12 @@ class VideoShopController extends Controller
         }
 
         // (Ha kell rendezés később, most kihagyjuk MVP-nél.)
-        $videos = $query->latest()->paginate(12)->withQueryString();
+        $videos = $query->latest()->paginate(4)->withQueryString();
 
         // Filter option listák
-        $types = VideoType::query()->where('is_active', true)->orderBy('sort_order')->orderBy('name')->get();
-        $topics = VideoTopic::query()->where('is_active', true)->orderBy('sort_order')->orderBy('name')->get();
-        $domains = VideoDomain::query()->where('is_active', true)->orderBy('sort_order')->orderBy('name')->get();
+        $types = VideoType::query()->whereHas('videos')->where('is_active', true)->orderBy('sort_order')->orderBy('name')->get();
+        $topics = VideoTopic::query()->whereHas('videos')->where('is_active', true)->orderBy('sort_order')->orderBy('name')->get();
+        $domains = VideoDomain::query()->whereHas('videos')->where('is_active', true)->orderBy('sort_order')->orderBy('name')->get();
         $tiles = \App\Models\Tile::query()
                     ->get();
 
@@ -113,7 +113,6 @@ class VideoShopController extends Controller
                 ->withInput();
         }
 
-        // TODO: itt szerver oldalon számold az árakat DB-ből (ne a kliensből)
         $subtotal = 0.00;
         $vatRate = 0.00;
         $vatAmount = round($subtotal * ($vatRate / 100), 2);

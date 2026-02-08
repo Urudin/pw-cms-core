@@ -71,6 +71,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (!cart.length) {
             cartElement.innerHTML = '<p class="text-gray-600">A kosár üres.</p>';
+
+            const totalEl = document.getElementById('cartTotal');
+            if (totalEl) totalEl.textContent = formatHufAfa(0);
+
             updateCartBadge();
             return;
         }
