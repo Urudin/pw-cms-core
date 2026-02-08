@@ -48,7 +48,7 @@ class VideoShopController extends Controller
         $topics = VideoTopic::query()->whereHas('videos')->where('is_active', true)->orderBy('sort_order')->orderBy('name')->get();
         $domains = VideoDomain::query()->whereHas('videos')->where('is_active', true)->orderBy('sort_order')->orderBy('name')->get();
         $tiles = \App\Models\Tile::query()
-                    ->whereIn('id', [6, 4, 2])
+                    ->whereIn('id', [6, /*4,*/ 2])
                     ->orderByDesc('id')
                     ->get();
 
