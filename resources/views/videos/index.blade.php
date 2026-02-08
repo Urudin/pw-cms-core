@@ -216,11 +216,6 @@
                                                     <path d="M10 2l4 5-4 5V2z"/>
                                                 </svg>
                                             </span>
-{{--                                            <span class="px-5 bg-[#c7802f] flex items-center -mr-[-2px]">--}}
-{{--                                            <svg viewBox="0 0 14 14" class="h-4 w-4" fill="currentColor">--}}
-{{--                                                <path d="M10 2l4 5-4 5V2z"/>--}}
-{{--                                            </svg>--}}
-{{--                                            </span>--}}
                                         </button>
                                     </div>
                                 </div>

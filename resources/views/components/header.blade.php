@@ -166,23 +166,23 @@
         let submenu = document.getElementById("submenu");
         let timeout;
 
-        if(menuItem != null){
-            menuItem.addEventListener("mouseenter", function () {
-                clearTimeout(timeout);
-                submenu.classList.remove("hidden");
-                submenu.classList.add("opacity-100");
-            });
-
-            menuItem.addEventListener("mouseleave", function () {
-                timeout = setTimeout(() => {
-                    submenu.classList.add("hidden");
-                    submenu.classList.remove("opacity-100");
-                }, 300);
-            });
-        }
 
         if(submenu != null)
         {
+            if(menuItem != null){
+                menuItem.addEventListener("mouseenter", function () {
+                    clearTimeout(timeout);
+                    submenu.classList.remove("hidden");
+                    submenu.classList.add("opacity-100");
+                });
+
+                menuItem.addEventListener("mouseleave", function () {
+                    timeout = setTimeout(() => {
+                        submenu.classList.add("hidden");
+                        submenu.classList.remove("opacity-100");
+                    }, 300);
+                });
+            }
             submenu.addEventListener("mouseenter", function () {
                 clearTimeout(timeout);
             });
