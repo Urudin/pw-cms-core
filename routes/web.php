@@ -1,11 +1,14 @@
 <?php
 
+use App\Http\Controllers\LegalContentController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\VideoShopController;
 
 Route::get('/', [PageController::class, 'show'])->name('home');
+Route::get('/adatkezelesi-tajekoztato-kepzes', [LegalContentController::class, 'dataHandlingCourse'])->name('data-handling-courses');
+Route::get('/innovacio-menedzsment-aszf', [LegalContentController::class, 'aszf'])->name('aszf');
 
 
 //Route::get('/tanfolyami-resztvevo-hallgatoink', fn() => view('references'));

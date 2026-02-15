@@ -100,9 +100,9 @@
                             <li><a href="https://imakademia.hu/" target="_blank" class="hover:underline">Innovációmenedzsment
                                     oktatás</a></li>
                             <li>
-                                <a href="https://innovacio-menedzsment.hu/innovacio-menedzsment-felhasznalasi-feltetelek"
+                                <a href="{{route('aszf')}}"
                                    target="_blank" class="hover:underline">Felhasználási feltételeink</a></li>
-                            <li><a href="https://innovacio-menedzsment.hu/innovacio-menedzsment-adatvedelem"
+                            <li><a href="{{route('data-handling-courses')}}"
                                    target="_blank" class="hover:underline">Adatvédelmi tájékoztató</a></li>
                         </ul>
                     </div>
