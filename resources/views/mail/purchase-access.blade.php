@@ -38,8 +38,10 @@
 
             <p style="margin: 0 0 6px 0;">
                 Elérés:
-                <a href="{{ route('video.show', $video->id) }}" target="_blank" style="color: #2563eb; text-decoration: underline;">
-                    {{ route('video.show', $video->id) }}
+                <a href="{{ route('video.show', ['video' => $video->id, 'u' => $accesses[$video->id]['username']]) }}"
+                   target="_blank"
+                   style="color: #2563eb; text-decoration: underline;">
+                    {{ route('video.show', ['video' => $video->id, 'u' => $accesses[$video->id]['username']]) }}
                 </a>
             </p>
 

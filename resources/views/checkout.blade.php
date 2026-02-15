@@ -157,19 +157,49 @@
                             <div class="text-sm text-red-600 mt-1">{{ $message }}</div>
                             @enderror
                         </div>
+
+                        <div>
+                            <input
+                                type="text"
+                                name="billing_postal_code"
+                                value="{{ old('billing_postal_code') }}"
+                                placeholder="Irányítószám*"
+                                class="w-full px-3 py-2 border rounded @error('billing_postal_code') border-red-400 bg-red-50 @else border-gray-300 @enderror"
+                                required
+                            >
+                            @error('billing_postal_code')
+                            <div class="text-sm text-red-600 mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <input
+                                type="text"
+                                name="billing_city"
+                                value="{{ old('billing_city') }}"
+                                placeholder="Város*"
+                                class="w-full px-3 py-2 border rounded @error('billing_city') border-red-400 bg-red-50 @else border-gray-300 @enderror"
+                                required
+                            >
+                            @error('billing_city')
+                            <div class="text-sm text-red-600 mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
 
-                    <div>
-                        <input
-                            type="text"
-                            name="billing_address"
-                            value="{{ old('billing_address') }}"
-                            placeholder="Cím*"
-                            class="w-full px-3 py-2 border rounded @error('billing_address') border-red-400 bg-red-50 @else border-gray-300 @enderror" required>
-                        @error('billing_address')
-                        <div class="text-sm text-red-600 mt-1">{{ $message }}</div>
-                        @enderror
-                    </div>
+                        <div class="md:col-span-3">
+                            <input
+                                type="text"
+                                name="billing_street_address"
+                                value="{{ old('billing_street_address') }}"
+                                placeholder="Cím* (utca, házszám, emelet/ajtó)"
+                                class="w-full px-3 py-2 border rounded @error('billing_street_address') border-red-400 bg-red-50 @else border-gray-300 @enderror"
+                                required
+                            >
+                            @error('billing_street_address')
+                            <div class="text-sm text-red-600 mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
                 </div>
 
                 {{-- PAYMENT + DECLARATIONS + SUBMIT (ONE BOX) --}}

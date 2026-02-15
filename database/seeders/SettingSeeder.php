@@ -20,6 +20,7 @@ class SettingSeeder extends Seeder
             ['name' => 'header-sub-title-row-2', 'value' => 'SZOLGÁLTATÁSOK'],
             ['name' => 'startingPage', 'value' => '#'],
             ['name' => 'contact-form-block-id', 'value' => 1],
+            ['name' => 'admin-email-address', 'value' => 'baccbela@gmail.com'],
         ];
 
         foreach ($settings as $setting) {

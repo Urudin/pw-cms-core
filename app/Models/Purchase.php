@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Services\BillingService;
 use Illuminate\Database\Eloquent\Model;
+use zoparga\SzamlazzHu\Invoice;
 
 class Purchase extends Model
 {
@@ -42,6 +44,11 @@ class Purchase extends Model
         'status',
         'client_ip',
         'user_agent',
+
+        'billing_postal_code',
+        'billing_city',
+        'billing_street_address',
+        'access_sent',
     ];
 
     protected $casts = [
@@ -61,10 +68,15 @@ class Purchase extends Model
     public function getTotal()
     {
         $total = 0;
-        $videos = \App\Models\Video::query()->whereIn('id', array_column($this->items, 'id'))->get();
+        $videos = Video::query()->whereIn('id', array_column($this->items, 'id'))->get();
         foreach($videos as $video) {
             $total += $video->price_huf;
         }
         return $total;
+    }
+
+    public function issueInvoice(Purchase $purchase): Invoice|array
+    {
+        return (new BillingService())->issueInvoice($purchase);
     }
 }

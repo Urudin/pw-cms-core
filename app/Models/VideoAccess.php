@@ -11,8 +11,16 @@ class VideoAccess extends Model
 
     protected $guarded = ['id'];
 
+    protected $appends = ['username'];
+
     public function video(): BelongsTo
     {
         return $this->belongsTo(Video::class);
+    }
+
+    public function getUsernameAttribute(): string
+    {
+        return explode('@', $this->email)[0];
+
     }
 }

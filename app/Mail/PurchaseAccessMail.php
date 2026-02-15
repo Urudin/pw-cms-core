@@ -8,6 +8,7 @@ use App\Models\VideoAccess;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class PurchaseAccessMail extends Mailable
@@ -31,22 +32,37 @@ class PurchaseAccessMail extends Mailable
 
         $videos = Video::query()->whereIn('id', $videoIds)->get()->keyBy('id');
         $accesses = [];
-        foreach($videos as $video) {
+
+        foreach ($videos as $video) {
             $access = VideoAccess::query()->firstOrCreate([
                 'video_id' => $video->id,
                 'email' => $this->purchase->personal_email,
             ], [
                 'password' => Str::random(10),
             ]);
+
             $accesses[$access->video_id] = $access->toArray();
         }
-        return $this->subject('Digitális tartalmak elérése')
+
+        $mail = $this->subject('Digitális tartalmak elérése')
             ->view('mail.purchase-access')
             ->with([
                 'purchase' => $this->purchase,
                 'videos'   => $videos,
                 'items'    => $items,
-                'accesses' => $accesses
+                'accesses' => $accesses,
             ]);
+
+        if (! empty($this->purchase->invoice_file_path) && Storage::exists($this->purchase->invoice_file_path)) {
+            $mail->attach(
+                Storage::path($this->purchase->invoice_file_path),
+                [
+                    'as'   => basename($this->purchase->invoice_file_path),
+                    'mime' => 'application/pdf',
+                ]
+            );
+        }
+
+        return $mail;
     }
 }

@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PurchaseThankYouMail;
 use App\Models\Purchase;
+use App\Models\UserSetting;
 use App\Models\Video;
 use App\Models\VideoType;
 use App\Models\VideoTopic;
 use App\Models\VideoDomain;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
 
 class VideoShopController extends Controller
@@ -77,7 +80,9 @@ class VideoShopController extends Controller
             'billing_first_name' => ['required', 'string', 'max:200'],
             'billing_company_name' => ['nullable', 'string', 'max:255'],
             'billing_vat_number' => ['nullable', 'string', 'max:100'],
-            'billing_address' => ['required', 'string', 'max:500'],
+            'billing_postal_code' => ['required', 'string', 'max:20'],
+            'billing_city' => ['required', 'string', 'max:120'],
+            'billing_street_address' => ['required', 'string', 'max:255'],
 
             // payment
             'payment_method' => ['required', 'string', Rule::in($paymentMethods)],
@@ -131,7 +136,9 @@ class VideoShopController extends Controller
                 'billing_first_name' => $validated['billing_first_name'],
                 'billing_company_name' => $validated['billing_company_name'] ?? null,
                 'billing_vat_number' => $validated['billing_vat_number'] ?? null,
-                'billing_address' => $validated['billing_address'],
+                'billing_postal_code' => $validated['billing_postal_code'],
+                'billing_city' => $validated['billing_city'],
+                'billing_street_address' => $validated['billing_street_address'],
 
                 'payment_method' => $validated['payment_method'],
 
@@ -152,8 +159,12 @@ class VideoShopController extends Controller
                 'user_agent' => substr((string) $request->userAgent(), 0, 2000),
             ]);
         });
+        Mail::to([$purchase->personal_email, UserSetting::query()->firstWhere('name', 'admin-email-address')->value])->send(new PurchaseThankYouMail(
+            purchase: $purchase,
+            bankName: 'K&H Bank',
+            bankAccount: '10200823-22223649-00000000',
+        ));
 
-        // opcionális: ürítsd a sessionbe a cartot, hogy a "köszönjük" oldalon tudd jelezni
         return redirect()
             ->route('order-successful', ['purchaseId' => $purchase]) // csinálsz egy route-ot hozzá
             ->with('success', 'Sikeres rendelés! Köszönjük.');

@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\PurchaseResource\Pages;
 use App\Mail\PurchaseAccessMail;
 use App\Models\Purchase;
+use App\Models\UserSetting;
 use App\Models\Video;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -220,27 +221,90 @@ class PurchaseResource extends Resource
                     ]),
             ])
             ->actions([
-//                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+
+                // 1) Fizetve
                 Tables\Actions\Action::make('acknowledgePayment')
                     ->label('Fizetve')
                     ->icon('heroicon-o-banknotes')
-                    ->requiresConfirmation()
-                    ->visible(fn(Purchase $record) => $record->status === 'pending')
+                    ->color(fn (Purchase $record) => $record->status === 'paid' ? 'success' : 'primary')
+                    ->disabled(fn (Purchase $record) => $record->status === 'paid')
+                    ->tooltip(fn (Purchase $record) => $record->status === 'paid'
+                        ? 'Már fizetve van'
+                        : 'Státusz átállítása fizetetté'
+                    )
+                    ->requiresConfirmation(fn (Purchase $record) => $record->status !== 'paid')
                     ->action(function (Purchase $record) {
+                        if ($record->status === 'paid') {
+                            return;
+                        }
+
                         $record->update(['status' => 'paid']);
 
                         Notification::make()
-                            ->title('Státusz frissítve')
+                            ->title('Státusz frissítve: fizetve')
                             ->success()
                             ->send();
                     }),
-                Tables\Actions\Action::make('sendAccess')
-                    ->label('Hozzáférés küldése')
-                    ->icon('heroicon-o-paper-airplane')
-                    ->requiresConfirmation()
+
+                // 2) Számla kiállítása (csak ha fizetve)
+                Tables\Actions\Action::make('makeInvoice')
+                    ->label(fn (Purchase $record) => (int) $record->billed === 1 ? 'Számla kiállítva' : 'Számla kiállítása')
+                    ->icon('heroicon-o-paper-clip')
+                    ->color(function (Purchase $record) {
+                        if ((int) $record->billed === 1) return 'success';
+                        if ($record->status !== 'paid') return 'gray';
+                        return 'primary';
+                    })
+                    ->disabled(fn (Purchase $record) => (int) $record->billed === 1 || $record->status !== 'paid')
+                    ->tooltip(function (Purchase $record) {
+                        if ((int) $record->billed === 1) return 'A számla már ki lett állítva';
+                        if ($record->status !== 'paid') return 'Számla csak fizetett státusz esetén állítható ki';
+                        return 'Számla kiállítása';
+                    })
+                    ->requiresConfirmation(fn (Purchase $record) => (int) $record->billed !== 1 && $record->status === 'paid')
                     ->action(function (Purchase $record) {
-                        Mail::to($record->personal_email)->send(new PurchaseAccessMail($record));
+                        if ($record->status !== 'paid' || (int) $record->billed === 1) {
+                            return;
+                        }
+
+                        $record->issueInvoice($record);
+
+                        // Ha az issueInvoice nem állítja, akkor itt állítsd:
+                        // $record->update(['billed' => 1]);
+
+                        Notification::make()
+                            ->title('Számla kiállítva')
+                            ->success()
+                            ->send();
+                    }),
+
+                // 3) Hozzáférés küldése (csak számla után, többször küldhető, zöld ha volt már)
+                Tables\Actions\Action::make('sendAccess')
+                    ->label(fn (Purchase $record) => $record->access_sent ? 'Hozzáférés elküldve' : 'Hozzáférés küldése')
+                    ->icon('heroicon-o-paper-airplane')
+                    ->color(fn (Purchase $record) => $record->access_sent ? 'success' : 'primary')
+                    ->disabled(fn (Purchase $record) => (int) $record->billed !== 1) // csak számla után
+                    ->tooltip(fn (Purchase $record) => (int) $record->billed !== 1
+                        ? 'Hozzáférés csak a számla kiállítása után küldhető'
+                        : 'Hozzáférés e-mail újraküldése is lehetséges'
+                    )
+                    ->requiresConfirmation(fn (Purchase $record) => (int) $record->billed === 1)
+                    ->action(function (Purchase $record) {
+                        if ((int) $record->billed !== 1) {
+                            return;
+                        }
+
+                        Mail::to([
+                            $record->personal_email,
+                            UserSetting::query()->firstWhere('name', 'admin-email-address')->value,
+                        ])->send(new PurchaseAccessMail($record));
+
+                        // boolean mező esetén:
+                        //$record->update(['access_sent' => true]);
+
+                        // ha inkább timestampet akarsz:
+                        $record->update(['access_sent' => now()]);
 
                         Notification::make()
                             ->title('E-mail elküldve')
