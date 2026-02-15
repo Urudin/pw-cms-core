@@ -5,16 +5,15 @@
         <div class="lg:flex lg:gap-8">
 
             <div class="lg:flex-1 min-w-0">
-                <div class="bg-gray-100 p-4 md:p-8 shadow-md w-full mx-auto space-y-12">
+                <div class="bg-gray-100 p-4 md:p-8 shadow-md w-full mx-auto space-y-6">
 
                     {{-- PAGE HEADER --}}
                     <div>
-                        <h1 class="text-4xl sm:text-5xl font-black tracking-tight text-slate-900">
+                        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900">
                             Tanfolyamtípusok témakörönként
                         </h1>
-                        <div class="mt-3 h-1 w-24 bg-[#5035e6]"></div>
 
-                        <p class="mt-4 max-w-4xl text-sm sm:text-base font-semibold leading-relaxed text-slate-700">
+                        <p class="mt-4 w-full text-sm sm:text-base font-semibold leading-relaxed text-slate-700">
                             Engedje meg, hogy segítséget nyújtsunk a képzéseink közötti könnyebb tájékozódás,
                             valamint az igényeinek legjobban megfelelő képzéstípus kiválasztásának megkönnyítésére!
                         </p>
@@ -23,11 +22,14 @@
                     {{-- CATEGORIES --}}
                     <div class="space-y-14">
                         @foreach($categories as $category)
+                            @if($category->courses()->count() == 0)
+                                @continue
+                            @endif
                             <section class="space-y-6">
 
                                 <h3 class="text-2xl sm:text-3xl font-black text-slate-900">
                                     Tanfolyamok
-                                    <span class="text-[#5035e6]">{{ $category->name }}</span>
+                                    {{ strtolower($category->name) }}
                                     témakörben
                                 </h3>
 
@@ -58,10 +60,11 @@
                                                 <button
                                                     type="button"
                                                     @click="open = !open"
-                                                    class="w-full flex items-start gap-4 px-5 py-4 text-left"
+                                                    class="w-full flex items-stretch text-left"
                                                 >
-                                                    <div class="pt-1">
-                                                        <svg class="w-5 h-5 text-white/80 transition-transform duration-200"
+                                                    {{-- BAL KÉK SÁV A NYÍLLAL --}}
+                                                    <div class="w-[82px] bg-[#39a7cc] flex items-center justify-center shrink-0">
+                                                        <svg class="w-5 h-5 text-white transition-transform duration-200"
                                                              :class="open ? 'rotate-90' : ''"
                                                              viewBox="0 0 20 20" fill="currentColor">
                                                             <path fill-rule="evenodd"
@@ -70,25 +73,28 @@
                                                         </svg>
                                                     </div>
 
-                                                    <div class="flex-1 min-w-0">
-                                                        <div class="font-black text-lg leading-snug">
-                                                            {{ $loop->iteration }}. {{ $course->name }}
+                                                    {{-- TARTALOM --}}
+                                                    <div class="flex-1 flex items-start gap-4 px-5 py-4">
+                                                        <div class="flex-1 min-w-0">
+                                                            <div class="font-black text-lg leading-snug">
+                                                                {{ $loop->iteration }}. {{ $course->name }}
+                                                            </div>
+
+                                                            @if($course->description)
+                                                                <div class="mt-1 text-sm text-white/70 line-clamp-2">
+                                                                    {!! html_entity_decode(strip_tags($course->description)) !!}
+                                                                </div>
+                                                            @endif
                                                         </div>
 
-                                                        @if($course->description)
-                                                            <div class="mt-1 text-sm text-white/70 line-clamp-2">
-                                                                {!! html_entity_decode(strip_tags($course->description)) !!}
-                                                            </div>
-                                                        @endif
-                                                    </div>
-
-                                                    <div class="shrink-0 text-right">
-                                                        @if($firstStartText)
-                                                            <div class="text-xs font-semibold text-white/60">Aktuális időpontok</div>
-                                                            <div class="text-sm font-extrabold text-white">{{ $firstStartText }}</div>
-                                                        @else
-                                                            <div class="text-sm font-semibold text-white/60">Nincs meghirdetett időpont</div>
-                                                        @endif
+                                                        <div class="shrink-0 text-right">
+                                                            @if($firstStartText)
+                                                                <div class="text-xs font-semibold text-white/60">Aktuális időpontok</div>
+                                                                <div class="text-sm font-extrabold text-white">{{ $firstStartText }}</div>
+                                                            @else
+                                                                <div class="text-sm font-semibold text-white/60">Nincs meghirdetett időpont</div>
+                                                            @endif
+                                                        </div>
                                                     </div>
                                                 </button>
 
@@ -178,7 +184,13 @@
                             </section>
                         @endforeach
                     </div>
-
+                    <section class="">
+                        <h1 class="text-3xl sm:text-4xl mb-4 font-extrabold tracking-tight text-slate-900">
+                            További információra van szüksége?
+                        </h1>
+                        <p class="text-base sm:text-lg font-semibold leading-relaxed text-slate-700">
+                            Amennyiben az Innovációmenedzsment Akadémia oktatási programjaival, a tanfolyamokkal, az időponttal, a tananyaggal, a megrendezés módjával, a jelentkezéssel, a fizetési lehetőségekkel, vagy egyéb vonatkozó kérdésekben további információkra van szüksége, kérjük az alábbi kapcsolati űrlapon jelezze felénk és kollégáink a következő munkanapon jelentkeznek a kért információkkal megadott elérhetőségein.                        </p>
+                    </section>
                     {{-- CONTACT FORM (UNCHANGED - FULL ORIGINAL) --}}
                     <div id="tovabbi-info" class="bg-white border border-gray-200 p-4 md:p-6 space-y-4">
                         <h2 class="text-2xl text-[#143c5a] font-semibold">További információt kérek</h2>

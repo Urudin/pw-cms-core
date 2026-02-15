@@ -26,6 +26,12 @@ class CourseCategoryResource extends Resource
                 ->label('Név')
                 ->required()
                 ->maxLength(255),
+            Forms\Components\TextInput::make('sort_order')
+                ->label('Sorrend')
+                ->numeric()
+                ->minValue(0)
+                ->default(0)
+                ->helperText('Kisebb szám = előrébb.'),
         ]);
     }
 
@@ -33,22 +39,24 @@ class CourseCategoryResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('sort_order')
+                    ->label('Sorrend')
+                    ->sortable()
+                    ->alignCenter(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Név')
                     ->searchable()
                     ->sortable(),
-
                 Tables\Columns\TextColumn::make('courses_count')
                     ->label('Kurzusok')
                     ->counts('courses')
                     ->sortable(),
-
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Módosítva')
                     ->dateTime('Y-m-d H:i')
                     ->sortable(),
             ])
-            ->defaultSort('name')
+            ->defaultSort('sort_order')
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])

@@ -37,7 +37,7 @@ class CourseApplicationController extends Controller
 
         $categories = \App\Models\CourseCategory::query()
             ->with(['courses' => fn ($q) => $q->where('is_active', true)->orderBy('name')])
-            ->orderBy('name')
+            ->orderBy('sort_order')
             ->get();
 
         return view('courses.index', compact('actualCourses', 'categories'));
