@@ -60,6 +60,7 @@
             </div>
 
             <a href="{{route('checkout')}}"
+                id="checkout"
                 class="mt-6 w-full inline-flex items-stretch bg-[#f2a44a] hover:brightness-95 text-white overflow-hidden">
                 <span class="pl-[2.9rem] pr-6 py-3 font-semibold">Tovább a pénztárhoz</span>
                 <span class="flex items-center justify-center w-[3.1rem] bg-[#c7802f] !text-white group-hover:!text-white">

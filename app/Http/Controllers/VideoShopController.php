@@ -84,7 +84,6 @@ class VideoShopController extends Controller
 
             // declarations
             'terms_accepted' => ['accepted'],
-            'privacy_accepted' => ['accepted'],
             'newsletter_opt_in' => ['nullable'],
             'new_video_opt_in' => ['nullable'],
 
@@ -156,7 +155,7 @@ class VideoShopController extends Controller
 
         // opcionális: ürítsd a sessionbe a cartot, hogy a "köszönjük" oldalon tudd jelezni
         return redirect()
-            ->route('order-successful', $purchase) // csinálsz egy route-ot hozzá
+            ->route('order-successful', ['purchaseId' => $purchase]) // csinálsz egy route-ot hozzá
             ->with('success', 'Sikeres rendelés! Köszönjük.');
     }
 

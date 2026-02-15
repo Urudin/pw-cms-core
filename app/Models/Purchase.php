@@ -57,4 +57,14 @@ class Purchase extends Model
         'vat_amount' => 'decimal:2',
         'total' => 'decimal:2',
     ];
+
+    public function getTotal()
+    {
+        $total = 0;
+        $videos = \App\Models\Video::query()->whereIn('id', array_column($this->items, 'id'))->get();
+        foreach($videos as $video) {
+            $total += $video->price_huf;
+        }
+        return $total;
+    }
 }

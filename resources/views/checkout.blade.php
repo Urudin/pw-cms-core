@@ -50,7 +50,7 @@
                                 name="personal_last_name"
                                 value="{{ old('personal_last_name') }}"
                                 placeholder="Vezetéknév*"
-                                class="w-full px-3 py-2 border rounded @error('personal_last_name') border-red-400 bg-red-50 @else border-gray-300 @enderror">
+                                class="w-full px-3 py-2 border rounded @error('personal_last_name') border-red-400 bg-red-50 @else border-gray-300 @enderror" required>
                             @error('personal_last_name')
                             <div class="text-sm text-red-600 mt-1">{{ $message }}</div>
                             @enderror
@@ -62,7 +62,7 @@
                                 name="personal_first_name"
                                 value="{{ old('personal_first_name') }}"
                                 placeholder="Keresztnév*"
-                                class="w-full px-3 py-2 border rounded @error('personal_first_name') border-red-400 bg-red-50 @else border-gray-300 @enderror">
+                                class="w-full px-3 py-2 border rounded @error('personal_first_name') border-red-400 bg-red-50 @else border-gray-300 @enderror" required>
                             @error('personal_first_name')
                             <div class="text-sm text-red-600 mt-1">{{ $message }}</div>
                             @enderror
@@ -74,7 +74,7 @@
                                 name="personal_phone"
                                 value="{{ old('personal_phone') }}"
                                 placeholder="Telefonszám*"
-                                class="w-full px-3 py-2 border rounded @error('personal_phone') border-red-400 bg-red-50 @else border-gray-300 @enderror">
+                                class="w-full px-3 py-2 border rounded @error('personal_phone') border-red-400 bg-red-50 @else border-gray-300 @enderror" required>
                             @error('personal_phone')
                             <div class="text-sm text-red-600 mt-1">{{ $message }}</div>
                             @enderror
@@ -86,7 +86,7 @@
                                 name="personal_email"
                                 value="{{ old('personal_email') }}"
                                 placeholder="E-mail cím*"
-                                class="w-full px-3 py-2 border rounded @error('personal_email') border-red-400 bg-red-50 @else border-gray-300 @enderror">
+                                class="w-full px-3 py-2 border rounded @error('personal_email') border-red-400 bg-red-50 @else border-gray-300 @enderror" required>
                             @error('personal_email')
                             <div class="text-sm text-red-600 mt-1">{{ $message }}</div>
                             @enderror
@@ -116,7 +116,7 @@
                                 name="billing_last_name"
                                 value="{{ old('billing_last_name') }}"
                                 placeholder="Vezetéknév*"
-                                class="w-full px-3 py-2 border rounded @error('billing_last_name') border-red-400 bg-red-50 @else border-gray-300 @enderror">
+                                class="w-full px-3 py-2 border rounded @error('billing_last_name') border-red-400 bg-red-50 @else border-gray-300 @enderror" required>
                             @error('billing_last_name')
                             <div class="text-sm text-red-600 mt-1">{{ $message }}</div>
                             @enderror
@@ -128,7 +128,7 @@
                                 name="billing_first_name"
                                 value="{{ old('billing_first_name') }}"
                                 placeholder="Keresztnév*"
-                                class="w-full px-3 py-2 border rounded @error('billing_first_name') border-red-400 bg-red-50 @else border-gray-300 @enderror">
+                                class="w-full px-3 py-2 border rounded @error('billing_first_name') border-red-400 bg-red-50 @else border-gray-300 @enderror" required>
                             @error('billing_first_name')
                             <div class="text-sm text-red-600 mt-1">{{ $message }}</div>
                             @enderror
@@ -165,7 +165,7 @@
                             name="billing_address"
                             value="{{ old('billing_address') }}"
                             placeholder="Cím*"
-                            class="w-full px-3 py-2 border rounded @error('billing_address') border-red-400 bg-red-50 @else border-gray-300 @enderror">
+                            class="w-full px-3 py-2 border rounded @error('billing_address') border-red-400 bg-red-50 @else border-gray-300 @enderror" required>
                         @error('billing_address')
                         <div class="text-sm text-red-600 mt-1">{{ $message }}</div>
                         @enderror
@@ -190,7 +190,7 @@
                                             name="payment_method"
                                             value="{{ $key }}"
                                             class="sr-only peer"
-                                            @checked(old('payment_method') === $key)>
+                                            @checked(old('payment_method') === $key) required>
 
                                         {{-- CHECKBOX-LIKE RADIO (LEFT) --}}
                                         <span class="w-5 h-5 border-2 border-gray-400 rounded-sm shrink-0 mt-1
@@ -221,11 +221,11 @@
                             <div class="text-lg font-black text-slate-800">Nyilatkozatok</div>
 
                             <div>
-                                <label class="flex items-start gap-3 cursor-pointer">
-                                    <input type="checkbox" name="terms_accepted" id="terms_accepted" class="sr-only peer" @checked(old('terms_accepted'))>
+                                <label class="grid grid-cols-[20px_1fr] gap-3 cursor-pointer">
+                                    <input type="checkbox" name="terms_accepted" id="terms_accepted" class="sr-only peer" @checked(old('terms_accepted')) required>
 
                                     <span
-                                        class="w-5 h-5 border-2 rounded-sm flex items-center justify-center transition-all duration-200 mt-1
+                                        class="w-5 h-5 shrink-0 border-2 rounded-sm flex items-center justify-center transition-all duration-200 mt-1
                                                peer-checked:bg-cyan-500
                                                peer-checked:border-[3px] peer-checked:border-white
                                                peer-checked:outline peer-checked:outline-1 peer-checked:outline-slate-300
@@ -233,35 +233,13 @@
                                     </span>
 
                                     <span class="text-slate-700">
-                                        Elolvastam és elfogadom az
-                                        <a class="text-blue-600 hover:underline" href="{{ route('terms') }}">Általános szerződési feltételekben</a>
-                                        foglaltakat!*
+                                        Elolvastam és elfogadom, hogy az adatkezelő a most megadott személyes adataimat az <a class="text-blue-600 hover:underline" target="_blank" href="https://innovacio-menedzsment.hu/innovacio-menedzsment-adatvedelem">Adatkezelési tájékoztatójának</a> feltételei
+                                        és az oldal
+                                        <a class="text-blue-600 hover:underline" target="_blank" href="{{ route('aszf') }}">Szerződési feltételeiben</a>
+                                        leírtak szerint kezelje.*
                                     </span>
                                 </label>
                                 @error('terms_accepted')
-                                <div class="text-sm text-red-600 mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div>
-                                <label class="flex items-start gap-3 cursor-pointer">
-                                    <input type="checkbox" name="privacy_accepted" id="privacy_accepted" class="sr-only peer" @checked(old('privacy_accepted'))>
-
-                                    <span
-                                        class="w-5 h-5 border-2 rounded-sm flex items-center justify-center transition-all duration-200 mt-1
-                                               peer-checked:bg-cyan-500
-                                               peer-checked:border-[3px] peer-checked:border-white
-                                               peer-checked:outline peer-checked:outline-1 peer-checked:outline-slate-300
-                                               @error('privacy_accepted') border-red-400 bg-red-50 @else border-gray-400 @enderror">
-                                    </span>
-
-                                    <span class="text-slate-700">
-                                        Elolvastam és elfogadom az
-                                        <a class="text-blue-600 hover:underline" href="{{ route('privacy-policy') }}">Adatkezelési tájékoztatóban</a>
-                                        foglaltakat!*
-                                    </span>
-                                </label>
-                                @error('privacy_accepted')
                                 <div class="text-sm text-red-600 mt-1">{{ $message }}</div>
                                 @enderror
                             </div>

@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             <div class="pt-3">
                 <div class="text-[#1f4fd6] font-black leading-snug text-[15px]">
-                    ${item.name}
+                    ${item.name} - Digitális tartalom megtekintés jogosultság
                 </div>
 
                 <div class="mt-2 flex items-end gap-4">
@@ -175,12 +175,12 @@ document.addEventListener('DOMContentLoaded', function () {
     if (checkoutButton) {
         checkoutButton.addEventListener('click', (e) => {
             e.preventDefault();
-
             if (!cart.length) {
                 alert('A kosár üres.');
                 return;
             }
-            window.location.href = '/checkout';
+            localStorage.setItem('cartOpen', 'false');
+            window.location.href = '/penztar';
         });
     }
 

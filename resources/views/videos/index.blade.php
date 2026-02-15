@@ -103,8 +103,8 @@
                                 $even = $loop->iteration % 2 === 0;
                                 $original = (int)$video->original_price_huf;
                                 $current = (int)$video->price_huf;
-                                $CARD_H = 'md:h-[320px]';      // <-- itt állítod a fix magasságot
-                                $IMG_H  = 'h-[240px] md:h-[320px]'; // mobil + desktop
+                                $CARD_H = 'md:h-[340px]';      // <-- itt állítod a fix magasságot
+                                $IMG_H  = 'h-[240px] md:h-[340px]'; // mobil + desktop
                             @endphp
 
                             <article class="bg-white border border-gray-200 overflow-hidden">
@@ -187,15 +187,15 @@
                                                 @endif
                                             </div>
 
-                                            <div class="flex items-end gap-4 pt-2">
+                                            <div class="">
                                                 @if(!empty($original))
-                                                    <span class="text-base font-black text-slate-300 line-through">
+                                                    <p class="text-sm font-black text-slate-300 line-through">
                                                         {{ number_format($original,0,' ',' ') }} Ft+áfa
-                                                    </span>
+                                                    </p>
                                                 @endif
-                                                <span class="text-base font-black text-slate-800">
+                                                <p class="text-base font-black text-slate-800">
                                                     {{ number_format($current,0,' ',' ') }} Ft+áfa
-                                                </span>
+                                                </p>
                                             </div>
                                         </div>
 
