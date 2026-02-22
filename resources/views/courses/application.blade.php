@@ -6,15 +6,16 @@
 
             {{-- LEFT: page content --}}
             <div class="lg:flex-1 min-w-0">
-                <div class="bg-gray-100 p-4 md:p-8 shadow-md w-full mx-auto space-y-8">
-                    <div>
-                        <h2 class="text-2xl text-[#143c5a] mb-2">
-                            Online <span class="text-[#B58E03]">jelentkezési lap</span>
-                        </h2>
-                        <p class="text-gray-700">
+                <section class="px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+                    <header class="space-y-4">
+                        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900">
+                            Online jelentkezési lap
+                        </h1>
+
+                        <p class="text-base text-slate-700 mt-6">
                             Előre meghirdetett tanfolyamot keres: <strong>Jó helyen jár!</strong>
                         </p>
-                    </div>
+                    </header>
 
                     @if(session('success'))
                         <div class="border border-green-200 bg-green-50 p-4 text-green-800">
@@ -355,7 +356,7 @@
                             </div>
                         </div>
                     </form>
-                </div>
+                </section>
             </div>
 
             {{-- RIGHT: tiles --}}

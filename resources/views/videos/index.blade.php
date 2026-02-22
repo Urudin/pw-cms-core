@@ -4,17 +4,17 @@
     <div class="pageContainer bg-white">
         <div class="lg:flex lg:gap-8">
             <div class="lg:flex-1 min-w-0">
-                <div class="bg-gray-100 p-4 md:p-8 shadow-md w-full mx-auto space-y-6">
+                <section class="px-4 sm:px-6 lg:px-8 py-10 space-y-10">
 
                     {{-- PAGE HEADER --}}
-                    <div>
+                    <header class="space-y-4">
                         <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900">
                             Válasszon video tartalmaink szerint!
                         </h1>
                         <p class="text-base text-slate-700 mt-6">
                             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur
                         </p>
-                    </div>
+                    </header>
 
                     {{-- FILTER --}}
                     <form method="GET" class="bg-[#e9eaee] border-b-2 border-[#d63b73] p-4 md:p-6 space-y-4">
@@ -225,7 +225,7 @@
 
                     {{ $videos->links('vendor.pagination.custom') }}
 
-                </div>
+                </section>
             </div>
             {{-- SIDEBAR --}}
             @if(!empty($tiles) && count($tiles))

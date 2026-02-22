@@ -8,10 +8,13 @@
         : [];
 @endphp
 
-<div class="px-[40px] pt-[40px] pb-[40px] bg-white space-y-6">
-    <h2 class="text-xl md:text-3xl font-bold text-slate-900">
-        Referenciáink, partnereink
-    </h2>
+<section class="px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+    <header class="space-y-4">
+        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900">
+            Referenciáink, partnereink
+        </h1>
+    </header>
+
 
     <p class="text-slate-900">
         Az elmúlt években az Innovációmenedzsment Akadémia weboldalt üzemeltető Glósz és Társa SYSTEM Csapata számos projektet bonyolított le a kutatás-fejlesztés, innovációmenedzsment,
@@ -45,4 +48,4 @@
             </div>
         @endforeach
     </div>
-</div>
+</section>

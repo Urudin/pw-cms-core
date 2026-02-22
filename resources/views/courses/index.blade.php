@@ -5,19 +5,19 @@
         <div class="lg:flex lg:gap-8">
 
             <div class="lg:flex-1 min-w-0">
-                <div class="bg-gray-100 p-4 md:p-8 shadow-md w-full mx-auto space-y-6">
+                <section class="px-4 sm:px-6 lg:px-8 py-10 space-y-10">
 
                     {{-- PAGE HEADER --}}
-                    <div>
+                    <header class="space-y-4">
                         <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900">
                             Tanfolyamtípusok témakörönként
                         </h1>
 
-                        <p class="mt-4 w-full text-sm sm:text-base font-semibold leading-relaxed text-slate-700">
+                        <p class="text-base text-slate-700 mt-6">
                             Engedje meg, hogy segítséget nyújtsunk a képzéseink közötti könnyebb tájékozódás,
                             valamint az igényeinek legjobban megfelelő képzéstípus kiválasztásának megkönnyítésére!
                         </p>
-                    </div>
+                    </header>
 
                     {{-- CATEGORIES --}}
                     <div class="space-y-14">
@@ -252,7 +252,7 @@
                         </form>
                     </div>
 
-                </div>
+                </section>
             </div>
 
             {{-- SIDEBAR --}}
