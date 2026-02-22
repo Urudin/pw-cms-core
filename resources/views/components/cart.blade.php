@@ -9,6 +9,7 @@
 >
     <!-- FÜL – a panel része, ezért együtt mozog -->
     <button
+        id="cart-toggle-button"
         type="button"
         class="toggle-button absolute left-[-3.25rem]
                top-[calc(var(--header-h)+1.5rem)]

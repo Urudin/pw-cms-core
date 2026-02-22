@@ -195,11 +195,18 @@ function updateCartBadge() {
     if (!badge) return;
 
     const total = cart.length; // 1 db / videó → ennyi elem
+
+    const toggleButton = document.getElementById('cart-toggle-button');
+
     if (total > 0) {
         badge.textContent = total;
         badge.classList.remove('hidden');
+
+        if (toggleButton) toggleButton.classList.remove('hidden');
     } else {
         badge.classList.add('hidden');
+
+        if (toggleButton) toggleButton.classList.add('hidden');
     }
 }
 
