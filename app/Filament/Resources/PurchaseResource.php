@@ -71,9 +71,9 @@ class PurchaseResource extends Resource
                         ->default('pending'),
 //
 //                    Forms\Components\Toggle::make('terms_accepted')->label('Feltételek elfogadva')->disabled(),
-//                    Forms\Components\Toggle::make('privacy_accepted')->label('Adatkezelési tájékoztató elfogadva')->disabled(),
-//                    Forms\Components\Toggle::make('newsletter_opt_in'),
-//                    Forms\Components\Toggle::make('new_video_opt_in'),
+                    Forms\Components\Toggle::make('privacy_accepted')->label('Adatkezelési tájékoztató elfogadva')->disabled(),
+                    Forms\Components\Toggle::make('newsletter_opt_in')->label('Feliratkozás Hírlevélre')->disabled(),
+                    Forms\Components\Toggle::make('new_video_opt_in')->label('Feliratkozás Új Videókra')->disabled(),
                 ]),
 
             Forms\Components\Section::make('Megvásárolt Videók')

@@ -435,7 +435,7 @@
                     `}
                     <div class="min-w-0">
                         <div class="text-[#1f4fd6] font-black leading-snug truncate">
-                            ${item.name || ''}
+                            ${item.name || ''} - Digitális tartalom megtekintés jogosultság
                         </div>
                     </div>
                 </div>
