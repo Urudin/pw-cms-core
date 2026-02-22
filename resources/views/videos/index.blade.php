@@ -12,8 +12,7 @@
                             Válasszon video tartalmaink szerint!
                         </h1>
                         <p class="text-base text-slate-700 mt-6">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur
-                        </p>
+                            Sajátítson el speciális tudást az innovációmenedzsment területén szakértőink segítségével! Online oktatóanyagaink célja, hogy közvetlen, gyakorlatias tudást adjanak a vállalati kutatás-fejlesztés és az iparjogvédelem területén. Válogasson tematikus videóink közül, szerezzen hozzáférést bárhonnan, és fejlessze cége innovációs képességeit a saját tempójában.                        </p>
                     </header>
 
                     {{-- FILTER --}}
