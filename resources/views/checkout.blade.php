@@ -399,6 +399,20 @@
             itemsJsonEl.value = JSON.stringify(payload);
         }
 
+        function showCartToast() {
+            const el = document.getElementById('cart-toast');
+            if (!el) return;
+
+            el.classList.remove('hidden');
+            el.classList.add('flex');
+
+            clearTimeout(window.__cartToastTimer);
+            window.__cartToastTimer = setTimeout(() => {
+                el.classList.add('hidden');
+                el.classList.remove('flex');
+            }, 3000);
+        }
+
         function renderCheckoutCartSummary() {
             const itemsEl = document.getElementById('checkoutCartItems');
             const totalEl = document.getElementById('checkoutCartTotal');
@@ -427,23 +441,26 @@
                 row.className = 'px-6 py-4 flex items-center justify-between';
 
                 row.innerHTML = `
-                <div class="flex items-center gap-4 min-w-0">
-                    ${imgSrc ? `
-                        <img src="${imgSrc}" alt="" class="w-[70px] h-[44px] object-cover border border-gray-300">
-                    ` : `
-                        <div class="w-[70px] h-[44px] bg-gray-200 border border-gray-300"></div>
-                    `}
-                    <div class="min-w-0">
-                        <div class="text-[#1f4fd6] font-black leading-snug truncate">
-                            ${item.name || ''} - Digitális tartalom megtekintés jogosultság
+                    <div class="flex items-start gap-4 min-w-0">
+                        ${imgSrc ? `
+                            <img src="${imgSrc}" alt="" class="w-[170px] h-[107px] min-w-[170px] min-h-[107px] object-cover border border-gray-300">
+                        ` : `
+                            <div class="w-[170px] h-[107px] min-w-[70px] bg-gray-200 border border-gray-300"></div>
+                        `}
+                        <div class="min-w-0">
+                            <div class="text-[#1f4fd6] font-black leading-snug truncate">
+                                <a target="_blank" href="/online-tartalmak?q=${item.name || ''}">${item.name || ''}</a>
+                            </div>
+                            <div class="text-sm text-slate-600 leading-snug">
+                                Digitális tartalom megtekintés jogosultság
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="shrink-0 font-black text-slate-700">
-                    ${formatHufAfa(current)}
-                </div>
-            `;
+                    <div class="shrink-0 font-black text-slate-700">
+                        ${formatHufAfa(current)}
+                    </div>
+                `;
 
                 itemsEl.appendChild(row);
             });
@@ -473,6 +490,22 @@
                     }
                 });
             }
+            // 4) több tab support: ha másik ablak módosítja a cart-ot, frissítsük ezt a checkoutot is
+            window.addEventListener('storage', (event) => {
+                if (event.key !== 'cart') return;
+
+                // frissítjük a hidden payloadot és az UI-t is
+                syncItemsJsonHidden();
+                renderCheckoutCartSummary();
+                confirm('Figyelem! A kosár tartalma megváltozott!') // 👈 értesítés
+
+                // opcionális: ha üres lett, jelezzük azonnal
+                const payload = safeJsonParse(document.getElementById('items_json')?.value || '[]', []);
+                if (!Array.isArray(payload) || payload.length < 1) {
+                    // itt lehetne gomb tiltás is, lásd lentebb
+                    console.log('Cart is empty on checkout tab after external update.');
+                }
+            });
         });
     </script>
 @endsection

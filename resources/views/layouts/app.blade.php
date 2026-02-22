@@ -71,5 +71,11 @@
 <x-cart />
 
 @include('components.footer')
+<div id="cart-toast"
+     class="fixed bottom-6 right-6 z-50 hidden items-center gap-3 rounded-lg bg-slate-900 text-white px-4 py-3 shadow-lg">
+    <span class="text-sm font-medium">
+        A kosár tartalma megváltozott egy másik ablakban.
+    </span>
+</div>
 </body>
 </html>
