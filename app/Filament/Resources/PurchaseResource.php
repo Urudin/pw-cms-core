@@ -7,6 +7,7 @@ use App\Mail\PurchaseAccessMail;
 use App\Models\Purchase;
 use App\Models\UserSetting;
 use App\Models\Video;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
@@ -45,7 +46,8 @@ class PurchaseResource extends Resource
                     Forms\Components\TextInput::make('billing_first_name')->label('Keresztnév')->required()->maxLength(200),
                     Forms\Components\TextInput::make('billing_company_name')->label('Cég neve')->maxLength(255),
                     Forms\Components\TextInput::make('billing_vat_number')->label('Adószám')->maxLength(100),
-                    Forms\Components\TextInput::make('billing_address')->label('Telephely címe')->required()->maxLength(500)->columnSpanFull(),
+                    Forms\Components\TextInput::make('billing_city')->label('Telephely címe (Város)')->maxLength(255)->columnSpanFull(),
+                    Forms\Components\TextInput::make('billing_street_address')->label('Telephely címe (Utca/házszám)')->maxLength(255)->columnSpanFull(),
                 ]),
 
             Forms\Components\Section::make('Fizetési Adatok')
@@ -123,6 +125,51 @@ class PurchaseResource extends Resource
                         })
                         ->disabled()
                         ->columns(4),
+                ]),
+
+            Forms\Components\Section::make('Video hozzáférés')
+                ->columns(2)
+                ->schema([
+                    Forms\Components\Placeholder::make('access_sent_at')
+                        ->label('Hozzáférés kezdete')
+                        ->content(function ($record) {
+                            $start = $record?->access_sent;
+
+                            if (! $start) {
+                                return '—';
+                            }
+
+                            return Carbon::parse($start)
+                                ->format('Y-m-d H:i');
+                        })
+                        ->disabled(),
+
+                    Forms\Components\Placeholder::make('access_end_at')
+                        ->label('Hozzáférés vége')
+                        ->content(function ($record) {
+                            $start = $record?->access_sent;
+
+                            if (! $start) {
+                                return '—';
+                            }
+
+                            return Carbon::parse($start)
+                                ->addDays(180)
+                                ->format('Y-m-d H:i');
+                        }),
+
+                    Forms\Components\Placeholder::make('first_viewed')
+                        ->label('Első megnyitás')
+                        ->content(function ($record) {
+                            $firstViewed = $record?->accesses()->min('first_used_at');
+
+                            if (! $firstViewed) {
+                                return '—';
+                            }
+
+                            return Carbon::parse($firstViewed)
+                                ->format('Y-m-d H:i');
+                        }),
                 ]),
 
             Forms\Components\Section::make('Kereskedői Megjegyzés')

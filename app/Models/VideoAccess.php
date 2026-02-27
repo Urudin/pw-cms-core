@@ -23,4 +23,9 @@ class VideoAccess extends Model
         return explode('@', $this->email)[0];
 
     }
+
+    public function purchase(): BelongsTo
+    {
+        return $this->belongsTo(Purchase::class);
+    }
 }

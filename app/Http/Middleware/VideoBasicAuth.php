@@ -46,6 +46,14 @@ class VideoBasicAuth
             abort(403, 'You are not authorized to access with this link');
         }
 
+        if(empty($access->first_used_at))
+        {
+            $access->first_used_at = now();
+        }
+
+        $access->usage_count++;
+        $access->save();
+
         return $next($request);
     }
 }

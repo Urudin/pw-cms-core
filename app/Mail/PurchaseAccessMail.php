@@ -37,6 +37,7 @@ class PurchaseAccessMail extends Mailable
             $access = VideoAccess::query()->firstOrCreate([
                 'video_id' => $video->id,
                 'email' => $this->purchase->personal_email,
+                'purchase_id' => $this->purchase->id
             ], [
                 'password' => Str::random(10),
             ]);

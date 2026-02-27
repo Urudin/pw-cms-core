@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Services\BillingService;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use zoparga\SzamlazzHu\Invoice;
 
 class Purchase extends Model
@@ -78,5 +79,17 @@ class Purchase extends Model
     public function issueInvoice(Purchase $purchase): Invoice|array
     {
         return (new BillingService())->issueInvoice($purchase);
+    }
+
+    public function accesses(): HasMany
+    {
+        return $this->hasMany(VideoAccess::class, 'purchase_id', 'id');
+    }
+
+    public function getFirstViewAttribute()
+    {
+        return $this->accesses()
+            ->whereNotNull('first_used_at')
+            ->min('first_used_at');
     }
 }
