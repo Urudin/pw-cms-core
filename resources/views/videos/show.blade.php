@@ -68,8 +68,7 @@
             </div>
         @else
             <div class="p-4 bg-red-50 border border-red-200 text-red-800 rounded-lg">
-                Nem sikerült YouTube embed URL-t előállítani a megadott <code class="font-mono">{{ $video->video_url }}</code> alapján.
-            </div>
+                Nem sikerült embed URL-t előállítani a megadott <code class="font-mono">{{ $video->video_url }}</code> alapján.            </div>
         @endif
         </div>
     </div>
