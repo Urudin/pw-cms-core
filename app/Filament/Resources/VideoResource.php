@@ -159,7 +159,17 @@ class VideoResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query) =>
+                $query->withSum('accesses as total_sales_count', 'id')
+            )
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('Cikkszám')
+                    ->searchable()
+                    ->sortable()
+                    ->wrap(),
+
+
                 Tables\Columns\TextColumn::make('title')
                     ->label('Cím')
                     ->searchable()
@@ -175,9 +185,14 @@ class VideoResource extends Resource
                     ->label('Aktív')
                     ->boolean()
                     ->sortable(),
+//                Tables\Columns\TextColumn::make('thumbnail_url')->label('Thumbnail URL')->columnSpanFull(),
 
-                Tables\Columns\TextColumn::make('thumbnail_url')->label('Thumbnail URL')->columnSpanFull(),
-
+                Tables\Columns\TextColumn::make('url')
+                    ->label('URL')
+                    ->getStateUsing(fn ($record) => route('video.show', $record))
+                    ->url(fn ($record) => route('video.show', $record))
+                    ->openUrlInNewTab()
+                    ->copyable(),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Létrehozva')
@@ -187,6 +202,17 @@ class VideoResource extends Resource
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('is_active')->label('Aktív'),
+                Tables\Filters\SelectFilter::make('video_type_id')
+                    ->label('Típus')
+                    ->relationship('type', 'name')
+                    ->searchable()
+                    ->preload(),
+
+                Tables\Filters\SelectFilter::make('video_domain_id')
+                    ->label('Szakterület')
+                    ->relationship('domain', 'name')
+                    ->searchable()
+                    ->preload(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

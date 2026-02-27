@@ -9,6 +9,8 @@ use zoparga\SzamlazzHu\Invoice;
 
 class Purchase extends Model
 {
+    const START_ORDER_NUMBER = 1000;
+
     protected $fillable = [
         // personal
         'personal_last_name',
@@ -50,6 +52,7 @@ class Purchase extends Model
         'billing_city',
         'billing_street_address',
         'access_sent',
+        'order_id'
     ];
 
     protected $casts = [
@@ -66,11 +69,21 @@ class Purchase extends Model
         'total' => 'decimal:2',
     ];
 
+    protected static function booted(): void
+    {
+        static::created(function (self $order) {
+            if (!$order->order_number) {
+                $order->order_number = $order->id + self::START_ORDER_NUMBER;
+                $order->saveQuietly();
+            }
+        });
+    }
+
     public function getTotal()
     {
         $total = 0;
         $videos = Video::query()->whereIn('id', array_column($this->items, 'id'))->get();
-        foreach($videos as $video) {
+        foreach ($videos as $video) {
             $total += $video->price_huf;
         }
         return $total;

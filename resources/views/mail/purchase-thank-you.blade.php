@@ -69,20 +69,20 @@
                                         <tr>
                                             <td style="padding: 18px; text-align:center; vertical-align: middle;">
                                                 <div style="font-family: Arial, Helvetica, sans-serif; font-size: 13px; font-weight: 900; color:#334155;">
-                                                    Megrendelt digitális tartalom/Video ({{ $videos->count() }} db):
+                                                    Megrendelt szolgáltatás:
                                                 </div>
                                                 <div style="height: 8px;"></div>
-
-                                                @forelse($videos as $video)
-                                                    <div style="font-family: Arial, Helvetica, sans-serif; font-size: 13px; line-height: 1.4; color:#334155;">
-                                                        {{ $video->title }}
-                                                    </div>
-                                                    <div style="height: 4px;"></div>
-                                                @empty
-                                                    <div style="font-family: Arial, Helvetica, sans-serif; font-size: 13px; color:#334155;">
-                                                        (nincs találat)
-                                                    </div>
-                                                @endforelse
+                                                    Video tartalom elérés - {{$videos->count()}}db
+{{--                                                @forelse($videos as $video)--}}
+{{--                                                    <div style="font-family: Arial, Helvetica, sans-serif; font-size: 13px; line-height: 1.4; color:#334155;">--}}
+{{--                                                        {{ $video->title }}--}}
+{{--                                                    </div>--}}
+{{--                                                    <div style="height: 4px;"></div>--}}
+{{--                                                @empty--}}
+{{--                                                    <div style="font-family: Arial, Helvetica, sans-serif; font-size: 13px; color:#334155;">--}}
+{{--                                                        (nincs találat)--}}
+{{--                                                    </div>--}}
+{{--                                                @endforelse--}}
                                             </td>
                                         </tr>
                                     </table>
@@ -103,12 +103,12 @@
                                                 </div>
                                                 <div style="height: 6px;"></div>
                                                 <div style="font-family: Arial, Helvetica, sans-serif; font-size: 13px; color:#334155;">
-                                                    {{ number_format((float)$totalGross, 0, ',', ' ') }} Ft
+                                                    {{ number_format((float)$totalNet, 0, ',', ' ') }} Ft +áfa
                                                 </div>
                                                 <div style="height: 4px;"></div>
-                                                <div style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; color:#64748b;">
-                                                    (bruttó, {{ (int)round($vatRate * 100) }}% ÁFA-val)
-                                                </div>
+{{--                                                <div style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; color:#64748b;">--}}
+{{--                                                    (bruttó , {{ (int)round($vatRate * 100) }}% ÁFA-val)--}}
+{{--                                                </div>--}}
                                             </td>
                                         </tr>
                                     </table>

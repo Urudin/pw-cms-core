@@ -13,7 +13,7 @@
          * - $bankAccount: pl. "10200823-22223649-00000000"
          */
         $purchase = Purchase::query()->find(request()->input('purchaseId'));
-        $orderId = $orderId ?? ($purchase->id ?? '#Error');
+        $orderId = $orderId ?? ($purchase->order_number ?? '#Error');
         $videos = \App\Models\Video::query()->whereIn('id', array_column($purchase->items, 'id'))->get();
         $videoTitle = $videoTitle ?? ($purchase->items[0]->name ?? 'Megrendelt videó címe');
         $total = $total ?? ($purchase->total_formatted ?? '6.900 Ft+áfa');
@@ -67,12 +67,13 @@
                                   d="M15.75 10.5 19.5 8.25v7.5l-3.75-2.25m-1.5 3.75H6.75A2.25 2.25 0 0 1 4.5 15V9A2.25 2.25 0 0 1 6.75 6.75h7.5A2.25 2.25 0 0 1 16.5 9v6a2.25 2.25 0 0 1-2.25 2.25Z"/>
                         </svg>
                     </div>
-                    <div class="text-sm font-black text-slate-700">Megrendelt digitális tartalom/Video {{$videos->count()}} db:</div>
-                    @foreach($videos as $video)
+                    <div class="text-sm font-black text-slate-700">Megrendelt szolgáltatás:</div>
+{{--                    @foreach($videos as $video)--}}
                     <div class="mt-1 text-slate-700 text-sm leading-snug">
-                        {{ $video->title }}
+                        Video tartalom elérés - {{$videos->count()}} db
+{{--                        {{ $video->title }}--}}
                     </div>
-                    @endforeach
+{{--                    @endforeach--}}
                 </div>
 
                 {{-- BOX 3 --}}
@@ -86,7 +87,7 @@
                         </svg>
                     </div>
                     <div class="text-sm font-black text-slate-700">A szolgáltatás költsége:</div>
-                    <div class="mt-1 text-slate-700 text-sm">{{ round($purchase->getTotal() * 1.27) }} Ft</div>
+                    <div class="mt-1 text-slate-700 text-sm">{{ round($purchase->getTotal()) }} Ft +áfa</div>
                 </div>
 
                 {{-- BOX 4 --}}

@@ -9,11 +9,13 @@ use App\Models\UserSetting;
 use App\Models\Video;
 use Carbon\Carbon;
 use Filament\Forms;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Mail;
 
 class PurchaseResource extends Resource
@@ -186,6 +188,7 @@ class PurchaseResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('order_number')->label('Rendelésszám')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('personal_email')
                     ->label('Megrendelő')
                     ->searchable(),
@@ -266,6 +269,20 @@ class PurchaseResource extends Resource
                         'forward_payment' => 'Banki átutalás',
                         'card' => 'Kártyás fizetés',
                     ]),
+                Tables\Filters\Filter::make('order_number')
+                    ->label('Rendelésszám')
+                    ->form([
+                        TextInput::make('value')
+                            ->label('Rendelésszám')
+                            ->numeric(),
+                    ])
+                    ->query(function (Builder $query, array $data) {
+                        if (! filled($data['value'])) {
+                            return $query;
+                        }
+
+                        return $query->where('order_number', $data['value']);
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

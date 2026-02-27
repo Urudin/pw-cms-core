@@ -49,13 +49,14 @@ class PurchaseThankYouMail extends Mailable
         };
 
         // Subjectben az azonosító jól jön
-        return $this->subject('Köszönjük megrendelését! #' . $this->purchase->id)
+        return $this->subject('Köszönjük megrendelését! #' . $this->purchase->order_number)
             ->view('mail.purchase-thank-you', [
                 'purchase' => $this->purchase,
                 'videos' => $videos,
-                'orderId' => $this->purchase->id,
+                'orderId' => $this->purchase->order_number,
                 'paymentMethodLabel' => $paymentMethodLabel,
                 'totalGross' => $totalGross,
+                'totalNet' => $totalNet,
                 'vatRate' => $this->vatRate,
                 'bankName' => $this->bankName,
                 'bankAccount' => $this->bankAccount,

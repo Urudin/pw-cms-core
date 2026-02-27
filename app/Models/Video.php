@@ -28,4 +28,9 @@ class Video extends Model
     public function topic()  { return $this->belongsTo(VideoTopic::class, 'video_topic_id'); }
     public function domain() { return $this->belongsTo(VideoDomain::class, 'video_domain_id'); }
     public function accesses()  { return $this->hasMany(VideoAccess::class, 'video_id'); }
+
+    public function getTotalUsageCountAttribute(): int
+    {
+        return (int) $this->accesses()->sum('usage_count');
+    }
 }
