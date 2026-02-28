@@ -181,17 +181,23 @@ class VideoResource extends Resource
                     ->sortable()
                     ->formatStateUsing(fn ($state) => number_format((int) $state, 0, ',', ' ') . ' Ft'),
 
+                Tables\Columns\TextColumn::make('total_sales_count')
+                    ->label('Összes eladás')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->columnSpanFull(),
+
                 Tables\Columns\IconColumn::make('is_active')
                     ->label('Aktív')
                     ->boolean()
                     ->sortable(),
-//                Tables\Columns\TextColumn::make('thumbnail_url')->label('Thumbnail URL')->columnSpanFull(),
+
 
                 Tables\Columns\TextColumn::make('url')
                     ->label('URL')
                     ->getStateUsing(fn ($record) => route('video.show', $record))
                     ->url(fn ($record) => route('video.show', $record))
                     ->openUrlInNewTab()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->copyable(),
 
                 Tables\Columns\TextColumn::make('created_at')
