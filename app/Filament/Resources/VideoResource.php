@@ -182,7 +182,7 @@ class VideoResource extends Resource
                     ->formatStateUsing(fn ($state) => number_format((int) $state, 0, ',', ' ') . ' Ft'),
 
                 Tables\Columns\TextColumn::make('total_sales_count')
-                    ->label('Összes eladás')
+                    ->label('Megvásárolva')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->columnSpanFull(),
 
