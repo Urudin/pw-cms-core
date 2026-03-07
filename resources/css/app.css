@@ -132,3 +132,18 @@
 .rotate-y-0 {
     transform: rotateY(0deg);
 }
+
+.how-list li {
+    display: flex;
+    align-items: flex-start;
+}
+
+.how-list li::before {
+    content: "";
+    width: 0;
+    height: 0;
+    border-bottom: 12px #00d4fb solid;
+    border-right: 12px solid transparent;
+    margin: 5px 10px 0 0;
+    flex: 0 0 auto;
+}

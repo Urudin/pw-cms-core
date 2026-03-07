@@ -33,154 +33,115 @@
                                     témakörben
                                 </h3>
 
-                                <div class="space-y-0">
-                                    @foreach($category->courses as $course)
-                                        @php
-                                            $activeDates = ($course->actualCourses ?? collect())
-                                                ->sortBy('start_date')
-                                                ->pluck('start_date')
-                                                ->map(fn($d) => \Carbon\Carbon::parse($d)->format('Y.m.d.'))
-                                                ->unique()
-                                                ->values();
+                                    <div x-data="{ open: null }" class="space-y-0">
+                                        @foreach($category->courses as $course)
+                                            @php
+                                                $activeDates = ($course->actualCourses ?? collect())
+                                                    ->sortBy('start_date')
+                                                    ->pluck('start_date')
+                                                    ->map(fn($d) => \Carbon\Carbon::parse($d)->format('Y.m.d.'))
+                                                    ->unique()
+                                                    ->values();
 
-                                            $firstStart = optional(($course->actualCourses ?? collect())->sortBy('start_date')->first())->start_date;
-                                            $firstStartText = $firstStart ? \Carbon\Carbon::parse($firstStart)->format('Y.m.d.') : null;
-                                        @endphp
+                                                $firstStart = optional(($course->actualCourses ?? collect())->sortBy('start_date')->first())->start_date;
+                                                $firstStartText = $firstStart ? \Carbon\Carbon::parse($firstStart)->format('Y.m.d.') : null;
+                                            @endphp
 
-                                        {{-- COURSE CARD --}}
-                                        <div
-                                            x-data="{ open: false }"
-                                            id="course-{{ $course->id }}"
-                                            class="bg-slate-700 text-white border border-white shadow-sm transition hover:shadow-md"
-                                            :class="open ? 'ring-1 ring-[#39a7cc]/60' : ''"
-                                        >
-                                            <div class="border-r-4 border-[#39a7cc]">
+                                            {{-- COURSE CARD --}}
+                                            <div
+                                                id="course-{{ $course->id }}"
+                                                class="bg-slate-700 text-white border border-white shadow-sm transition hover:shadow-md"
+                                                :class="open === {{ $course->id }} ? 'ring-1 ring-[#39a7cc]/60' : ''"
+                                            >
+                                                <div class="flex items-stretch border-r-4 border-[#39a7cc]">
+                                                    {{-- ACCORDION TOGGLE --}}
+                                                    <button
+                                                        type="button"
+                                                        @click="open = open === {{ $course->id }} ? null : {{ $course->id }}"
+                                                        class="flex-1 flex items-stretch text-left min-w-0"
+                                                    >
+                                                        {{-- BAL KÉK SÁV A NYÍLLAL --}}
+                                                        <div class="w-[82px] bg-[#39a7cc] flex items-center justify-center shrink-0">
+                                                            <svg
+                                                                class="w-5 h-5 text-white transition-transform duration-700 ease-in-out"
+                                                                :class="open === {{ $course->id }} ? 'rotate-90' : ''"
+                                                                viewBox="0 0 20 20"
+                                                                fill="currentColor"
+                                                            >
+                                                                <path
+                                                                    fill-rule="evenodd"
+                                                                    d="M7.293 14.707a1 1 0 0 1 0-1.414L10.586 10 7.293 6.707a1 1 0 1 1 1.414-1.414l4 4a1 1 0 0 1 0 1.414l-4 4a1 1 0 0 1-1.414 0Z"
+                                                                    clip-rule="evenodd"
+                                                                />
+                                                            </svg>
+                                                        </div>
 
-                                                {{-- HEADER --}}
-                                                <button
-                                                    type="button"
-                                                    @click="open = !open"
-                                                    class="w-full flex items-stretch text-left"
-                                                >
-                                                    {{-- BAL KÉK SÁV A NYÍLLAL --}}
-                                                    <div class="w-[82px] bg-[#39a7cc] flex items-center justify-center shrink-0">
-                                                        <svg class="w-5 h-5 text-white transition-transform duration-200"
-                                                             :class="open ? 'rotate-90' : ''"
-                                                             viewBox="0 0 20 20" fill="currentColor">
-                                                            <path fill-rule="evenodd"
-                                                                  d="M7.293 14.707a1 1 0 0 1 0-1.414L10.586 10 7.293 6.707a1 1 0 1 1 1.414-1.414l4 4a1 1 0 0 1 0 1.414l-4 4a1 1 0 0 1-1.414 0Z"
-                                                                  clip-rule="evenodd" />
-                                                        </svg>
-                                                    </div>
-
-                                                    {{-- TARTALOM --}}
-                                                    <div class="flex-1 flex items-start gap-4 px-5 py-4">
-                                                        <div class="flex-1 min-w-0">
-                                                            <div class="font-black text-lg leading-snug">
-                                                                {{ $loop->iteration }}. {{ $course->name }}
+                                                        {{-- TARTALOM --}}
+                                                        <div class="flex-1 flex items-start gap-4 px-5 py-4 min-w-0">
+                                                            <div class="flex-1 min-w-0">
+                                                                <div class="font-black text-2xl leading-snug text-white">
+                                                                    {{ $loop->iteration }}. {{ $course->name }}
+                                                                </div>
+                                                                <div class="mt-2 text-sm text-white/70">
+                                                                    Kattintson a lenyitáshoz
+                                                                </div>
                                                             </div>
 
-                                                            @if($course->description)
-                                                                <div class="mt-1 text-sm text-white/70 line-clamp-2">
-                                                                    {!! html_entity_decode(strip_tags($course->description)) !!}
-                                                                </div>
-                                                            @endif
-                                                        </div>
-
-                                                        <div class="shrink-0 text-right">
-                                                            @if($firstStartText)
-                                                                <div class="text-xs font-semibold text-white/60">Aktuális időpontok</div>
-                                                                <div class="text-sm font-extrabold text-white">{{ $firstStartText }}</div>
-                                                            @else
-                                                                <div class="text-sm font-semibold text-white/60">Nincs meghirdetett időpont</div>
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                </button>
-
-                                                {{-- EXPANDED CONTENT --}}
-                                                <div x-cloak x-show="open" x-transition class="px-5 pb-6">
-                                                    <div class="pt-4 border-t border-white/10 space-y-6">
-
-                                                        {{-- DESCRIPTION --}}
-                                                        <div class="space-y-2">
-                                                            <div class="font-extrabold text-[#39a7cc]">Rövid leírás</div>
-                                                            <div class="text-white/80 leading-relaxed text-sm sm:text-base">
-                                                                @if($course->description)
-                                                                    {!! html_entity_decode($course->description) !!}
+                                                            <div class="shrink-0 text-right">
+                                                                @if($firstStartText)
+                                                                    <div class="text-xs font-semibold text-white/60">Aktuális időpontok</div>
+                                                                    <div class="text-sm font-extrabold text-white">{{ $firstStartText }}</div>
                                                                 @else
-                                                                    <span class="text-white/50">Ehhez a tanfolyamhoz még nincs feltöltve leírás.</span>
+                                                                    <div class="text-sm font-semibold text-white/60">Nincs meghirdetett időpont</div>
                                                                 @endif
                                                             </div>
                                                         </div>
+                                                    </button>
 
-                                                        {{-- INFO BOXES --}}
+                                                    {{-- SEPARATE PAGE LINK --}}
+                                                    @if($course->page?->slug)
+                                                        <div class="shrink-0 flex items-center px-4 border-l border-white/10">
+                                                            <a
+                                                                href="{{ route('pages.show', ['slug' => $course->page->slug]) }}"
+                                                                @click.stop
+                                                                class="inline-flex items-center gap-2 rounded-md border border-white/20 px-3 py-2 text-sm font-semibold text-white hover:bg-white/10 hover:text-white transition"
+                                                            >
+                                                                Részletek
+                                                                <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                                                                    <path fill-rule="evenodd" d="M11.22 5.22a.75.75 0 0 1 1.06 0l4 4a.75.75 0 0 1 0 1.06l-4 4a.75.75 0 1 1-1.06-1.06l2.72-2.72H4.75a.75.75 0 0 1 0-1.5h9.19l-2.72-2.72a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                                                                </svg>
+                                                            </a>
+                                                        </div>
+                                                    @endif
+                                                </div>
+
+                                                {{-- EXPANDED CONTENT --}}
+                                                <div
+                                                    x-cloak
+                                                    x-show="open === {{ $course->id }}"
+                                                    x-transition:enter="transition-all ease-in-out duration-700"
+                                                    x-transition:enter-start="opacity-0 max-h-0"
+                                                    x-transition:enter-end="opacity-100 max-h-[2000px]"
+                                                    x-transition:leave="transition-all ease-in-out duration-700"
+                                                    x-transition:leave-start="opacity-100 max-h-[2000px]"
+                                                    x-transition:leave-end="opacity-0 max-h-0"
+                                                    class="bg-slate-200 px-5 overflow-hidden"
+                                                >
+                                                    <div class="pt-4 pb-6 border-t border-white/10 space-y-6">
                                                         <div class="space-y-2">
-                                                            <div class="font-extrabold text-[#39a7cc]">További információk</div>
-
-                                                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm sm:text-base">
-                                                                <div class="bg-slate-800/60 border border-slate-700 p-3">
-                                                                    <div class="text-white/60 font-semibold">Képzés díja</div>
-                                                                    <div class="font-extrabold text-white">
-                                                                        {{ number_format($course->price, 0, ',', ' ') }} Ft / fő
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="bg-slate-800/60 border border-slate-700 p-3">
-                                                                    <div class="text-white/60 font-semibold">Felnőttképzés rendszerében</div>
-                                                                    <div class="font-extrabold text-white">Igen</div>
-                                                                </div>
-
-                                                                <div class="bg-slate-800/60 border border-slate-700 p-3 sm:col-span-2">
-                                                                    <div class="text-white/60 font-semibold">Aktuális tanfolyam időpontok</div>
-                                                                    <div class="font-extrabold text-white">
-                                                                        @if($activeDates->count())
-                                                                            {{ $activeDates->implode(', ') }}
-                                                                        @else
-                                                                            <span class="text-white/50 font-semibold">Nincs meghirdetett időpont</span>
-                                                                        @endif
-                                                                    </div>
-                                                                </div>
+                                                            <div class="text-slate-900 leading-relaxed text-sm sm:text-base">
+                                                                @if($course->description)
+                                                                    {!! html_entity_decode($course->description) !!}
+                                                                @else
+                                                                    <span class="text-slate-500">Ehhez a tanfolyamhoz még nincs feltöltve leírás.</span>
+                                                                @endif
                                                             </div>
                                                         </div>
-
-                                                        {{-- ACTION BUTTONS (RESTORED ORIGINAL STRUCTURE) --}}
-                                                        <div class="flex flex-wrap gap-3 pt-1">
-                                                            <a
-                                                                class="inline-flex items-center justify-between bg-[#143c5a] hover:bg-[#39a7cc] text-white"
-                                                                href="{{ route('course-applications.create', ['tanfolyam' => $course->id]) }}#tanfolyamvalaszto"
-                                                            >
-                                                                <span class="pr-[24px] pl-[16px] font-medium">Jelentkezem</span>
-                                                                <span class="pl-[16px] pr-[16px] border border-[#39a7cc] bg-[#39a7cc] pt-[12px] pb-[12px]">▸</span>
-                                                            </a>
-
-                                                            <a
-                                                                class="inline-flex items-center justify-between bg-slate-900 hover:bg-slate-800 text-white border border-white/20"
-                                                                href="#tovabbi-info"
-                                                            >
-                                                                <span class="pr-[24px] pl-[16px] font-medium">További információt kérek</span>
-                                                                <span class="pl-[16px] pr-[16px] pt-[12px] pb-[12px] border-l border-white/20">▸</span>
-                                                            </a>
-
-                                                            @if(!empty($course->pdf_url))
-                                                                <a
-                                                                    class="inline-flex items-center justify-between bg-slate-900 hover:bg-slate-800 text-white border border-white/20"
-                                                                    href="{{ $course->pdf_url }}"
-                                                                    target="_blank"
-                                                                    rel="noopener"
-                                                                >
-                                                                    <span class="pr-[24px] pl-[16px] font-medium">Tanfolyam információk letöltése</span>
-                                                                    <span class="pl-[16px] pr-[16px] pt-[12px] pb-[12px] border-l border-white/20">▸</span>
-                                                                </a>
-                                                            @endif
-                                                        </div>
-
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    @endforeach
-                                </div>
+                                        @endforeach
+                                    </div>
                             </section>
                         @endforeach
                     </div>

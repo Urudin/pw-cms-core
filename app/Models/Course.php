@@ -19,4 +19,9 @@ class Course extends Model
     {
         return $this->belongsTo(CourseCategory::class);
     }
+
+    public function page(): BelongsTo
+    {
+        return $this->belongsTo(Page::class);
+    }
 }

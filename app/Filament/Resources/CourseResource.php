@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Filament\Resources\CourseResource\Pages;
 use App\Models\Course;
 use Filament\Forms;
@@ -50,27 +51,20 @@ class CourseResource extends Resource
                         ->minValue(0)
                         ->required()
                         ->suffix('Ft'),
-                ]),
 
-            Forms\Components\Section::make('Leírás')
-                ->schema([
-                    Forms\Components\RichEditor::make('description')
-                        ->label('HTML leírás')
+                    Forms\Components\Select::make('page_id')
+                        ->label('Leíró Oldal')
+                        ->relationship('page', 'title')
+                        ->searchable()
+                        ->preload()
+                        ->nullable(),
+
+                    MonacoEditor::make('description')
+                        ->label('Leírás')
+                        ->language('html')
+                        ->required()
                         ->columnSpanFull()
-                        ->toolbarButtons([
-                            'bold',
-                            'italic',
-                            'underline',
-                            'strike',
-                            'link',
-                            'blockquote',
-                            'orderedList',
-                            'bulletList',
-                            'h2',
-                            'h3',
-                            'redo',
-                            'undo',
-                        ]),
+                        ->previewHeadEndContent("<script src='https://cdn.tailwindcss.com'></script><script defer src='https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js'></script>"),
                 ]),
         ]);
     }
@@ -97,7 +91,7 @@ class CourseResource extends Resource
                 Tables\Columns\TextColumn::make('price')
                     ->label('Ár')
                     ->sortable()
-                    ->formatStateUsing(fn ($state) => number_format((int) $state, 0, ',', ' ') . ' Ft'),
+                    ->formatStateUsing(fn($state) => number_format((int)$state, 0, ',', ' ') . ' Ft'),
 
                 Tables\Columns\TextColumn::make('actual_courses_count')
                     ->label('Turnusok')
