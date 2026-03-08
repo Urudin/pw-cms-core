@@ -22,7 +22,7 @@
                     {{-- CATEGORIES --}}
                     <div class="space-y-14">
                         @foreach($categories as $category)
-                            @if($category->courses()->count() == 0)
+                            @if($category->courses()->where('listed', 1)->where('is_active', 1)->count() == 0)
                                 @continue
                             @endif
                             <section class="space-y-6">
@@ -34,7 +34,7 @@
                                 </h3>
 
                                     <div x-data="{ open: null }" class="space-y-0">
-                                        @foreach($category->courses as $course)
+                                        @foreach($category->courses()->where('listed', 1)->where('is_active', 1)->get() as $course)
                                             @php
                                                 $activeDates = ($course->actualCourses ?? collect())
                                                     ->sortBy('start_date')
