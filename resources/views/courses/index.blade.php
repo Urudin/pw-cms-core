@@ -3,7 +3,11 @@
 @section('content')
     <div class="pageContainer bg-white">
         <div class="lg:flex lg:gap-8">
-
+            <style>
+                .course-desc h2{
+                    color: #22d3ee !important;
+                }
+            </style>
             <div class="lg:flex-1 min-w-0">
                 <section class="px-4 sm:px-6 lg:px-8 py-10 space-y-10">
 
@@ -129,7 +133,7 @@
                                                 >
                                                     <div class="pt-4 pb-6 border-t border-white/10 space-y-6">
                                                         <div class="space-y-2">
-                                                            <div class="text-slate-900 leading-relaxed text-sm sm:text-base">
+                                                            <div class="text-slate-900 leading-relaxed text-sm sm:text-base course-desc">
                                                                 @if($course->description)
                                                                     {!! html_entity_decode($course->description) !!}
                                                                 @else
@@ -146,14 +150,14 @@
                         @endforeach
                     </div>
                     <section class="">
-                        <h1 class="text-3xl sm:text-4xl mb-4 font-extrabold tracking-tight text-slate-900">
+                        <h1 id="tovabbi-info" class="text-3xl sm:text-4xl mb-4 font-extrabold tracking-tight text-slate-900">
                             További információra van szüksége?
                         </h1>
                         <p class="text-base sm:text-lg font-semibold leading-relaxed text-slate-700">
                             Amennyiben az Innovációmenedzsment Akadémia oktatási programjaival, a tanfolyamokkal, az időponttal, a tananyaggal, a megrendezés módjával, a jelentkezéssel, a fizetési lehetőségekkel, vagy egyéb vonatkozó kérdésekben további információkra van szüksége, kérjük az alábbi kapcsolati űrlapon jelezze felénk és kollégáink a következő munkanapon jelentkeznek a kért információkkal megadott elérhetőségein.                        </p>
                     </section>
                     {{-- CONTACT FORM (UNCHANGED - FULL ORIGINAL) --}}
-                    <div id="tovabbi-info" class="bg-white border border-gray-200 p-4 md:p-6 space-y-4">
+                    <div class="bg-white border border-gray-200 p-4 md:p-6 space-y-4">
                         <h2 class="text-2xl text-[#143c5a] font-semibold">További információt kérek</h2>
 
                         <form class="space-y-6" action="#" method="POST">
