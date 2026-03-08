@@ -39,6 +39,10 @@ class CourseResource extends Resource
                         ->label('Aktív')
                         ->default(true),
 
+                    Forms\Components\Toggle::make('listed')
+                        ->label('Listázott')
+                        ->default(true),
+
                     Forms\Components\TextInput::make('name')
                         ->label('Kurzus neve')
                         ->required()

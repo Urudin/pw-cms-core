@@ -30,7 +30,7 @@ class CourseApplicationController extends Controller
     public function index()
     {
         $actualCourses = ActualCourse::query()
-            ->whereHas('course', fn ($q) => $q->where('is_active', true))
+            ->whereHas('course', fn ($q) => $q->where('is_active', true)->where('listed', true))
             ->orderBy('start_date')
             ->with(['course.courseCategory', 'days'])
             ->get();
