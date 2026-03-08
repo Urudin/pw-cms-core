@@ -92,6 +92,11 @@ class CourseResource extends Resource
                     ->boolean()
                     ->sortable(),
 
+                Tables\Columns\IconColumn::make('listed')
+                    ->label('Listázott')
+                    ->boolean()
+                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('price')
                     ->label('Ár')
                     ->sortable()
