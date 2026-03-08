@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('actual_courses', function (Blueprint $table) {
+        Schema::table('courses', function (Blueprint $table) {
             $table->boolean('listed')->default(true);
         });
     }
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('actual_courses', function (Blueprint $table) {
-            //
+            $table->dropColumn('listed');
         });
     }
 };
