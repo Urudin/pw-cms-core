@@ -83,7 +83,7 @@
                                                         {{-- TARTALOM --}}
                                                         <div class="flex-1 flex items-start gap-4 px-5 py-4 min-w-0">
                                                             <div class="flex-1 min-w-0">
-                                                                <div class="font-black text-2xl leading-snug text-white">
+                                                                <div class="font-black text-xl leading-snug text-white">
                                                                     {{ $loop->iteration }}. {{ $course->name }}
                                                                 </div>
                                                                 <div class="mt-2 text-sm text-white/70">
