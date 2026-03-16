@@ -40,31 +40,39 @@
                                     <div x-data="{ open: null }" class="space-y-0">
                                         @foreach($category->courses()->where('listed', 1)->where('is_active', 1)->get() as $course)
                                             @php
-                                                $activeDates = ($course->actualCourses ?? collect())
-                                                    ->sortBy('start_date')
-                                                    ->pluck('start_date')
-                                                    ->map(fn($d) => \Carbon\Carbon::parse($d)->format('Y.m.d.'))
-                                                    ->unique()
-                                                    ->values();
+                                                $today = now()->startOfDay();
 
-                                                $firstStart = optional(($course->actualCourses ?? collect())->sortBy('start_date')->first())->start_date;
-                                                $firstStartText = $firstStart ? \Carbon\Carbon::parse($firstStart)->format('Y.m.d.') : null;
+                                                $nearestActualCourse = ($course->actualCourses ?? collect())
+                                                    ->filter(function ($actualCourse) use ($today) {
+                                                        return filled($actualCourse->start_date)
+                                                            && \Carbon\Carbon::parse($actualCourse->start_date)->greaterThanOrEqualTo($today);
+                                                    })
+                                                    ->sortBy('start_date')
+                                                    ->first();
+
+                                                $nextStartText = $nearestActualCourse?->start_date
+                                                    ? \Carbon\Carbon::parse($nearestActualCourse->start_date)->format('Y.m.d.')
+                                                    : 'hamarosan';
+
+                                                $courseTitle = $course->title ?: $course->name;
                                             @endphp
 
-                                            {{-- COURSE CARD --}}
                                             <div
                                                 id="course-{{ $course->id }}"
                                                 class="bg-slate-700 text-white border border-white shadow-sm transition hover:shadow-md"
                                                 :class="open === {{ $course->id }} ? 'ring-1 ring-[#39a7cc]/60' : ''"
                                             >
-                                                <div class="flex items-stretch border-r-4 border-[#39a7cc]">
-                                                    {{-- ACCORDION TOGGLE --}}
-                                                    <button
-                                                        type="button"
+                                                <div class="flex items-stretch border-r-4 border-[#39a7cc] min-w-0">
+                                                    {{-- ACCORDION TOGGLE AREA --}}
+                                                    <div
+                                                        class="flex-1 flex items-stretch min-w-0 cursor-pointer"
                                                         @click="open = open === {{ $course->id }} ? null : {{ $course->id }}"
-                                                        class="flex-1 flex items-stretch text-left min-w-0"
+                                                        role="button"
+                                                        tabindex="0"
+                                                        @keydown.enter.prevent="open = open === {{ $course->id }} ? null : {{ $course->id }}"
+                                                        @keydown.space.prevent="open = open === {{ $course->id }} ? null : {{ $course->id }}"
                                                     >
-                                                        {{-- BAL KÉK SÁV A NYÍLLAL --}}
+                                                        {{-- BAL KÉK SÁV --}}
                                                         <div class="w-[82px] bg-[#39a7cc] flex items-center justify-center shrink-0">
                                                             <svg
                                                                 class="w-5 h-5 text-white transition-transform duration-700 ease-in-out"
@@ -83,40 +91,63 @@
                                                         {{-- TARTALOM --}}
                                                         <div class="flex-1 flex items-start gap-4 px-5 py-4 min-w-0">
                                                             <div class="flex-1 min-w-0">
-                                                                <div class="font-black text-xl leading-snug text-white">
-                                                                    {{ $loop->iteration }}. {{ $course->name }}
-                                                                </div>
-                                                                <div class="mt-2 text-sm text-white/70">
-                                                                    Kattintson a lenyitáshoz
-                                                                </div>
-                                                            </div>
+                                                                {{-- TANFOLYAM NÉV --}}
+                                                                @if($course->page?->slug)
+                                                                    <a
+                                                                        href="{{ route('pages.show', ['slug' => $course->page->slug]) }}"
+                                                                        title="{{ $courseTitle }}"
+                                                                        @click.stop
+                                                                        class="group inline-flex max-w-full items-center gap-2 text-xl font-black leading-snug text-white transition hover:text-[#d4af37]"
+                                                                    >
+                                <span class="truncate">
+                                    {{ $loop->iteration }}. {{ $course->name }}
+                                </span>
 
-                                                            <div class="shrink-0 text-right">
-                                                                @if($firstStartText)
-                                                                    <div class="text-xs font-semibold text-white/60">Aktuális időpontok</div>
-                                                                    <div class="text-sm font-extrabold text-white">{{ $firstStartText }}</div>
+                                                                        <svg
+                                                                            class="w-5 h-5 shrink-0 text-[#d4af37] opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0"
+                                                                            viewBox="0 0 20 20"
+                                                                            fill="currentColor"
+                                                                            aria-hidden="true"
+                                                                        >
+                                                                            <path
+                                                                                fill-rule="evenodd"
+                                                                                d="M11.22 5.22a.75.75 0 0 1 1.06 0l4 4a.75.75 0 0 1 0 1.06l-4 4a.75.75 0 1 1-1.06-1.06l2.72-2.72H4.75a.75.75 0 0 1 0-1.5h9.19l-2.72-2.72a.75.75 0 0 1 0-1.06Z"
+                                                                                clip-rule="evenodd"
+                                                                            />
+                                                                        </svg>
+                                                                    </a>
                                                                 @else
-                                                                    <div class="text-sm font-semibold text-white/60">Nincs meghirdetett időpont</div>
+                                                                    <div
+                                                                        title="{{ $courseTitle }}"
+                                                                        class="inline-flex max-w-full items-center gap-2 text-xl font-black leading-snug text-white"
+                                                                    >
+                                <span class="truncate">
+                                    {{ $loop->iteration }}. {{ $course->name }}
+                                </span>
+                                                                    </div>
                                                                 @endif
+
+                                                                {{-- ACCORDION TOGGLE SZÖVEG --}}
+                                                                <div class="mt-2 text-sm text-white/70">
+                                                                    <button
+                                                                        type="button"
+                                                                        @click.stop="open = open === {{ $course->id }} ? null : {{ $course->id }}"
+                                                                        class="inline-flex items-center gap-1 text-white/70 transition hover:text-white focus:outline-none"
+                                                                    >
+                                                                        Kattintson a részletekért
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+
+                                                            {{-- AKTUÁLIS IDŐPONT --}}
+                                                            <div class="shrink-0 text-right self-center">
+                                                                <div class="text-sm font-semibold text-white/75">
+                                                                    Aktuális tanfolyam időpont:
+                                                                    <span class="font-extrabold text-white">{{ $nextStartText }}</span>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </button>
-
-                                                    {{-- SEPARATE PAGE LINK --}}
-                                                    @if($course->page?->slug)
-                                                        <div class="shrink-0 flex items-center px-4 border-l border-white/10">
-                                                            <a
-                                                                href="{{ route('pages.show', ['slug' => $course->page->slug]) }}"
-                                                                @click.stop
-                                                                class="inline-flex items-center gap-2 rounded-md border border-white/20 px-3 py-2 text-sm font-semibold text-white hover:bg-white/10 hover:text-white transition"
-                                                            >
-                                                                Részletek
-                                                                <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-                                                                    <path fill-rule="evenodd" d="M11.22 5.22a.75.75 0 0 1 1.06 0l4 4a.75.75 0 0 1 0 1.06l-4 4a.75.75 0 1 1-1.06-1.06l2.72-2.72H4.75a.75.75 0 0 1 0-1.5h9.19l-2.72-2.72a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-                                                                </svg>
-                                                            </a>
-                                                        </div>
-                                                    @endif
+                                                    </div>
                                                 </div>
 
                                                 {{-- EXPANDED CONTENT --}}
@@ -200,7 +231,7 @@
                                         <path d="M5 12.5L10 17.5L19 6.5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
                                 </div>
-                                <span class="font-medium text-[18px] text-gray-700 pl-[10px]">
+                                <span class="font-medium text-[16px] text-gray-700 pl-[10px]">
                                     A checkbox bepipálásával hozzájárulok, hogy az adatkezelő a most megadott személyes adataimat az Adatvédelmi Rendelet,
                                     továbbá az oldal <a href="#" class="text-blue-500 underline">Adatkezelési tájékoztatójának</a> feltételei és az oldal
                                     <a href="#" class="text-blue-500 underline">Szerződési feltételeiben</a> leírtak szerint kezelje, és információt, üzleti ajánlatot küldjön a számomra.
@@ -209,9 +240,16 @@
                             </label>
 
                             <div class="mt-6">
-                                <button type="submit" class="bg-[#143c5a] hover:bg-[#39a7cc] text-white pb-[16px] py-[15px]">
-                                    <span class="pr-[30px] pl-[20px] font-medium">Üzenet küldése</span>
-                                    <span class="pl-[20px] pr-[20px] pt-[16px] pb-[19px] border border-[#39a7cc] bg-[#39a7cc]">▸</span>
+                                <button
+                                    type="submit"
+                                    class="inline-flex items-stretch overflow-hidden bg-[#143c5a] text-white hover:bg-[#39a7cc] transition"
+                                >
+                                <span class="flex items-center px-5 py-4 font-medium leading-none">
+                                    Üzenet küldése
+                                </span>
+                                <span class="flex items-center border-l border-[#39a7cc] bg-[#39a7cc] px-5 leading-none">
+                                    ▸
+                                </span>
                                 </button>
                             </div>
                         </form>
