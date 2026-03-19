@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ActualCourse;
 use App\Models\CourseApplication;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class CourseApplicationController extends Controller
@@ -82,7 +83,20 @@ class CourseApplicationController extends Controller
             abort(422);
         }
 
-        $data['newsletter_opt_in'] = (bool) ($request->boolean('newsletter_opt_in'));
+        $actualCourse = ActualCourse::query()->findOrFail($data['actual_course_id']);
+
+        if (
+            $actualCourse->application_deadline &&
+            Carbon::parse($actualCourse->application_deadline)->endOfDay()->isPast()
+        ) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'actual_course_id' => 'A jelentkezési határidő lejárt erre a tanfolyamra.',
+                ]);
+        }
+
+        $data['newsletter_opt_in'] = (bool) $request->boolean('newsletter_opt_in');
         $data['privacy_accepted'] = true;
 
         CourseApplication::query()->create($data);

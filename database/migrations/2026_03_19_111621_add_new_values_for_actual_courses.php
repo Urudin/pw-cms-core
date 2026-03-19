@@ -1,0 +1,30 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::table('actual_courses', function (Blueprint $table) {
+            $table->string('place_of_event')->nullable();
+            $table->date('application_deadline')->nullable();
+            $table->integer('price')->nullable();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::table('actual_courses', function (Blueprint $table) {
+            //
+        });
+    }
+};

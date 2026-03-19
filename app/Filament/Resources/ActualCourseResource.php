@@ -36,6 +36,10 @@ class ActualCourseResource extends Resource
                         ->required()
                         ->columnSpanFull(),
 
+                    Forms\Components\TextInput::make('place_of_event')
+                        ->label('Képzés helye')
+                        ->required(),
+
                     Forms\Components\DatePicker::make('start_date')
                         ->label('Kezdés')
                         ->required(),
@@ -45,6 +49,10 @@ class ActualCourseResource extends Resource
                         ->required()
                         ->afterOrEqual('start_date'),
 
+                    Forms\Components\DatePicker::make('application_deadline')
+                        ->label('Jelentkezési határidő')
+                        ->required(),
+
                     Forms\Components\Select::make('type')
                         ->label('Típus')
                         ->options([
@@ -53,12 +61,20 @@ class ActualCourseResource extends Resource
                         ])
                         ->required(),
 
+                    Forms\Components\TextInput::make('price')
+                        ->label('Tanfolyam díja')
+                        ->numeric()
+                        ->minValue(0)
+                        ->required()
+                        ->default(0),
+
                     Forms\Components\TextInput::make('max_participants')
                         ->label('Max. résztvevő')
                         ->numeric()
                         ->minValue(1)
                         ->required()
                         ->default(15),
+
                     Repeater::make('days')
                         ->label('Oktatási napok')
                         ->relationship('days')
@@ -99,8 +115,21 @@ class ActualCourseResource extends Resource
                     ->date('Y-m-d')
                     ->sortable(),
 
+                Tables\Columns\TextColumn::make('application_deadline')
+                    ->label('Jelentkezési határidő')
+                    ->date('Y-m-d')
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('place_of_event')
+                    ->label('Képzés helye')
+                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('max_participants')
                     ->label('Max')
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('price')
+                    ->label('Tanfolyam díja')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('updated_at')
