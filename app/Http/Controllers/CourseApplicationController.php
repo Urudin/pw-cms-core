@@ -52,6 +52,7 @@ class CourseApplicationController extends Controller
             'payer_name' => ['required', 'string', 'max:255'],
             'payer_address' => ['required', 'string', 'max:255'],
             'payer_mailing_address' => ['required', 'string', 'max:255'],
+            'payer_email' => ['required', 'email', 'max:255'],
             'payer_signatory' => ['required', 'string', 'max:255'],
             'payer_tax_number' => ['required', 'string', 'max:255'],
 

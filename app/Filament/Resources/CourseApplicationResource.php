@@ -48,6 +48,7 @@ class CourseApplicationResource extends Resource
                 Forms\Components\TextInput::make('payer_tax_number')->required(),
                 Forms\Components\TextInput::make('payer_address')->required()->columnSpanFull(),
                 Forms\Components\TextInput::make('payer_mailing_address')->required()->columnSpanFull(),
+                Forms\Components\TextInput::make('payer_email')->required()->columnSpanFull(),
                 Forms\Components\TextInput::make('payer_signatory')->required()->columnSpanFull(),
             ]),
 

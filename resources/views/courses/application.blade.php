@@ -3,13 +3,28 @@
 @section('content')
     <div class="pageContainer bg-gray-100">
         <div class="lg:flex lg:gap-8">
+            <style>
+                .how-list li {
+                    display: flex;
+                    align-items: flex-start;
+                }
 
+                .how-list li::before {
+                    content: "";
+                    width: 0;
+                    height: 0;
+                    border-bottom: 12px #00d4fb solid;
+                    border-right: 12px solid transparent;
+                    margin: 5px 10px 0 0;
+                    flex: 0 0 auto;
+                }
+            </style>
             {{-- LEFT: page content --}}
             <div class="lg:flex-1 min-w-0">
                 <section class="px-4 sm:px-6 lg:px-8 py-10 space-y-10">
                     <header class="space-y-4">
                         <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900">
-                            Online jelentkezési lap
+                            Jelentkezés tanfolyamra
                         </h1>
 
                         <p class="text-base text-slate-700 mt-6">
@@ -33,7 +48,71 @@
                             </ul>
                         </div>
                     @endif
+                    <div class="bg-gray-300 p-6 md:p-8">
+                        <h2 class="text-xl font-extrabold text-[#1f355e] mb-6 leading-tight">
+                            Hogyan tovább, ha jelentkezni szeretne egy meghirdetett tanfolyamra:
+                        </h2>
 
+                        <div class="space-y-1">
+                            <div class="flex items-start gap-4">
+                                <div class="shrink-0 bg-[#11c5e8] text-white font-bold text-sm leading-none px-2 py-1 min-w-[2rem] text-center">
+                                    1.
+                                </div>
+                                <p class="text-base leading-snug text-[#1f355e]">
+                                    Válassza ki, és pipálással jelölje meg, hogy melyik tanfolyamra jelentkezne!
+                                </p>
+                            </div>
+
+                            <div class="flex items-start gap-4">
+                                <div class="shrink-0 bg-[#11c5e8] text-white font-bold text-sm leading-none px-2 py-1 min-w-[2rem] text-center">
+                                    2.
+                                </div>
+                                <p class="text-base leading-snug text-[#1f355e]">
+                                    Töltse ki a lap alján található online jelentkezési lapot!
+                                </p>
+                            </div>
+
+                            <div class="flex items-start gap-4">
+                                <div class="shrink-0 bg-[#11c5e8] text-white font-bold text-sm leading-none px-2 py-1 min-w-[2rem] text-center">
+                                    3.
+                                </div>
+                                <p class="text-base leading-snug text-[#1f355e]">
+                                    A jelentkezési lap alján jelezze, ha hozzájárul adatai szabályozott kezeléséhez!
+                                </p>
+                            </div>
+
+                            <div class="flex items-start gap-4">
+                                <div class="shrink-0 bg-[#11c5e8] text-white font-bold text-sm leading-none px-2 py-1 min-w-[2rem] text-center">
+                                    4.
+                                </div>
+                                <p class="text-base leading-snug text-[#1f355e]">
+                                    Nyomja meg a jelentkezési lap alján a „Jelentkezni szeretnék” gombot!
+                                </p>
+                            </div>
+
+                            <div class="flex items-start gap-4">
+                                <div class="shrink-0 bg-[#11c5e8] text-white font-bold text-sm leading-none px-2 py-1 min-w-[2rem] text-center">
+                                    5.
+                                </div>
+                                <p class="text-base leading-snug text-[#1f355e]">
+                                    Sikeres jelentkezését követően, az Ön által megadott e-mail címre elküldjük a jelentkezési lapot és a felnőttképzési szerződést jóváhagyás és aláírás céljára!
+                                </p>
+                            </div>
+
+                            <div class="flex items-start gap-4">
+                                <div class="shrink-0 bg-[#11c5e8] text-white font-bold text-sm leading-none px-2 py-1 min-w-[2rem] text-center">
+                                    6.
+                                </div>
+                                <p class="text-base leading-snug text-[#1f355e]">
+                                    Az aláírt dokumentumokat küldje vissza címünkre!
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <p>
+                        A jelentkezéssel kapcsolatos további információkkal kapcsolatban <a class="text-[#11c5e8]" href="/kapcsolat" title="Kérdése van? Lépjen kapcsolatba velünk!"><strong>vegye fel a kapcsolatot</strong></a>
+                        kollégánkkal!
+                    </p>
                     <form class="space-y-8" action="{{ route('course-applications.store') }}" method="POST">
                         @csrf
                         <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
@@ -109,8 +188,16 @@
                         </div>
 
                         <div class="bg-white border border-gray-200 p-4 md:p-6 space-y-4">
-                            <h3 class="text-xl text-[#143c5a] font-semibold">Képzés</h3>
+                            <h3 class="text-3xl text-[#143c5a] font-semibold">Online <span class="text-[#11c5e8]">jelentkezési lap</span></h3>
+                            <p class="font-bold">
+                                Tájékoztatás! Az Innovációmenedzsment Akadémia a megújult felnőttképzésről szóló 2013. évi LXXVII. törvény (Fktv.) hatálya alá tartozó képzéseit előre meghirdetett formában biztosítja. Az ilyen tanfolyamok szakmai tartalma, a képzés helye és az időpontja ezen az oldalon előre meghirdetésre kerül. A képzési napok 4-8 óra időtartamú oktatásból állnak, az órák 45 percesek, az órákat szünet tagolja.
+                            </p>
+                            <p>
+                                A csillaggal (*) jelölt mezők kitöltése kötelező.
+                            </p>
 
+
+                            <h3 class="text-xl text-[#143c5a] font-semibold">Képzés</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <input
@@ -168,9 +255,7 @@
                                     >
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="bg-white border border-gray-200 p-4 md:p-6 space-y-4">
                             <h3 class="text-xl text-[#143c5a] font-semibold">Díjfizető</h3>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -195,6 +280,12 @@
                                 <div class="md:col-span-2">
                                     <input type="text" name="payer_mailing_address" placeholder="*Levelezési cím"
                                            value="{{ old('payer_mailing_address') }}"
+                                           class="w-full border border-gray-300 p-2 focus:outline-none focus:border-blue-500" required>
+                                </div>
+
+                                <div class="md:col-span-2">
+                                    <input type="text" name="payer_email" placeholder="*E-mail cím"
+                                           value="{{ old('payer_email') }}"
                                            class="w-full border border-gray-300 p-2 focus:outline-none focus:border-blue-500" required>
                                 </div>
 
@@ -324,7 +415,7 @@
                                         <path d="M5 12.5L10 17.5L19 6.5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
                                 </div>
-                                <span class="font-medium text-[18px] text-gray-700 pl-[10px]">
+                                <span class="font-medium text-[16px] text-gray-700 pl-[10px]">
                                 Hozzájárulok, hogy programjaikról, szakmai anyagokról a megadott elérhetőségeimen tájékoztassanak.
                             </span>
                             </label>
@@ -338,20 +429,27 @@
                                         <path d="M5 12.5L10 17.5L19 6.5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
                                 </div>
-                                <span class="font-medium text-[18px] text-gray-700 pl-[10px]">
+                                <span class="font-medium text-[16px] text-gray-700 pl-[10px]">
                                 <span class="text-[#D21243]">*</span>
-                                A checkbox bepipálásával hozzájárulok az adatkezeléshez az
-                                <a href="#" class="text-blue-500 underline">Adatkezelési tájékoztató</a>
-                                és
-                                <a href="#" class="text-blue-500 underline">Szerződési feltételek</a>
-                                szerint.
+                                Hozzájárulok, hogy az Innovációmenedzsment Akadémia (mint Adatkezelő) a most megadott személyes adataimat az Adatvédelmi Rendelet, továbbá a weboldal
+                                <a href="https://innovacio-menedzsment.hu/innovacio-menedzsment-adatvedelem" target="_blank" class="text-blue-500 underline">Adatkezelési tájékoztatójának</a>
+                                a tanfolyamokkal kapcsolatos <a href="/adatkezelesi-tajekoztato-kepzes" target="_blank" class="text-blue-500 underline">Adatkezelési tájékoztatójának</a> és a
+                                <a href="/innovacio-menedzsment-aszf" target="_blank" class="text-blue-500 underline">Felhasználási feltételeiben</a>
+                                leírtaknak megfelelően kezelje és információt, üzleti ajánlatot, hírlevelet küldjön a számomra.
                             </span>
                             </label>
 
                             <div class="mt-6">
-                                <button type="submit" class="bg-[#143c5a] hover:bg-[#39a7cc] text-white pb-[16px] py-[15px]">
-                                    <span class="pr-[30px] pl-[20px] font-medium">Jelentkezni kívánok!</span>
-                                    <span class="pl-[20px] pr-[20px] pt-[16px] pb-[19px] border border-[#39a7cc] bg-[#39a7cc]">▸</span>
+                                <button
+                                    type="submit"
+                                    class="inline-flex items-stretch overflow-hidden bg-[#143c5a] text-white hover:bg-[#39a7cc] transition"
+                                >
+                                <span class="flex items-center px-5 py-4 font-medium leading-none">
+                                    Jelentkezni kívánok!
+                                </span>
+                                    <span class="flex items-center border-l border-[#39a7cc] bg-[#39a7cc] px-5 leading-none">
+                                    ▸
+                                </span>
                                 </button>
                             </div>
                         </div>
@@ -361,7 +459,7 @@
 
             {{-- RIGHT: tiles --}}
             @if(!empty($tiles) && count($tiles))
-                <aside class="hidden lg:block w-[460px] shrink-0">
+                <aside class="hidden lg:block w-[352px] shrink-0">
                     <div class="sticky top-24 space-y-6">
                         @foreach($tiles as $tile)
                             {!! $tile->content !!}
