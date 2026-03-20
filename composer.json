@@ -23,6 +23,7 @@
         "laravel/breeze": "^2.3",
         "laravel/framework": "^11.31",
         "laravel/tinker": "^2.9",
+        "netipar/simplepay": "^1.0",
         "spatie/laravel-package-tools": "^1.15.0",
         "spatie/laravel-sluggable": "^3.6",
         "tomatophp/filament-media-manager": "^1.1",

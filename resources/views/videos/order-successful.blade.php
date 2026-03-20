@@ -1,30 +1,22 @@
-@php use App\Models\Purchase; @endphp
 @extends('layouts.app')
 
 @section('content')
     @php
-        /**
-         * VÁLTOZÓK (példák)
-         * - $orderId: pl. 652
-         * - $videoTitle: pl. "Innovációmenedzsment a mezőgazdaságban"
-         * - $total: pl. "6.900 Ft+áfa"
-         * - $paymentMethodLabel: pl. "átutalás"
-         * - $bankName: pl. "K&H Bank"
-         * - $bankAccount: pl. "10200823-22223649-00000000"
-         */
-        $purchase = Purchase::query()->find(request()->input('purchaseId'));
-        $orderId = $orderId ?? ($purchase->order_number ?? '#Error');
-        $videos = \App\Models\Video::query()->whereIn('id', array_column($purchase->items, 'id'))->get();
-        $videoTitle = $videoTitle ?? ($purchase->items[0]->name ?? 'Megrendelt videó címe');
-        $total = $total ?? ($purchase->total_formatted ?? '6.900 Ft+áfa');
-        $paymentMethodLabel = $paymentMethodLabel ?? ($order->payment_method_label ?? 'átutalás');
+        $orderId = $purchase->order_number ?? '#Error';
+        $total = round($purchase->getTotal()) . ' Ft +áfa';
+
+        $paymentMethodLabel = match($purchase->payment_method) {
+            'forward_payment' => 'Átutalás',
+            'card' => 'Bankkártya',
+            default => $purchase->payment_method,
+        };
 
         $bankName = $bankName ?? 'K&H Bank';
         $bankAccount = $bankAccount ?? '10200823-22223649-00000000';
 
-        $accentBlue = '#2f46d6'; // a képen látott kékhez hasonló
-        $accentPink = '#d63b73'; // a piros/pink alsó csík
-        $cardBg = '#efeff2';     // doboz háttér
+        $accentBlue = '#2f46d6';
+        $accentPink = '#d63b73';
+        $cardBg = '#efeff2';
     @endphp
 
     <div class="pageContainer bg-white">
@@ -109,19 +101,31 @@
             </div>
 
             {{-- INFO BAR --}}
-            <div class="bg-[{{ $cardBg }}] border-b-2 px-6 py-5 space-y-3" style="border-color: {{ $accentPink }};">
-                <div class="flex flex-col items-center gap-2 text-slate-700 text-sm leading-relaxed text-center">
+            @if($purchase->payment_method === 'forward_payment')
+                <div class="bg-[{{ $cardBg }}] border-b-2 px-6 py-5 space-y-3" style="border-color: {{ $accentPink }};">
+                    <div class="flex flex-col items-center gap-2 text-slate-700 text-sm leading-relaxed text-center">
+                        <div>
+                            A szolgáltatás díját kérjük bankszámlánkra <span class="font-black">8 napon belül</span> utalni,
+                            a megjegyzésbe kérjük tüntesse fel a <span class="font-black">megrendelés azonosítóját</span>!
+                        </div>
+                    </div>
 
-                    <div>
-                        A szolgáltatás díját kérjük bankszámlánkra <span class="font-black">8 napon belül</span> utalni,
-                        a megjegyzésbe kérjük tüntesse fel a <span class="font-black">megrendelés azonosítóját</span>!
+                    <div class="text-center font-black text-base sm:text-lg" style="color: {{ $accentBlue }};">
+                        Bankszámlaszámunk ({{ $bankName }}): {{ $bankAccount }}
                     </div>
                 </div>
-
-                <div class="text-center font-black text-base sm:text-lg" style="color: {{ $accentBlue }};">
-                    Bankszámlaszámunk ({{ $bankName }}): {{ $bankAccount }}
+            @elseif($purchase->payment_method === 'card')
+                <div class="bg-[{{ $cardBg }}] border-b-2 px-6 py-5 space-y-3" style="border-color: {{ $accentPink }};">
+                    <div class="flex flex-col items-center gap-2 text-slate-700 text-sm leading-relaxed text-center">
+                        <div>
+                            A kártyás fizetés visszaigazolása megtörtént, rendelésed feldolgozása folyamatban van.
+                        </div>
+                        <div>
+                            A hozzáférést és a további információkat e-mailben küldjük meg.
+                        </div>
+                    </div>
                 </div>
-            </div>
+            @endif
 
             {{-- FOOTER --}}
             <div class="text-center pt-2">

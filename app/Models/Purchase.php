@@ -67,6 +67,11 @@ class Purchase extends Model
         'vat_rate' => 'decimal:2',
         'vat_amount' => 'decimal:2',
         'total' => 'decimal:2',
+
+        'payment_payload' => 'array',
+        'payment_started_at' => 'datetime',
+        'payment_paid_at' => 'datetime',
+        'payment_failed_at' => 'datetime',
     ];
 
     protected static function booted(): void

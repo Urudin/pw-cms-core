@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "84313161868712b9c4fc00e72aefc160",
+    "content-hash": "9e8dd8319a285905cdc6d6b69bb262ad",
     "packages": [
         {
             "name": "abdelhamiderrahmouni/filament-monaco-editor",
@@ -4188,6 +4188,63 @@
                 }
             ],
             "time": "2025-02-20T17:33:38+00:00"
+        },
+        {
+            "name": "netipar/simplepay",
+            "version": "v1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/NETipar/simplepay.git",
+                "reference": "ce98ea6f61d58942daafde1fb1f0bfa4f72e00ca"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/NETipar/simplepay/zipball/ce98ea6f61d58942daafde1fb1f0bfa4f72e00ca",
+                "reference": "ce98ea6f61d58942daafde1fb1f0bfa4f72e00ca",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/http": "^11.0|^12.0",
+                "illuminate/support": "^11.0|^12.0",
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.18",
+                "orchestra/testbench": "^9.0|^10.0",
+                "pestphp/pest": "^3.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "SimplePay": "Netipar\\SimplePay\\Facades\\SimplePay"
+                    },
+                    "providers": [
+                        "Netipar\\SimplePay\\SimplePayServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Netipar\\SimplePay\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Modern Laravel package for SimplePay online payment integration",
+            "keywords": [
+                "SimplePay",
+                "hungary",
+                "laravel",
+                "payment"
+            ],
+            "support": {
+                "issues": "https://github.com/NETipar/simplepay/issues",
+                "source": "https://github.com/NETipar/simplepay/tree/v1.0.2"
+            },
+            "time": "2026-03-02T13:09:49+00:00"
         },
         {
             "name": "nette/schema",

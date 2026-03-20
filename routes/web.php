@@ -3,6 +3,7 @@
 use App\Http\Controllers\LegalContentController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SimplePayIpnController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\VideoShopController;
 
@@ -23,8 +24,9 @@ Route::get('/penztar', [VideoShopController::class, 'checkout'])->name('checkout
 Route::post('/rendeles', [VideoShopController::class, 'placeOrder'])->name('placeOrder');
 Route::get('privacy-policy', fn() => 'TODO')->name('privacy-policy');
 Route::get('terms', fn() => 'TODO')->name('terms');
-Route::get('/sikeres-rendeles', fn() => view('videos.order-successful'))->name('order-successful');
-Route::get('/sikertelen-rendeles', fn() => view('videos.order-failed'))->name('order-failed');
+Route::get('/sikeres-rendeles', [VideoShopController::class, 'orderSuccessful'])
+    ->name('order-successful');
+//Route::get('/sikertelen-rendeles', [VideoShopController::class, 'orderFailed'])->name('order-failed');
 Route::get('/video/{video}', [VideoShopController::class, 'show'])
     ->middleware('video.auth')
     ->name('video.show');
@@ -41,6 +43,16 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/payment/failed', [VideoShopController::class, 'paymentFailed'])
+    ->name('payment-failed');
+
+Route::get('/order/success/{orderRef}', [VideoShopController::class, 'orderSuccessfulByOrderRef'])
+    ->name('order-successful-by-order-ref');
+
+Route::post('/simplepay/ipn-glosz', [SimplePayIpnController::class, 'handle'])
+    ->middleware(\App\Http\Middleware\VerifySimplePaySignature::class)
+    ->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class)
+    ->name('simplepay.ipn.glosz');
 
 Route::post('/contact', [\App\Http\Controllers\ContactController::class, 'submit'])->name('contact')->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class);
 

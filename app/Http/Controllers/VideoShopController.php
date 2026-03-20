@@ -68,14 +68,12 @@ class VideoShopController extends Controller
         $paymentMethods = array_keys(config('payment_methods', []));
 
         $validated = $request->validate([
-            // personal
             'personal_last_name' => ['required', 'string', 'max:200'],
             'personal_first_name' => ['required', 'string', 'max:200'],
             'personal_phone' => ['required', 'string', 'max:50'],
             'personal_email' => ['required', 'email', 'max:255'],
             'personal_note' => ['nullable', 'string'],
 
-            // billing
             'billing_last_name' => ['required', 'string', 'max:200'],
             'billing_first_name' => ['required', 'string', 'max:200'],
             'billing_company_name' => ['nullable', 'string', 'max:255'],
@@ -84,34 +82,16 @@ class VideoShopController extends Controller
             'billing_city' => ['required', 'string', 'max:120'],
             'billing_street_address' => ['required', 'string', 'max:255'],
 
-            // payment
             'payment_method' => ['required', 'string', Rule::in($paymentMethods)],
 
-            // declarations
             'terms_accepted' => ['accepted'],
             'newsletter_opt_in' => ['nullable'],
             'new_video_opt_in' => ['nullable'],
 
-            // items from hidden json field
             'items_json' => ['required', 'string'],
         ]);
 
-        $items = json_decode($validated['items_json'], true);
-
-        if (!is_array($items) || count($items) < 1) {
-            return back()
-                ->withErrors(['items_json' => 'A kosár üres vagy hibás.'])
-                ->withInput();
-        }
-        // normalize items: only id + quantity
-        $items = collect($items)
-            ->map(fn ($i) => [
-                'id' => (int) str_replace('video_', '', data_get($i, 'id')),
-                'quantity' => (int) (data_get($i, 'quantity', 1) ?: 1),
-            ])
-            ->filter(fn ($i) => $i['id'] > 0 && $i['quantity'] > 0)
-            ->values()
-            ->all();
+        $items = $this->normalizeItems($validated['items_json']);
 
         if (count($items) < 1) {
             return back()
@@ -119,12 +99,9 @@ class VideoShopController extends Controller
                 ->withInput();
         }
 
-        $subtotal = 0.00;
-        $vatRate = 0.00;
-        $vatAmount = round($subtotal * ($vatRate / 100), 2);
-        $total = $subtotal + $vatAmount;
+        $amounts = $this->calculateAmounts($items);
 
-        $purchase = DB::transaction(function () use ($validated, $items, $subtotal, $vatRate, $vatAmount, $total, $request) {
+        $purchase = DB::transaction(function () use ($validated, $items, $amounts, $request) {
             return Purchase::create([
                 'personal_last_name' => $validated['personal_last_name'],
                 'personal_first_name' => $validated['personal_first_name'],
@@ -149,25 +126,35 @@ class VideoShopController extends Controller
 
                 'items' => $items,
                 'currency' => 'HUF',
-                'subtotal' => $subtotal,
-                'vat_rate' => $vatRate,
-                'vat_amount' => $vatAmount,
-                'total' => $total,
+                'subtotal' => $amounts['subtotal'],
+                'vat_rate' => $amounts['vat_rate'],
+                'vat_amount' => $amounts['vat_amount'],
+                'total' => $amounts['total'],
 
                 'status' => 'pending',
                 'client_ip' => $request->ip(),
                 'user_agent' => substr((string) $request->userAgent(), 0, 2000),
             ]);
         });
-        Mail::to([$purchase->personal_email, UserSetting::query()->firstWhere('name', 'admin-email-address')->value])->send(new PurchaseThankYouMail(
-            purchase: $purchase,
-            bankName: 'K&H Bank',
-            bankAccount: '10200823-22223649-00000000',
-        ));
 
-        return redirect()
-            ->route('order-successful', ['purchaseId' => $purchase]) // csinálsz egy route-ot hozzá
-            ->with('success', 'Sikeres rendelés! Köszönjük.');
+        if ($purchase->payment_method === 'forward_payment') {
+            Mail::to([$purchase->personal_email, UserSetting::query()->firstWhere('name', 'admin-email-address')->value])
+                ->send(new PurchaseThankYouMail(
+                    purchase: $purchase,
+                    bankName: 'K&H Bank',
+                    bankAccount: '10200823-22223649-00000000',
+                ));
+
+            return redirect()
+                ->route('order-successful', ['purchaseId' => $purchase])
+                ->with('success', 'Sikeres rendelés! Köszönjük.');
+        }
+
+        if ($purchase->payment_method === 'card') {
+            return app(\App\Services\SimplePayService::class)->startPayment($purchase);
+        }
+
+        abort(422, 'Ismeretlen fizetési mód.');
     }
 
     public function show(Request $request, Video $video)
@@ -177,6 +164,95 @@ class VideoShopController extends Controller
         $embedUrl = $video->embed_url;
 
         return view('videos.show', compact('video', 'embedUrl'));
+    }
+
+    protected function normalizeItems(string $itemsJson): array
+    {
+        $items = json_decode($itemsJson, true);
+
+        if (! is_array($items)) {
+            return [];
+        }
+
+        $ids = collect($items)
+            ->map(fn ($i) => (int) str_replace('video_', '', data_get($i, 'id')))
+            ->filter(fn ($id) => $id > 0)
+            ->unique()
+            ->values();
+
+        $videos = Video::query()
+            ->whereIn('id', $ids)
+            ->get(['id', 'title', 'price_huf'])
+            ->keyBy('id');
+
+        return $ids
+            ->map(function ($id) use ($videos) {
+                $video = $videos->get($id);
+
+                if (! $video) {
+                    return null;
+                }
+
+                return [
+                    'id' => $video->id,
+                    'title' => $video->title,
+                    'price' => (int) $video->price_huf,
+                ];
+            })
+            ->filter()
+            ->values()
+            ->all();
+    }
+    protected function calculateAmounts(array $items): array
+    {
+        $subtotal = collect($items)->sum(fn ($item) => (int) ($item['price'] ?? 0));
+
+        return [
+            'subtotal' => $subtotal,
+            'vat_rate' => 27,
+            'vat_amount' => 0,
+            'total' => $subtotal,
+        ];
+    }
+
+    public function orderSuccessfulByOrderRef(string $orderRef)
+    {
+        $purchase = Purchase::query()
+            ->where('order_number', $orderRef)
+            ->firstOrFail();
+
+        $videos = \App\Models\Video::query()
+            ->whereIn('id', array_column($purchase->items ?? [], 'id'))
+            ->get();
+
+        return view('videos.order-successful', [
+            'purchase' => $purchase,
+            'videos' => $videos,
+            'bankName' => 'K&H Bank',
+            'bankAccount' => '10200823-22223649-00000000',
+        ]);
+    }
+
+    public function orderSuccessful(Request $request)
+    {
+        $purchase = Purchase::query()->findOrFail($request->integer('purchaseId'));
+
+        $videos = \App\Models\Video::query()
+            ->whereIn('id', array_column($purchase->items ?? [], 'id'))
+            ->get();
+
+        return view('videos.order-successful', [
+            'purchase' => $purchase,
+            'videos' => $videos,
+            'bankName' => 'K&H Bank',
+            'bankAccount' => '10200823-22223649-00000000',
+        ]);
+    }
+    public function paymentFailed(Request $request)
+    {
+        $purchase = Purchase::query()->findOrFail($request->integer('purchaseId'));
+
+        return view('videos.order-failed', compact('purchase'));
     }
 }
 
