@@ -7,6 +7,7 @@ use App\Models\ActualCourse;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -36,8 +37,23 @@ class ActualCourseResource extends Resource
                         ->required()
                         ->columnSpanFull(),
 
+                    Forms\Components\Select::make('classification')
+                        ->label('Tanfolyam besorolása')
+                        ->options([
+                            'Minősített tanfolyami oktatás' => 'Minősített tanfolyami oktatás',
+                            'Minősített oktatás' => 'Minősített oktatás',
+                            'Nem minősített oktatás' => 'Nem minősített oktatás',
+                        ])
+                        ->nullable(),
+
+                    Forms\Components\TextInput::make('user_given_id')
+                        ->label('Egyedi Azonosító')
+                        ->numeric()
+                        ->rule('min:1')
+                        ->required(),
+
                     Forms\Components\TextInput::make('place_of_event')
-                        ->label('Képzés helye')
+                        ->label('Oktatás helyszíne')
                         ->required(),
 
                     Forms\Components\DatePicker::make('start_date')
@@ -53,8 +69,8 @@ class ActualCourseResource extends Resource
                         ->label('Jelentkezési határidő')
                         ->required(),
 
-                    Forms\Components\Select::make('type')
-                        ->label('Típus')
+                    Forms\Components\Select::make('way_of_participation')
+                        ->label('Részvételi mód')
                         ->options([
                             'group' => 'Csoportos',
                             'individual' => 'Egyéni',
@@ -68,6 +84,13 @@ class ActualCourseResource extends Resource
                         ->required()
                         ->default(0),
 
+                    Forms\Components\TextInput::make('min_participants')
+                        ->label('Min. résztvevő')
+                        ->numeric()
+                        ->minValue(0)
+                        ->required()
+                        ->default(0),
+
                     Forms\Components\TextInput::make('max_participants')
                         ->label('Max. résztvevő')
                         ->numeric()
@@ -75,18 +98,34 @@ class ActualCourseResource extends Resource
                         ->required()
                         ->default(15),
 
+
                     Repeater::make('days')
                         ->label('Oktatási napok')
                         ->relationship('days')
                         ->schema([
                             DatePicker::make('day')
                                 ->label('Nap')
+                                ->columnSpanFull()
+                                ->required(),
+                            TimePicker::make('start_time')
+                                ->label('Kezdés időpontja')
+                                ->seconds(false)
+                                ->format('H:i')
+                                ->default('09:00:00')
+                                ->required(),
+
+                            TimePicker::make('end_time')
+                                ->label('Befejezés időpontja')
+                                ->seconds(false)
+                                ->format('H:i')
+                                ->default('13:00:00')
                                 ->required(),
                         ])
                         ->addActionLabel('Új nap')
                         ->reorderable()
+                        ->columns()
                         ->defaultItems(0)
-                        ->columns(1),
+                        ->columnSpanFull(),
                 ]),
         ]);
     }
@@ -95,13 +134,19 @@ class ActualCourseResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('user_given_id')
+                    ->label('Azonosító')
+                    ->alignCenter()
+                    ->searchable()
+                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('course.name')
                     ->label('Kurzus')
                     ->searchable()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('type')
-                    ->label('Típus')
+                Tables\Columns\TextColumn::make('way_of_participation')
+                    ->label('Részvételi mód')
                     ->badge()
                     ->formatStateUsing(fn (string $state) => $state === 'group' ? 'Csoportos' : 'Egyéni'),
 
@@ -121,7 +166,7 @@ class ActualCourseResource extends Resource
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('place_of_event')
-                    ->label('Képzés helye')
+                    ->label('Oktatás helyszíne')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('max_participants')
@@ -144,8 +189,8 @@ class ActualCourseResource extends Resource
                     ->searchable()
                     ->preload(),
 
-                Tables\Filters\SelectFilter::make('type')
-                    ->label('Típus')
+                Tables\Filters\SelectFilter::make('way_of_participation')
+                    ->label('Részvételi mód')
                     ->options([
                         'group' => 'Csoportos',
                         'individual' => 'Egyéni',

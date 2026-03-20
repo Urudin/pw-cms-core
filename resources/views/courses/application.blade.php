@@ -142,47 +142,192 @@
                             </select>
                         </div>
 
-                        <div class="bg-white border border-gray-200 p-4 md:p-6 space-y-3">
+                        <div
+                            x-data="{ openCourse: null }"
+                            class="bg-white border border-gray-200 p-4 md:p-6 space-y-4"
+                        >
                             <h3 class="text-xl text-[#143c5a] font-semibold">Jelenleg elérhető aktuális tanfolyamaink</h3>
 
-                            <div class="space-y-3">
+                            <div class="space-y-0">
                                 @foreach($actualCourses as $ac)
                                     @php
                                         $courseName = $ac->course->name ?? '';
+
                                         $period = \Carbon\Carbon::parse($ac->start_date)->format('Y.m.d.')
                                             . ' - ' . \Carbon\Carbon::parse($ac->end_date)->format('Y.m.d.');
 
                                         $days = $ac->days->sortBy('day')->values();
                                         $daysText = $days->map(fn($d) => \Carbon\Carbon::parse($d->day)->format('Y.m.d.'))->implode(', ');
+                                        $daysTextDetailed = $days
+                                            ->map(function ($d) {
+                                                $date = \Carbon\Carbon::parse($d->day)->format('Y.m.d.');
+                                                $startTime = $d->start_time ? \Carbon\Carbon::parse($d->start_time)->format('H:i') : null;
+                                                $endTime = $d->end_time ? \Carbon\Carbon::parse($d->end_time)->format('H:i') : null;
 
-                                        $location = $ac->type === 'group' ? 'Csoportos képzés' : 'Egyéni képzés';
+                                                if ($startTime && $endTime) {
+                                                    return "{$date} ({$startTime} - {$endTime})";
+                                                }
+
+                                                if ($startTime) {
+                                                    return "{$date} ({$startTime})";
+                                                }
+
+                                                return $date;
+                                            })
+                                            ->implode('<br>');
+
+                                        $location = $ac->place_of_event;
+
+                                        $participationText = match($ac->way_of_participation) {
+                                            'group' => 'Csoportos',
+                                            'individual' => 'Egyéni',
+                                            default => $ac->way_of_participation,
+                                        };
                                     @endphp
 
-                                    <label
-                                        class="course-item flex items-start gap-3 bg-gray-50 border border-gray-200 p-3 cursor-pointer hover:bg-gray-100"
-                                        data-cat-id="{{ $ac->course->course_category_id }}"
-                                        data-course-id="{{ $ac->course_id }}"
+                                    <div
+                                        class="bg-slate-700 text-white border border-white shadow-sm transition hover:shadow-md"
+                                        :class="openCourse === {{ $ac->id }} ? 'ring-1 ring-[#39a7cc]/60' : ''"
                                     >
-                                        <input
-                                            required
-                                            type="radio"
-                                            name="actual_course_id"
-                                            value="{{ $ac->id }}"
-                                            class="mt-1"
-                                            data-course-name="{{ $courseName }}"
-                                            data-course-period="{{ $period }}"
-                                            data-course-location="{{ $location }}"
-                                            data-course-days="{{ $daysText }}"
-                                        >
+                                        <div class="flex items-stretch border-r-4 border-[#39a7cc] min-w-0">
+                                            {{-- NYITÓ/ZÁRÓ IKON --}}
+                                            <button
+                                                type="button"
+                                                class="w-[82px] bg-[#39a7cc] flex items-center justify-center shrink-0"
+                                                @click.stop="openCourse = openCourse === {{ $ac->id }} ? null : {{ $ac->id }}"
+                                                aria-label="Részletek megnyitása"
+                                            >
+                                                <svg
+                                                    class="w-5 h-5 text-white transition-transform duration-700 ease-in-out"
+                                                    :class="openCourse === {{ $ac->id }} ? 'rotate-90' : ''"
+                                                    viewBox="0 0 20 20"
+                                                    fill="currentColor"
+                                                >
+                                                    <path
+                                                        fill-rule="evenodd"
+                                                        d="M7.293 14.707a1 1 0 0 1 0-1.414L10.586 10 7.293 6.707a1 1 0 1 1 1.414-1.414l4 4a1 1 0 0 1 0 1.414l-4 4a1 1 0 0 1-1.414 0Z"
+                                                        clip-rule="evenodd"
+                                                    />
+                                                </svg>
+                                            </button>
 
-                                        <div class="flex-1">
-                                            <div class="font-semibold text-gray-800">{{ $courseName }}</div>
-                                            <div class="text-sm text-gray-600">{{ $period }}</div>
-                                            @if($daysText)
-                                                <div class="text-sm text-gray-600">Oktatási napok: {{ $daysText }}</div>
-                                            @endif
+                                            {{-- FŐ TARTALOM --}}
+                                            <label
+                                                class="flex-1 min-w-0 cursor-pointer px-5 py-4"
+                                                data-cat-id="{{ $ac->course->course_category_id }}"
+                                                data-course-id="{{ $ac->course_id }}"
+                                            >
+                                                <div class="flex items-start gap-4">
+                                                    {{-- RADIO --}}
+                                                    <div class="pt-1 shrink-0">
+                                                        <input
+                                                            required
+                                                            type="radio"
+                                                            name="actual_course_id"
+                                                            value="{{ $ac->id }}"
+                                                            class="mt-1"
+                                                            data-course-name="{{ $courseName }}"
+                                                            data-course-period="{{ $period }}"
+                                                            data-course-location="{{ $location }}"
+                                                            data-course-days="{{ $daysText }}"
+                                                        >
+                                                    </div>
+
+                                                    {{-- SZÖVEGES TARTALOM --}}
+                                                    <div class="flex-1 min-w-0">
+                                                        {{-- FELSŐ SOR --}}
+                                                        <div class="font-black text-lg sm:text-xl leading-snug text-white">
+                                                            {{ $courseName }}
+                                                        </div>
+
+                                                        {{-- ALSÓ SOR --}}
+                                                        <div class="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                                                            <div class="text-sm text-white/70">
+                                                                <button
+                                                                    type="button"
+                                                                    @click.stop="openCourse = openCourse === {{ $ac->id }} ? null : {{ $ac->id }}"
+                                                                    class="inline-flex items-center gap-1 text-white/70 transition hover:text-white focus:outline-none"
+                                                                >
+                                                                    Kattintson a részletekért
+                                                                </button>
+                                                            </div>
+
+                                                            <div class="text-sm font-semibold text-white/75 sm:text-right">
+                                                                Aktuális tanfolyam időpont:
+                                                                <span class="font-extrabold text-white">
+                                            {{ \Carbon\Carbon::parse($ac->start_date)->format('Y.m.d.') }}
+                                        </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </label>
                                         </div>
-                                    </label>
+
+                                        {{-- LENYÍLÓ RÉSZ --}}
+                                        <div
+                                            x-cloak
+                                            x-show="openCourse === {{ $ac->id }}"
+                                            x-transition:enter="transition-all ease-in-out duration-700"
+                                            x-transition:enter-start="opacity-0 max-h-0"
+                                            x-transition:enter-end="opacity-100 max-h-[2000px]"
+                                            x-transition:leave="transition-all ease-in-out duration-700"
+                                            x-transition:leave-start="opacity-100 max-h-[2000px]"
+                                            x-transition:leave-end="opacity-0 max-h-0"
+                                            class="bg-slate-200 px-5 overflow-hidden"
+                                        >
+                                            <div class="pt-4 pb-6 border-t border-white/10">
+                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm sm:text-base text-slate-800">
+                                                    <div>
+                                                        <div class="font-semibold text-slate-900">Képzés megnevezése</div>
+                                                        <div>{{ $courseName }}</div>
+                                                    </div>
+
+                                                    <div>
+                                                        <div class="font-semibold text-slate-900">Időszak</div>
+                                                        <div>{{ $period }}</div>
+                                                    </div>
+
+                                                    <div>
+                                                        <div class="font-semibold text-slate-900">Oktatási forma</div>
+                                                        <div>{{ $participationText }}</div>
+                                                    </div>
+
+                                                    <div>
+                                                        <div class="font-semibold text-slate-900">Maximális létszám</div>
+                                                        <div>{{ $ac->max_participants }} fő</div>
+                                                    </div>
+
+                                                    <div>
+                                                        <div class="font-semibold text-slate-900">Minimum létszám</div>
+                                                        <div>{{ $ac->min_participants }} fő</div>
+                                                    </div>
+
+                                                    <div>
+                                                        <div class="font-semibold text-slate-900">Helyszín</div>
+                                                        <div>{{ $ac->place_of_event }}</div>
+                                                    </div>
+
+                                                    <div>
+                                                        <div class="font-semibold text-slate-900">Jelentkezési határidő</div>
+                                                        <div>{{ $ac->application_deadline }}</div>
+                                                    </div>
+
+                                                    <div>
+                                                        <div class="font-semibold text-slate-900">Részvételi díj</div>
+                                                        <div>{{ number_format($ac->price, 0, ',', ' ') }} Ft</div>
+                                                    </div>
+
+                                                    @if($daysTextDetailed)
+                                                        <div class="md:col-span-2">
+                                                            <div class="font-semibold text-slate-900">Oktatási napok</div>
+                                                            <div>{!! $daysTextDetailed !!}</div>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 @endforeach
                             </div>
                         </div>
@@ -227,7 +372,7 @@
                                         id="course_location"
                                         readonly
                                         name="course_location_readonly"
-                                        placeholder="Helyszín / megrendezés módja (automatikusan kitöltődő mező)"
+                                        placeholder="Oktatás helyszíne"
                                         class="w-full border border-gray-300 p-2 bg-[#ADD8E6] focus:outline-none"
                                     >
                                 </div>
