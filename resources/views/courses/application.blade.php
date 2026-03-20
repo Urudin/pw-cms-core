@@ -186,7 +186,9 @@
                                     @endphp
 
                                     <div
-                                        class="bg-slate-700 text-white border border-white shadow-sm transition hover:shadow-md"
+                                        class="course-item bg-slate-700 text-white border border-white shadow-sm transition hover:shadow-md"
+                                        data-cat-id="{{ $ac->course->course_category_id }}"
+                                        data-course-id="{{ $ac->course_id }}"
                                         :class="openCourse === {{ $ac->id }} ? 'ring-1 ring-[#39a7cc]/60' : ''"
                                     >
                                         <div class="flex items-stretch border-r-4 border-[#39a7cc] min-w-0">
@@ -214,8 +216,6 @@
                                             {{-- FŐ TARTALOM --}}
                                             <label
                                                 class="flex-1 min-w-0 cursor-pointer px-5 py-4"
-                                                data-cat-id="{{ $ac->course->course_category_id }}"
-                                                data-course-id="{{ $ac->course_id }}"
                                             >
                                                 <div class="flex items-start gap-4">
                                                     {{-- RADIO --}}
