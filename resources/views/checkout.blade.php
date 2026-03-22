@@ -150,9 +150,14 @@
                             <input
                                 type="text"
                                 name="billing_vat_number"
+                                id="billing_vat_number"
                                 value="{{ old('billing_vat_number') }}"
-                                placeholder="Adószám (opcionális)"
-                                class="w-full px-3 py-2 border rounded @error('billing_vat_number') border-red-400 bg-red-50 @else border-gray-300 @enderror">
+                                placeholder="Adószám (opcionális) pl. 12345678-1-12"
+                                inputmode="numeric"
+                                maxlength="13"
+                                pattern="^\d{8}-\d-\d{2}$"
+                                class="w-full px-3 py-2 border rounded @error('billing_vat_number') border-red-400 bg-red-50 @else border-gray-300 @enderror"
+                            >
                             @error('billing_vat_number')
                             <div class="text-sm text-red-600 mt-1">{{ $message }}</div>
                             @enderror
@@ -469,6 +474,73 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+
+            //Vat validáció
+            const vatInput = document.getElementById('billing_vat_number');
+            const form = document.getElementById('checkout-form');
+
+            if (!vatInput) return;
+
+            function formatVatNumber(value) {
+                const digits = value.replace(/\D/g, '').slice(0, 11); // 8 + 1 + 2
+
+                let result = '';
+
+                if (digits.length > 0) {
+                    result += digits.slice(0, 8);
+                }
+
+                if (digits.length > 8) {
+                    result += '-' + digits.slice(8, 9);
+                }
+
+                if (digits.length > 9) {
+                    result += '-' + digits.slice(9, 11);
+                }
+
+                return result;
+            }
+
+            function isValidVatNumber(value) {
+                return /^\d{8}-\d-\d{2}$/.test(value);
+            }
+
+            vatInput.addEventListener('input', (e) => {
+                const formatted = formatVatNumber(e.target.value);
+                e.target.value = formatted;
+
+                if (formatted === '' || isValidVatNumber(formatted)) {
+                    e.target.setCustomValidity('');
+                } else {
+                    e.target.setCustomValidity('Az adószám formátuma: 12345678-1-12');
+                }
+            });
+
+            vatInput.addEventListener('blur', (e) => {
+                const value = e.target.value.trim();
+
+                if (value !== '' && !isValidVatNumber(value)) {
+                    e.target.setCustomValidity('Az adószám formátuma: 12345678-1-12');
+                    e.target.reportValidity();
+                } else {
+                    e.target.setCustomValidity('');
+                }
+            });
+
+            if (form) {
+                form.addEventListener('submit', (e) => {
+                    const value = vatInput.value.trim();
+
+                    if (value !== '' && !isValidVatNumber(value)) {
+                        vatInput.setCustomValidity('Az adószám formátuma: 12345678-1-12');
+                        vatInput.reportValidity();
+                        e.preventDefault();
+                        return;
+                    }
+
+                    vatInput.setCustomValidity('');
+                });
+            }
             // 1) már betöltéskor töltsük ki a hidden mezőt a TE localStorage cartodból
             syncItemsJsonHidden();
 
@@ -476,7 +548,6 @@
             renderCheckoutCartSummary();
 
             // 3) submit előtt frissítsünk, és ne engedjünk üres kosarat
-            const form = document.getElementById('checkout-form');
             if (form) {
                 form.addEventListener('submit', (e) => {
                     syncItemsJsonHidden();

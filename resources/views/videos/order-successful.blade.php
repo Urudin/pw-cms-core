@@ -118,7 +118,7 @@
                 <div class="bg-[{{ $cardBg }}] border-b-2 px-6 py-5 space-y-3" style="border-color: {{ $accentPink }};">
                     <div class="flex flex-col items-center gap-2 text-slate-700 text-sm leading-relaxed text-center">
                         <div>
-                            A kártyás fizetés visszaigazolása megtörtént, rendelésed feldolgozása folyamatban van.
+                            Sikeres bankkártyás fizetés, rendelésed feldolgozása folyamatban van.
                         </div>
                         <div>
                             A hozzáférést és a további információkat e-mailben küldjük meg.
@@ -130,7 +130,7 @@
             {{-- FOOTER --}}
             <div class="text-center pt-2">
                 <div class="text-slate-700 font-black">Üdvözlettel:</div>
-                <div class="text-slate-600 text-sm">Glósz és Tsa csapata</div>
+                <div class="text-slate-600 text-sm">Glósz és Társa csapata</div>
             </div>
 
         </div>

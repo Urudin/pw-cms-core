@@ -77,7 +77,7 @@ class VideoShopController extends Controller
             'billing_last_name' => ['required', 'string', 'max:200'],
             'billing_first_name' => ['required', 'string', 'max:200'],
             'billing_company_name' => ['nullable', 'string', 'max:255'],
-            'billing_vat_number' => ['nullable', 'string', 'max:100'],
+            'billing_vat_number' => ['nullable', 'regex:/^\d{8}-\d-\d{2}$/'],
             'billing_postal_code' => ['required', 'string', 'max:20'],
             'billing_city' => ['required', 'string', 'max:120'],
             'billing_street_address' => ['required', 'string', 'max:255'],
