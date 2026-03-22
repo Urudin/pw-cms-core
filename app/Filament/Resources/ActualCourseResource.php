@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ActualCourseResource\Pages;
 use App\Models\ActualCourse;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;
@@ -153,6 +154,8 @@ class ActualCourseResource extends Resource
                 Tables\Columns\TextColumn::make('start_date')
                     ->label('Kezdés')
                     ->date('Y-m-d')
+                    ->badge()
+                    ->color(fn ($state) => filled($state) && Carbon::parse($state)->lt(today()) ? 'danger' : 'success')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('end_date')
@@ -163,6 +166,8 @@ class ActualCourseResource extends Resource
                 Tables\Columns\TextColumn::make('application_deadline')
                     ->label('Jelentkezési határidő')
                     ->date('Y-m-d')
+                    ->badge()
+                    ->color(fn ($state) => filled($state) && Carbon::parse($state)->lt(today()) ? 'danger' : 'success')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('place_of_event')
