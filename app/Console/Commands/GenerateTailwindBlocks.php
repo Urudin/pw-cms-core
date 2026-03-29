@@ -42,7 +42,7 @@ class GenerateTailwindBlocks extends Command
             $fileName = "tailwindTile-{$tile->id}.blade.php";
             $filePath = $directory . DIRECTORY_SEPARATOR . $fileName;
 
-            file_put_contents($filePath, $tile->content); // vagy amit szeretnél
+            file_put_contents($filePath, $tile->renderedContent); // vagy amit szeretnél
         }
 
         $this->info('Tailwind block és tile fájlok sikeresen generálva.');

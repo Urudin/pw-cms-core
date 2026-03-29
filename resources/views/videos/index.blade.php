@@ -231,7 +231,7 @@
                 <aside class="hidden lg:block w-[352px] shrink-0">
                     <div class="sticky top-24 space-y-6">
                         @foreach($tiles as $tile)
-                            {!! $tile->content !!}
+                            {!! $tile->renderedContent !!}
                         @endforeach
                     </div>
                 </aside>
