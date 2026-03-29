@@ -11,7 +11,7 @@
                         @if($item->block->name === 'referenciaink-partnereink')
                             @include('references')
                         @else
-                            {!! $item->block->content !!}
+                            {!! $item->block->rendered_content !!}
                         @endif
                     @endforeach
                     {!! $section?->wrap_section_close ?? '' !!}

@@ -35,6 +35,13 @@ class CourseResource extends Resource
                         ->preload()
                         ->required(),
 
+                    Forms\Components\Select::make('online_version')
+                        ->label('Távoktatási verzió')
+                        ->relationship('onlineVersion', 'name')
+                        ->searchable()
+                        ->preload()
+                        ->nullable(),
+
                     Forms\Components\Toggle::make('is_active')
                         ->label('Aktív')
                         ->default(true),
@@ -77,6 +84,11 @@ class CourseResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('Azonosító')
+                    ->searchable()
+                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('name')
                     ->label('Kurzus')
                     ->searchable()
