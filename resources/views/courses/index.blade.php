@@ -165,7 +165,7 @@
                                                     <div class="space-y-2">
                                                         <div class="text-slate-900 leading-relaxed text-sm sm:text-base course-desc">
                                                             @if($course->description)
-                                                                {!! html_entity_decode($course->description) !!}
+                                                                {!! html_entity_decode($course->renderedDescription) !!}
                                                             @else
                                                                 <span class="text-slate-500">Ehhez a tanfolyamhoz még nincs feltöltve leírás.</span>
                                                             @endif
