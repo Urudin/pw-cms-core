@@ -248,7 +248,7 @@
                                                 </div>
 
                                                 @if($key === 'card')
-                                                    <a href="https://simplepartner.hu/PaymentService/Fizetesi_tajekoztato.pdf" target="_blank">
+                                                    <a href="https://simplepay.hu/" target="_blank">
                                                         <img
                                                             src="{{ asset('images/payments/checkout_simplepay_hu_v2_1.png') }}"
                                                             alt="SimplePay támogatott fizetési módok"
