@@ -219,28 +219,42 @@
                                 @foreach ($paymentMethods as $key => $method)
                                     <label
                                         class="payment-option cursor-pointer border rounded-lg shadow-sm p-4 flex items-start gap-4 transition-all duration-200 hover:shadow-md
-                                               @error('payment_method') border-red-300 bg-red-50 @else border-gray-200 @enderror">
-                                        <input
-                                            type="radio"
-                                            name="payment_method"
-                                            value="{{ $key }}"
-                                            class="sr-only peer"
-                                            @checked(old('payment_method') === $key) required>
+                                       @error('payment_method') border-red-300 bg-red-50 @else border-gray-200 @enderror">
+                                                                <input
+                                                                    type="radio"
+                                                                    name="payment_method"
+                                                                    value="{{ $key }}"
+                                                                    class="sr-only peer"
+                                                                    @checked(old('payment_method') === $key) required>
 
-                                        {{-- CHECKBOX-LIKE RADIO (LEFT) --}}
-                                        <span class="w-5 h-5 border-2 border-gray-400 rounded-sm shrink-0 mt-1
-                                                   flex items-center justify-center transition-all duration-200
-                                                   peer-checked:bg-cyan-500
-                                                   peer-checked:border-[3px] peer-checked:border-white
-                                                   peer-checked:outline peer-checked:outline-1 peer-checked:outline-slate-300">
-                                        </span>
+                                                                {{-- CHECKBOX-LIKE RADIO (LEFT) --}}
+                                                                <span class="w-5 h-5 border-2 border-gray-400 rounded-sm shrink-0 mt-1
+                                                                   flex items-center justify-center transition-all duration-200
+                                                                   peer-checked:bg-cyan-500
+                                                                   peer-checked:border-[3px] peer-checked:border-white
+                                                                   peer-checked:outline peer-checked:outline-1 peer-checked:outline-slate-300">
+                                                                </span>
+                                        {{-- TEXT + CARD LOGOS (RIGHT) --}}
+                                        <div class="min-w-0 flex-1">
+                                            <div class="flex items-start justify-between gap-4">
+                                                <div class="min-w-0">
+                                                    <div class="font-bold text-slate-800">{{ $method['label'] }}</div>
 
-                                        {{-- TEXT (RIGHT) --}}
-                                        <div class="min-w-0">
-                                            <div class="font-bold text-slate-800">{{ $method['label'] }}</div>
-                                            @if(!empty($method['info']))
-                                                <div class="mt-1 text-sm text-red-600 leading-relaxed">{{ $method['info'] }}</div>
-                                            @endif
+                                                    @if(!empty($method['info']))
+                                                        <div class="mt-1 text-sm text-red-600 leading-relaxed">
+                                                            {{ $method['info'] }}
+                                                        </div>
+                                                    @endif
+                                                </div>
+
+                                                @if($key === 'card')
+                                                    <img
+                                                        src="{{ asset('images/payments/checkout_simplepay_hu_v2_1.png') }}"
+                                                        alt="SimplePay támogatott fizetési módok"
+                                                        class="h-8 sm:h-7 w-auto object-contain shrink-0"
+                                                    >
+                                                @endif
+                                            </div>
                                         </div>
                                     </label>
                                 @endforeach
