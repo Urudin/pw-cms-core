@@ -120,6 +120,15 @@
                 innovációmenedzsment • Minden jog fenntartva!</p>
         </div>
     @endif
+        <div class="p-5 bg-white flex justify-center">
+            <a href="https://simplepartner.hu/PaymentService/Fizetesi_tajekoztato.pdf" target="_blank">
+                <img
+                    src="{{ asset('images/payments/checkout_simplepay_hu_v2_1.png') }}"
+                    alt="SimplePay támogatott fizetési módok"
+                    class="h-10 sm:h-7 w-auto object-contain shrink-0"
+                >
+            </a>
+        </div>
     <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
     <script>
         GLightbox({

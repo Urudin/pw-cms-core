@@ -248,11 +248,13 @@
                                                 </div>
 
                                                 @if($key === 'card')
-                                                    <img
-                                                        src="{{ asset('images/payments/checkout_simplepay_hu_v2_1.png') }}"
-                                                        alt="SimplePay támogatott fizetési módok"
-                                                        class="h-8 sm:h-7 w-auto object-contain shrink-0"
-                                                    >
+                                                    <a href="https://simplepartner.hu/PaymentService/Fizetesi_tajekoztato.pdf" target="_blank">
+                                                        <img
+                                                            src="{{ asset('images/payments/checkout_simplepay_hu_v2_1.png') }}"
+                                                            alt="SimplePay támogatott fizetési módok"
+                                                            class="h-8 sm:h-7 w-auto object-contain shrink-0"
+                                                        >
+                                                    </a>
                                                 @endif
                                             </div>
                                         </div>
