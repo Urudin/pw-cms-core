@@ -291,7 +291,15 @@ class PurchaseResource extends Resource
                 Tables\Actions\Action::make('acknowledgePayment')
                     ->label('Fizetve')
                     ->icon('heroicon-o-banknotes')
-                    ->color(fn (Purchase $record) => $record->status === 'paid' ? 'success' : 'primary')
+                    ->color(function (Purchase $record) {
+                        if ($record->status === 'paid') {
+                            return 'success';
+                        }
+
+                        return $record->created_at->lte(now()->subDays(8))
+                            ? 'danger'
+                            : 'primary';
+                    })
                     ->disabled(fn (Purchase $record) => $record->status === 'paid')
                     ->tooltip(fn (Purchase $record) => $record->status === 'paid'
                         ? 'Már fizetve van'

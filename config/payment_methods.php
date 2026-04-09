@@ -7,5 +7,6 @@ return [
     ],
     'card' => [
         'label' => 'Bankkártyás fizetés',
+        'info' => 'A megrendelést követően automatikusan átirányítjuk a Simplepay oldalára, ahol bankkártyával meg tudja fizetni a megrendelés ellenértékét.'
     ]
 ];

@@ -85,6 +85,7 @@ class VideoShopController extends Controller
             'payment_method' => ['required', 'string', Rule::in($paymentMethods)],
 
             'terms_accepted' => ['accepted'],
+            'no_refund' => ['accepted'],
             'newsletter_opt_in' => ['nullable'],
             'new_video_opt_in' => ['nullable'],
 

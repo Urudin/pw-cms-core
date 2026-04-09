@@ -297,6 +297,22 @@
 
                             <div>
                                 <label class="flex items-start gap-3 cursor-pointer">
+                                    <input type="checkbox" name="no_refund" class="sr-only peer" @checked(old('no_refund')) required>
+
+                                    <span
+                                        class="w-5 h-5 shrink-0 border-2 rounded-sm flex items-center justify-center transition-all duration-200 mt-1
+                                               peer-checked:bg-cyan-500
+                                               peer-checked:border-[3px] peer-checked:border-white
+                                               peer-checked:outline peer-checked:outline-1 peer-checked:outline-slate-300
+                                               @error('no_refund') border-red-400 bg-red-50 @else border-gray-400 @enderror">
+                                    </span>
+
+                                    <span class="text-slate-700">Kifejezetten hozzájárulok a digitális tartalom azonnali biztosításához, és tudomásul veszem, hogy a hozzáférési adatok megküldésével elveszítem a 14 napos elállási jogomat.</span>
+                                </label>
+                            </div>
+
+                            <div>
+                                <label class="flex items-start gap-3 cursor-pointer">
                                     <input type="checkbox" name="newsletter_opt_in" class="sr-only peer" @checked(old('newsletter_opt_in'))>
 
                                     <span
