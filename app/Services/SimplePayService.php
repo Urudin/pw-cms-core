@@ -40,6 +40,7 @@ class SimplePayService
                             title: $item['title'] ?? ('Videó #' . ($item['id'] ?? '')),
                             price: (int) ($item['price'] ?? 0) * 1.27,
                             quantity: 1,
+                            tax: 0.27
                         ))
                         ->values()
                         ->all(),
