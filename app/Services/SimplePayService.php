@@ -21,7 +21,7 @@ class SimplePayService
             $response = SimplePay::payment()->start(
                 new PaymentRequest(
                     currency: Currency::HUF,
-                    total: (int) $purchase->total,
+                    total: (int) $purchase->total * 1.27,
                     orderRef: (string) $purchase->order_number,
                     customerEmail: $purchase->personal_email,
                     language: 'HU',
@@ -38,7 +38,7 @@ class SimplePayService
                     items: collect($purchase->items ?? [])
                         ->map(fn ($item) => new Item(
                             title: $item['title'] ?? ('Videó #' . ($item['id'] ?? '')),
-                            price: (int) ($item['price'] ?? 0),
+                            price: (int) ($item['price'] ?? 0) * 1.27,
                             quantity: 1,
                         ))
                         ->values()
