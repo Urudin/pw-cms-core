@@ -307,7 +307,7 @@
                                                @error('no_refund') border-red-400 bg-red-50 @else border-gray-400 @enderror">
                                     </span>
 
-                                    <span class="text-slate-700">Kifejezetten hozzájárulok a digitális tartalom azonnali biztosításához, és tudomásul veszem, hogy a hozzáférési adatok megküldésével elveszítem a 14 napos elállási jogomat.</span>
+                                    <span class="text-slate-700">Kifejezetten hozzájárulok a digitális tartalom azonnali biztosításához, és tudomásul veszem, hogy a hozzáférési adatok megküldésével elveszítem a 14 napos elállási jogomat.*</span>
                                 </label>
                             </div>
 
