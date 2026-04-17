@@ -47,9 +47,9 @@ class VideoShopController extends Controller
         $videos = $query->latest()->paginate(4)->withQueryString();
 
         // Filter option listák
-        $types = VideoType::query()->whereHas('videos')->where('is_active', true)->orderBy('sort_order')->orderBy('name')->get();
-        $topics = VideoTopic::query()->whereHas('videos')->where('is_active', true)->orderBy('sort_order')->orderBy('name')->get();
-        $domains = VideoDomain::query()->whereHas('videos')->where('is_active', true)->orderBy('sort_order')->orderBy('name')->get();
+        $types = VideoType::query()->whereHas('videos', fn($q) => $q->where('is_active', true))->where('is_active', true)->orderBy('sort_order')->orderBy('name')->get();
+        $topics = VideoTopic::query()->whereHas('videos', fn($q) => $q->where('is_active', true))->where('is_active', true)->orderBy('sort_order')->orderBy('name')->get();
+        $domains = VideoDomain::query()->whereHas('videos', fn($q) => $q->where('is_active', true))->where('is_active', true)->orderBy('sort_order')->orderBy('name')->get();
         $tiles = \App\Models\Tile::query()
                     ->whereIn('id', [6, /*4,*/ 2])
                     ->orderByDesc('id')
