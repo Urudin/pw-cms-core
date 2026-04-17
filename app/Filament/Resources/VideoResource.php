@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\VideoResource\Pages;
 use App\Models\Video;
+use Filament\Actions\DeleteAction;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -74,6 +75,7 @@ class VideoResource extends Resource
                         ->label('Videó hossza')
                         ->helperText('Formátum: mm:ss vagy hh:mm:ss (pl. 12:34 vagy 1:02:03)')
                         ->placeholder('mm:ss vagy hh:mm:ss')
+                        ->required()
                         ->dehydrateStateUsing(function (?string $state): ?int {
                             if ($state === null || trim($state) === '') {
                                 return null;
@@ -222,12 +224,11 @@ class VideoResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->disabled(fn ($record) => $record->accesses()->exists())
+                    ->color(fn ($record) => $record->accesses()->exists() ? 'gray' : 'danger'),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+            ->bulkActions([]);
     }
 
     public static function getPages(): array
