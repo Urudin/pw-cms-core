@@ -87,7 +87,7 @@ class VideoShopController extends Controller
             'terms_accepted' => ['accepted'],
             'no_refund' => ['accepted'],
             'newsletter_opt_in' => ['nullable'],
-            'new_video_opt_in' => ['nullable'],
+//            'new_video_opt_in' => ['nullable'],
 
             'items_json' => ['required', 'string'],
         ]);
@@ -123,7 +123,7 @@ class VideoShopController extends Controller
                 'terms_accepted' => true,
                 'privacy_accepted' => true,
                 'newsletter_opt_in' => $request->boolean('newsletter_opt_in'),
-                'new_video_opt_in' => $request->boolean('new_video_opt_in'),
+//                'new_video_opt_in' => $request->boolean('new_video_opt_in'),
 
                 'items' => $items,
                 'currency' => 'HUF',

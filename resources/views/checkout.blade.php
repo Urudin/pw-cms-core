@@ -327,21 +327,21 @@
                                 </label>
                             </div>
 
-                            <div>
-                                <label class="flex items-start gap-3 cursor-pointer">
-                                    <input type="checkbox" name="new_video_opt_in" class="sr-only peer" @checked(old('new_video_opt_in'))>
+{{--                            <div>--}}
+{{--                                <label class="flex items-start gap-3 cursor-pointer">--}}
+{{--                                    <input type="checkbox" name="new_video_opt_in" class="sr-only peer" @checked(old('new_video_opt_in'))>--}}
 
-                                    <span
-                                        class="w-5 h-5 border-2 border-gray-400 rounded-sm flex items-center justify-center transition-all duration-200
-                                               peer-checked:bg-cyan-500
-                                               peer-checked:border-[3px] peer-checked:border-white
-                                               peer-checked:outline peer-checked:outline-1 peer-checked:outline-slate-300
-                                               mt-1">
-                                    </span>
+{{--                                    <span--}}
+{{--                                        class="w-5 h-5 border-2 border-gray-400 rounded-sm flex items-center justify-center transition-all duration-200--}}
+{{--                                               peer-checked:bg-cyan-500--}}
+{{--                                               peer-checked:border-[3px] peer-checked:border-white--}}
+{{--                                               peer-checked:outline peer-checked:outline-1 peer-checked:outline-slate-300--}}
+{{--                                               mt-1">--}}
+{{--                                    </span>--}}
 
-                                    <span class="text-slate-700">Feliratkozom új videó értesítésre</span>
-                                </label>
-                            </div>
+{{--                                    <span class="text-slate-700">Feliratkozom új videó értesítésre</span>--}}
+{{--                                </label>--}}
+{{--                            </div>--}}
                         </div>
                     </div>
 
