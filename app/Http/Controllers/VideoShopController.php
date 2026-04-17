@@ -160,7 +160,7 @@ class VideoShopController extends Controller
 
     public function show(Request $request, Video $video)
     {
-        abort_unless($video->is_active, 404);
+//        abort_unless($video->is_active, 404);
 
         $embedUrl = $video->embed_url;
 
