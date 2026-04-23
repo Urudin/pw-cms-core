@@ -42,7 +42,7 @@
                         <img src="{{asset('images/footer/twitter-lablec.png')}}" title="Glósz és Tsa Kft. X oldal"
                              alt="Glósz és Tsa Kft. X oldal" class="h-6">
                     </a>
-                    <a href="https://hu.linkedin.com/company/gl%C3%B3sz-%C3%A9s-%C3%A1rsa-kft."
+                    <a href="https://www.linkedin.com/company/gl%C3%B3sz-%C3%A9s-t%C3%A1rsa-kft."
                        title="Glósz és Tsa Kft. LinkedIn oldal" target="_blank">
                         <img src="{{asset('images/footer/in-footer.png')}}" title="Glósz és Tsa Kft. LinkedIn oldal"
                              alt="Glósz és Tsa Kft. LinkedIn oldal" class="h-6">
