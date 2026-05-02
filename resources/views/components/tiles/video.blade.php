@@ -40,6 +40,7 @@
                     data-name="{{ $video->title }}"
                     data-price="{{ $video->price_huf }}"
                     data-image="{{ $video->thumbnail_url }}"
+                    title="{{ $video->title }}"
                     class="group flex items-stretch font-semibold add-to-cart
                            h-12 min-w-[290px] mt-4
                            bg-[#143c5a] hover:bg-[#39a7cc] transition-colors
