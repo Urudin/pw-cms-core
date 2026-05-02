@@ -31,7 +31,7 @@
                             @endif
 
                             <section class="space-y-6">
-                                <h3 class="text-2xl sm:text-3xl font-black text-slate-900">
+                                <h3 id="{{$category->id}}" class="text-2xl sm:text-3xl font-black text-slate-900">
                                     Tanfolyamok
                                     {{ strtolower($category->name) }}
                                     témakörben
