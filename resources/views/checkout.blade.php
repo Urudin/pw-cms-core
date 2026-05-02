@@ -5,6 +5,110 @@
         $paymentMethods = config('payment_methods');
     @endphp
 
+
+    <style>
+        .checkout-cart-row {
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .checkout-cart-left {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            min-width: 0;
+        }
+
+        .checkout-cart-image {
+            width: 170px;
+            height: 107px;
+            min-width: 170px;
+            min-height: 107px;
+            object-fit: cover;
+            border: 1px solid #d1d5db;
+        }
+
+        .checkout-cart-image-placeholder {
+            width: 170px;
+            height: 107px;
+            min-width: 170px;
+            background: #e5e7eb;
+            border: 1px solid #d1d5db;
+        }
+
+        .checkout-cart-text {
+            min-width: 0;
+        }
+
+        .checkout-cart-price {
+            flex-shrink: 0;
+            text-align: right;
+            color: #334155;
+        }
+
+        .checkout-cart-total-row {
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid #d1d5db;
+            font-weight: 900;
+            color: #334155;
+        }
+
+        @media (max-width: 767px) {
+            .checkout-cart-row {
+                padding: 1rem;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+            }
+
+            .checkout-cart-left {
+                width: 100%;
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .checkout-cart-image,
+            .checkout-cart-image-placeholder {
+                width: 100%;
+                height: auto;
+                min-width: 0;
+                min-height: 0;
+                aspect-ratio: 16 / 9;
+            }
+
+            .checkout-cart-image {
+                object-fit: contain;
+                background: #fff;
+            }
+
+            .checkout-cart-image-placeholder {
+                background: #e5e7eb;
+            }
+
+            .checkout-cart-text {
+                width: 100%;
+            }
+
+            .checkout-cart-price {
+                width: 100%;
+                text-align: left;
+                border-top: 1px solid #d1d5db;
+                padding-top: 0.75rem;
+            }
+
+            .checkout-cart-total-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.25rem;
+            }
+        }
+    </style>
+
     <div class="pageContainer bg-white">
         <div class="bg-gray-100 p-4 md:p-8 shadow-md w-full mx-auto space-y-10">
 
@@ -24,9 +128,9 @@
 
                 <div id="checkoutCartItems" class="divide-y divide-gray-300"></div>
 
-                <div class="px-6 py-4 flex items-center justify-between border-t border-gray-300 font-black text-slate-700">
+                <div class="checkout-cart-total-row">
                     <span>Összesen:</span>
-                    <span id="checkoutCartTotal">0 Ft+áfa</span>
+                    <span id="checkoutCartTotal" class="leading-snug">0 Ft</span>
                 </div>
             </div>
 
@@ -367,10 +471,34 @@
     </div>
 
     <script>
-        function formatHufAfa(n) {
+        const VAT_RATE = 0.27;
+
+        function formatHuf(n) {
             const v = Math.round(Number(n) || 0);
-            const s = v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-            return `${s} Ft+áfa`;
+            return v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' Ft';
+        }
+
+        function grossFromNet(net) {
+            return Math.round((Number(net) || 0) * (1 + VAT_RATE));
+        }
+
+        function vatFromNet(net) {
+            return Math.round((Number(net) || 0) * VAT_RATE);
+        }
+
+        function formatGrossWithNetVat(net) {
+            const netValue = Number(net) || 0;
+            const vatValue = vatFromNet(netValue);
+            const grossValue = grossFromNet(netValue);
+
+            return `
+                <span class="inline-flex flex-wrap items-baseline gap-x-2 gap-y-1 justify-start sm:justify-end">
+                    <span class="whitespace-nowrap">${formatHuf(grossValue)}</span>
+                    <span class="whitespace-nowrap text-sm font-normal text-slate-500">
+                        (${formatHuf(netValue)} + ${formatHuf(vatValue)} ÁFA)
+                    </span>
+                </span>
+            `;
         }
 
         function safeJsonParse(str, fallback) {
@@ -460,7 +588,7 @@
 
             if (!cart.length) {
                 itemsEl.innerHTML = `<div class="px-6 py-4 text-slate-600">A kosár üres.</div>`;
-                totalEl.textContent = formatHufAfa(0);
+                totalEl.innerHTML = formatGrossWithNetVat(0);
                 return;
             }
 
@@ -471,22 +599,28 @@
                     ? item.image
                     : (item.image ? `/storage/${item.image}` : '');
 
-                const current = Number(item.price) || 0;
-                total += current;
+                const quantity = Number(item.quantity ?? 1) || 1;
+                const currentNet = Number(item.price) || 0;
+                const lineNet = currentNet * quantity;
+
+                total += lineNet;
 
                 const row = document.createElement('div');
-                row.className = 'px-6 py-4 flex items-center justify-between';
+                row.className = 'checkout-cart-row';
 
                 row.innerHTML = `
-                    <div class="flex items-start gap-4 min-w-0">
+                    <div class="checkout-cart-left">
                         ${imgSrc ? `
-                            <img src="${imgSrc}" alt="" class="w-[170px] h-[107px] min-w-[170px] min-h-[107px] object-cover border border-gray-300">
+                            <img src="${imgSrc}" alt="" class="checkout-cart-image">
                         ` : `
-                            <div class="w-[170px] h-[107px] min-w-[70px] bg-gray-200 border border-gray-300"></div>
+                            <div class="checkout-cart-image-placeholder"></div>
                         `}
-                        <div class="min-w-0">
+
+                        <div class="checkout-cart-text">
                             <div class="text-[#1f4fd6] font-black leading-snug truncate">
-                                <a target="_blank" href="/online-tartalmak?q=${item.name || ''}">${item.name || ''}</a>
+                                <a target="_blank" href="/online-tartalmak?q=${encodeURIComponent(item.name || '')}">
+                                    ${item.name || ''}
+                                </a>
                             </div>
                             <div class="text-sm text-slate-600 leading-snug">
                                 Digitális tartalom megtekintés jogosultság
@@ -494,15 +628,20 @@
                         </div>
                     </div>
 
-                    <div class="shrink-0 font-black text-slate-700">
-                        ${formatHufAfa(current)}
+                    <div class="checkout-cart-price">
+                        <div class="font-black text-slate-700">
+                            ${formatHuf(grossFromNet(lineNet))}
+                        </div>
+                        <div class="text-sm font-normal text-slate-500 leading-snug">
+                            (${formatHuf(lineNet)} + ${formatHuf(vatFromNet(lineNet))} ÁFA)
+                        </div>
                     </div>
                 `;
 
                 itemsEl.appendChild(row);
             });
 
-            totalEl.textContent = formatHufAfa(total);
+            totalEl.innerHTML = formatGrossWithNetVat(total);
         }
 
         document.addEventListener('DOMContentLoaded', () => {

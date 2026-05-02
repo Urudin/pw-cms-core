@@ -75,12 +75,11 @@
 
                             <div class="md:col-span-4">
                                 <button type="submit"
-                                        class="inline-flex items-stretch bg-[#f2a44a] hover:brightness-95 text-white w-full overflow-hidden">
-                                <span class="px-[4.65rem] py-[11px] font-semibold flex items-center">
-                                    Szűrés
-                                </span>
-                                    <span
-                                        class="flex items-center justify-center w-[3.1rem] bg-[#c7802f] !text-white group-hover:!text-white">
+                                        class="flex items-stretch bg-[#f2a44a] hover:brightness-95 text-white w-full overflow-hidden">
+                                    <span class="flex-1 px-4 py-[11px] font-semibold flex items-center justify-center">
+                                        Szűrés
+                                    </span>
+                                    <span class="shrink-0 flex items-center justify-center w-[3.1rem] bg-[#c7802f] !text-white group-hover:!text-white">
                                                 <svg
                                                     viewBox="0 0 14 14"
                                                     class="h-4 w-4 translate-x-[-5px]"
@@ -199,13 +198,15 @@
                                         </div>
 
                                         <button
-                                            class="mt-6 inline-flex items-stretch bg-[#f2a44a] hover:brightness-95 text-white overflow-hidden add-to-cart"
+                                            class="mt-6 flex sm:inline-flex w-full sm:w-auto items-stretch bg-[#f2a44a] hover:brightness-95 text-white overflow-hidden add-to-cart"
                                             data-id="video_{{ $video->id }}"
                                             data-name="{{ $video->title }}"
                                             data-price="{{ $current }}"
                                             data-image="{{ $video->thumbnail_url }}">
-                                            <span class="pl-8 pr-6 py-3 font-semibold">Kosárba teszem</span>
-                                            <span class="flex items-center justify-center w-[3.1rem] bg-[#c7802f] !text-white group-hover:!text-white">
+                                            <span class="flex-1 sm:flex-none px-4 sm:pl-8 sm:pr-6 py-3 font-semibold flex items-center justify-center">
+                                                Kosárba teszem
+                                            </span>
+                                            <span class="shrink-0 flex items-center justify-center w-[3.1rem] bg-[#c7802f] !text-white group-hover:!text-white">
                                                 <svg
                                                     viewBox="0 0 14 14"
                                                     class="h-4 w-4 translate-x-[-5px]"
