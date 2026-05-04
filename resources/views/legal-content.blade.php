@@ -59,47 +59,37 @@
     }
 
     /* Táblázat – klasszikus kinézet */
-    #akademia table {
+    #akademia table:not(.no-akademia-style) {
         width: 100%;
-        border-collapse: collapse;
+        border-collapse: collapse !important;
         margin: 1.25em 0;
         font-size: 0.95rem;
+        border: 2px solid #000 !important;
     }
 
     /* Cellák */
-    #akademia th,
-    #akademia td {
-        border: 1px solid #e5e7eb; /* light gray */
+    #akademia table:not(.no-akademia-style) th,
+    #akademia table:not(.no-akademia-style) td {
+        border: 2px solid #000 !important;
         padding: 0.5rem 0.75rem;
         text-align: left;
         vertical-align: top;
     }
 
     /* Fejléc sor */
-    #akademia th {
-        background: #f1f5f9; /* világos szürke */
+    #akademia table:not(.no-akademia-style) th {
+        background: #f1f5f9;
         font-weight: 600;
     }
 
     /* Zebra csíkozás */
-    #akademia tbody tr:nth-child(even) {
+    #akademia table:not(.no-akademia-style) tbody tr:nth-child(even) {
         background: #f8fafc;
     }
 
     /* Ha túl széles a táblázat mobilon */
     #akademia .table-wrap {
         overflow-x: auto;
-    }
-
-    #akademia table {
-        border-collapse: collapse !important;
-        border: 2px solid #000 !important;
-    }
-
-    #akademia th,
-    #akademia td {
-        border: 2px solid #000 !important;
-        padding: 0.5rem 0.75rem;
     }
 </style>
 @section('content')
