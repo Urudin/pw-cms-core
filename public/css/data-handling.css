@@ -8331,7 +8331,7 @@ h2.modal-title {
     padding: 0;
 }
 
-#content #akademia .mlist li strong, #content #akademia .mlist li strong, #content #akademia .accordion h3:before, #content #akademia .accordion h3:after, #content #akademia .accordion h3 .arrow, #akademia .accordion td.checkbox {
+#content #akademia .mlist li strong, #content #akademia .mlist li strong, #content #akademia .accordion h3:before, #content #akademia .accordion h3:after, #content #akademia .accordion h3 .arrow, #akademia .accordion table:not(.no-akademia-style) td.checkbox {
     background: #00d4fb;
     text-align: center;
     font-size: 40px;
@@ -8342,7 +8342,7 @@ h2.modal-title {
     font-family: 'Montserrat', sans-serif;
 }
 
-#akademia .accordion h3 td, #akademia .checkbox-accordion h3 td {
+#akademia .accordion h3 table:not(.no-akademia-style) td, #akademia .checkbox-accordion h3 table:not(.no-akademia-style) td {
     vertical-align: middle;
     padding: 0 20px;
     font-size: 16px;
@@ -8350,7 +8350,7 @@ h2.modal-title {
     font-weight: 500;
 }
 
-#akademia .accordion h3 table, #akademia .checkbox-accordion h3 table {
+#akademia .accordion h3 table:not(.no-akademia-style), #akademia .checkbox-accordion h3 table:not(.no-akademia-style) {
     margin: 0;
     padding: 25px 0;
 }
@@ -8365,14 +8365,14 @@ h2.modal-title {
     display: none;
 }
 
-#akademia .accordion h3 td.checkbox, #akademia .checkbox-accordion h3 td.checkbox {
+#akademia .accordion h3 table:not(.no-akademia-style) td.checkbox, #akademia .checkbox-accordion h3 table:not(.no-akademia-style) td.checkbox {
     width: 20px;
     height: 20px;
     padding: 10px 25px;
     vertical-align: middle;
 }
 
-#akademia .accordion h3 td.checkbox:after, #akademia .checkbox-accordion h3 td.checkbox:after {
+#akademia .accordion h3 table:not(.no-akademia-style) td.checkbox:after, #akademia .checkbox-accordion h3 table:not(.no-akademia-style) td.checkbox:after {
     left: 32px;
     top: 27px;
     border-right-color: #3d3d55;
@@ -9116,7 +9116,7 @@ p + .mlist {
     margin-top: 0;
 }
 
-#akademia td h2 {
+#akademia table:not(.no-akademia-style) td h2 {
     margin: 0;
 }
 
@@ -9124,41 +9124,41 @@ p + .mlist {
     margin-top: 0;
 }
 
-#content #akademia td p[style*="text-align: right;"] {
+#content #akademia table:not(.no-akademia-style) td p[style*="text-align: right;"] {
     float: right;
     margin: 0;
 }
 
-#akademia table {
+#akademia table:not(.no-akademia-style) {
     width: 100%;
     margin: 20px 0;
 }
 
-#akademia td[width="300"] {
+#akademia table:not(.no-akademia-style) td[width="300"] {
     padding-right: 20px;
     max-width: calc(100% - 20px);
 }
 
-#akademia td {
+#akademia table:not(.no-akademia-style) td {
     padding: 0;
     vertical-align: top;
 }
 
-#content #akademia td img {
+#content #akademia table:not(.no-akademia-style) td img {
     max-width: 100%;
     max-height: 100% ! important;
     width: auto ! important;
 }
 
-#content #akademia td ul {
+#content #akademia table:not(.no-akademia-style) td ul {
     margin: 0;
 }
 
-#content #akademia table.data, #content #akademia table.data tr, #content #akademia table.data tbody, #content #akademia table.data thead {
+#content #akademia table.data:not(.no-akademia-style), #content #akademia table.data:not(.no-akademia-style) tr, #content #akademia table.data:not(.no-akademia-style) tbody, #content #akademia table.data:not(.no-akademia-style) thead {
     width: 100%;
 }
 
-#content #akademia table.data th {
+#content #akademia table.data:not(.no-akademia-style) th {
     background: #3d3d55;
     text-align: left;
     color: #fff;
@@ -9166,7 +9166,7 @@ p + .mlist {
     white-space: nowrap;
 }
 
-#content #akademia .tabs table th {
+#content #akademia .tabs table:not(.no-akademia-style) th {
     font-family: 'Montserrat', sans-serif;
     text-align: left;
     font-weight: 700;
@@ -9175,32 +9175,32 @@ p + .mlist {
     font-size: 15px;
 }
 
-#content #akademia .tabs table thead th {
+#content #akademia .tabs table:not(.no-akademia-style) thead th {
     font-size: 16px;
 }
 
-#akademia .tabs table td.date {
+#akademia .tabs table:not(.no-akademia-style) td.date {
     width: 120px;
 }
 
-#content #akademia .tabs table thead th.date {
+#content #akademia .tabs table:not(.no-akademia-style) thead th.date {
     width: 160px;
 }
 
-#content #akademia .tabs table thead th.kiv {
+#content #akademia .tabs table:not(.no-akademia-style) thead th.kiv {
     width: 100px;
 }
 
-#akademia .tabs table th.checkbox {
+#akademia .tabs table:not(.no-akademia-style) th.checkbox {
     width: 90px;
 }
 
-#akademia .tabs table th.checkbox:before, #akademia .tabs table th.checkbox:after {
+#akademia .tabs table:not(.no-akademia-style) th.checkbox:before, #akademia .tabs table:not(.no-akademia-style) th.checkbox:after {
     display: none;
     content: none;
 }
 
-#akademia .tabs table td.checkbox {
+#akademia .tabs table:not(.no-akademia-style) td.checkbox {
     width: 90px;
 }
 
@@ -9208,15 +9208,15 @@ p + .mlist {
     top: calc(50% - 9px);
 }
 
-#content #akademia table.data td, #content #akademia table.data th {
+#content #akademia table.data:not(.no-akademia-style) td, #content #akademia table.data:not(.no-akademia-style) th {
     padding: 5px 8px;
 }
 
-#content #akademia table.data tr:nth-child(odd) {
+#content #akademia table.data:not(.no-akademia-style) tr:nth-child(odd) {
     background: #eeeeee;
 }
 
-#content #akademia .accordion table.data tr:nth-child(odd) {
+#content #akademia .accordion table.data:not(.no-akademia-style) tr:nth-child(odd) {
     background: #ddd;
 }
 
@@ -9378,7 +9378,7 @@ p + .mlist {
 }
 
 @media only screen and (max-width: 1199px) {
-    #content #akademia td p[style*="text-align: right;"] {
+    #content #akademia table:not(.no-akademia-style) td p[style*="text-align: right;"] {
         float: none;
         margin: 5px 0;
         text-align: center ! important;
@@ -9392,22 +9392,22 @@ p + .mlist {
         font-size: 19px;
     }
 
-    #akademia td[width="300"] {
+    #akademia table:not(.no-akademia-style) td[width="300"] {
         padding: 0;
         max-width: 100%;
     }
 
-    #akademia td[width="300"] img,#content #akademia .about {
+    #akademia table:not(.no-akademia-style) td[width="300"] img,#content #akademia .about {
         margin: 0 auto;
     }
 
-    #content #akademia table.data {
+    #content #akademia table.data:not(.no-akademia-style) {
         display: block;
         overflow-x: auto;
         margin: 10px 0;
     }
 
-    #content #akademia table.data td {
+    #content #akademia table.data:not(.no-akademia-style) td {
         display: table-cell !important;
         width: auto !important;
         text-align: left ! important;
@@ -9427,7 +9427,7 @@ p + .mlist {
             margin: 0px auto;
         }
 
-        #akademia .accordion h3 td, #akademia .checkbox-accordion h3 td {
+        #akademia .accordion h3 table:not(.no-akademia-style) td, #akademia .checkbox-accordion h3 table:not(.no-akademia-style) td {
             padding: 0 5px;
             width: calc(100% - 10px) ! important;
             font-size: 14px;
@@ -9479,17 +9479,17 @@ p + .mlist {
         }
     }
 
-    #content #akademia td img {
+    #content #akademia table:not(.no-akademia-style) td img {
         margin: 0 auto;
     }
 
-    #content #akademia table td[style*="width: 20%"] img {
+    #content #akademia table:not(.no-akademia-style) td[style*="width: 20%"] img {
         display: block;
         object-fit: contain;
         margin: 0 auto;
     }
 
-    #content #akademia table td[style*="width: 20%"] {
+    #content #akademia table:not(.no-akademia-style) td[style*="width: 20%"] {
         width: 20% ! important;
         margin: 0 auto;
         display: inline-block;
@@ -9498,7 +9498,7 @@ p + .mlist {
         text-align: center ! important;
     }
 
-    #content #akademia h2[style*="text-align: center;"] + hr + table tr {
+    #content #akademia h2[style*="text-align: center;"] + hr + table:not(.no-akademia-style) tr {
         display: inline-block;
         width: 100%;
     }
@@ -9508,11 +9508,11 @@ p + .mlist {
     }
 
     @media only screen and (max-width: 580px) {
-        #content #akademia table td[style*="width: 20%"] {
+        #content #akademia table:not(.no-akademia-style) td[style*="width: 20%"] {
             width: 100% ! important;
         }
 
-        #content #akademia h2[style*="text-align: center;"] + hr + table tr {
+        #content #akademia h2[style*="text-align: center;"] + hr + table:not(.no-akademia-style) tr {
             width: 50%;
         }
 
@@ -9528,7 +9528,7 @@ p + .mlist {
             width: 100% ! important;
         }
 
-        #akademia .ui-tabs-panel table thead {
+        #akademia .ui-tabs-panel table:not(.no-akademia-style) thead {
             display: none;
         }
 
@@ -9547,12 +9547,12 @@ p + .mlist {
             font-size: 13px;
         }
 
-        #content #akademia table td[style*="text-align: right;"] {
+        #content #akademia table:not(.no-akademia-style) td[style*="text-align: right;"] {
             text-align: right ! important;
             font-size: 14px;
         }
 
-        #content #akademia .tabs table th {
+        #content #akademia .tabs table:not(.no-akademia-style) th {
             font-size: 12px;
         }
 
@@ -9578,7 +9578,7 @@ p + .mlist {
             padding: 0;
         }
 
-        #content #akademia .checkbox-accordion h3:before, #content #akademia .checkbox-accordion h3 td.arrow, #content #akademia .checkbox-accordion h3:after, #content #akademia .checkbox-accordion h3:before, #content #akademia .checkbox-accordion h3:after, #content #akademia .mlist li strong, #content #akademia .accordion h3:before, #content #akademia .accordion h3 td.arrow, #content #akademia .accordion h3:after, #content #akademia .accordion h3:before, #content #akademia .accordion h3:after {
+        #content #akademia .checkbox-accordion h3:before, #content #akademia .checkbox-accordion h3 table:not(.no-akademia-style) td.arrow, #content #akademia .checkbox-accordion h3:after, #content #akademia .checkbox-accordion h3:before, #content #akademia .checkbox-accordion h3:after, #content #akademia .mlist li strong, #content #akademia .accordion h3:before, #content #akademia .accordion h3 table:not(.no-akademia-style) td.arrow, #content #akademia .accordion h3:after, #content #akademia .accordion h3:before, #content #akademia .accordion h3:after {
             width: 50px;
             height: 50px;
             padding-top: 0px;
@@ -9613,7 +9613,7 @@ p + .mlist {
             max-width: 300px ! important;
         }
 
-        #content #akademia h2[style*="text-align: center;"] + hr + table tr td img {
+        #content #akademia h2[style*="text-align: center;"] + hr + table:not(.no-akademia-style) tr td img {
             margin: 0 auto;
             max-height: 100px ! important;
         }
@@ -10136,7 +10136,7 @@ p + .mlist {
 }
 
 @media screen and (max-width: 660px) {
-    #content #akademia td img {
+    #content #akademia table:not(.no-akademia-style) td img {
         width: 100% ! important;
     }
 
