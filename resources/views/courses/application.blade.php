@@ -113,7 +113,7 @@
                         A jelentkezéssel kapcsolatos további információkkal kapcsolatban <a class="text-[#11c5e8]" href="/kapcsolat" title="Kérdése van? Lépjen kapcsolatba velünk!"><strong>vegye fel a kapcsolatot</strong></a>
                         kollégánkkal!
                     </p>
-                    <form class="space-y-8" action="{{ route('course-applications.store') }}" method="POST">
+                    <form class="space-y-8" action="{{ route('course-applications.store', [], false) }}" method="POST">
                         @csrf
                         <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
 

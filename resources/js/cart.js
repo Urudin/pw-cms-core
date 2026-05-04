@@ -59,11 +59,35 @@ document.addEventListener('DOMContentLoaded', function () {
         renderCart();
     }
 
-    function formatHufAfa(n) {
+    const VAT_RATE = 0.27;
+
+    function formatHuf(n) {
         const v = Math.round(Number(n) || 0);
-        // 6 900 formátum
         const s = v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-        return `${s} Ft+áfa`;
+        return `${s} Ft`;
+    }
+
+    function grossFromNet(net) {
+        return Math.round((Number(net) || 0) * (1 + VAT_RATE));
+    }
+
+    function vatFromNet(net) {
+        return Math.round((Number(net) || 0) * VAT_RATE);
+    }
+
+    function formatGrossWithNetVat(net) {
+        const netValue = Number(net) || 0;
+        const vatValue = vatFromNet(netValue);
+        const grossValue = grossFromNet(netValue);
+
+        return `
+        <span class="inline-flex flex-wrap items-baseline gap-x-2 gap-y-1">
+            <span class="whitespace-nowrap">${formatHuf(grossValue)}</span>
+            <span class="whitespace-nowrap text-xs font-normal text-slate-500">
+                (${formatHuf(netValue)} + ${formatHuf(vatValue)} ÁFA)
+            </span>
+        </span>
+    `;
     }
 
     function renderCart() {
@@ -73,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function () {
             cartElement.innerHTML = '<p class="text-gray-600">A kosár üres.</p>';
 
             const totalEl = document.getElementById('cartTotal');
-            if (totalEl) totalEl.textContent = formatHufAfa(0);
+            if (totalEl) totalEl.innerHTML = formatGrossWithNetVat(0);
 
             updateCartBadge();
             return;
@@ -118,15 +142,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div class="text-[#1f4fd6] font-black leading-snug text-[15px]">
                     ${item.name} - Digitális tartalom megtekintés jogosultság
                 </div>
+                    <div class="mt-3 space-y-1">
+                        <div class="text-slate-400 line-through font-extrabold text-[13px]">
+                            ${formatHuf(grossFromNet(original))}
+                        </div>
 
-                <div class="mt-2 flex items-end gap-4">
-                    <div class="text-slate-400 line-through font-extrabold text-[14px]">
-                        ${formatHufAfa(original)}
+                        <div class="text-slate-800 leading-tight">
+                            <div class="font-extrabold text-[15px]">
+                                ${formatHuf(grossFromNet(current))}
+                            </div>
+                            <div class="text-[11px] font-normal text-slate-500">
+                                (${formatHuf(current)} + ${formatHuf(vatFromNet(current))} ÁFA)
+                            </div>
+                        </div>
                     </div>
-                    <div class="text-slate-800 font-extrabold text-[14px]">
-                        ${formatHufAfa(current)}
-                    </div>
-                </div>
             </div>
         `;
 
@@ -139,8 +168,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         const total = cart.reduce((sum, i) => sum + (Number(i.price) || 0), 0);
         const totalEl = document.getElementById('cartTotal');
-        if (totalEl) totalEl.textContent = formatHufAfa(total);
-
+        if (totalEl) totalEl.innerHTML = formatGrossWithNetVat(total);
         updateCartBadge();
     }
 

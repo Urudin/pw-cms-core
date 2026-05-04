@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\CourseApplicationAdminNotificationMail;
+use App\Mail\CourseApplicationConfirmationMail;
 use App\Models\ActualCourse;
 use App\Models\CourseApplication;
+use App\Models\UserSetting;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class CourseApplicationController extends Controller
 {
@@ -99,7 +103,18 @@ class CourseApplicationController extends Controller
         $data['newsletter_opt_in'] = (bool) $request->boolean('newsletter_opt_in');
         $data['privacy_accepted'] = true;
 
-        CourseApplication::query()->create($data);
+        $application = CourseApplication::query()->create($data);
+        $application->load('actualCourse.course.courseCategory');
+
+        Mail::to($application->participant_email)
+            ->send(new CourseApplicationConfirmationMail($application));
+
+        $adminEmail = UserSetting::getValueByName('admin-email-address');
+
+        if (! empty($adminEmail)) {
+            Mail::to($adminEmail)
+                ->send(new CourseApplicationAdminNotificationMail($application));
+        }
 
         return back()->with('success', 'Sikeres jelentkezés! Hamarosan e-mailben jelentkezünk.');
     }

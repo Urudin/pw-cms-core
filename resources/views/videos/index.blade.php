@@ -1,6 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
+    @php
+        $vatRate = 0.27;
+
+        $formatHuf = fn ($amount) => number_format((int) round($amount), 0, ',', ' ') . ' Ft';
+        $grossFromNet = fn ($net) => (int) round(((float) $net) * (1 + $vatRate));
+        $vatFromNet = fn ($net) => (int) round(((float) $net) * $vatRate);
+    @endphp
     <div class="pageContainer bg-white">
         <div class="lg:flex lg:gap-8">
             <div class="lg:flex-1 min-w-0">
@@ -99,10 +106,18 @@
                         @foreach($videos as $video)
                             @php
                                 $even = $loop->iteration % 2 === 0;
-                                $original = (int)$video->original_price_huf;
-                                $current = (int)$video->price_huf;
-                                $CARD_H = 'md:h-[340px]';      // <-- itt állítod a fix magasságot
-                                $IMG_H  = 'h-[240px] md:h-[340px]'; // mobil + desktop
+
+                                $originalNet = (int) $video->original_price_huf;
+                                $currentNet = (int) $video->price_huf;
+
+                                $originalVat = $vatFromNet($originalNet);
+                                $originalGross = $grossFromNet($originalNet);
+
+                                $currentVat = $vatFromNet($currentNet);
+                                $currentGross = $grossFromNet($currentNet);
+
+                                $CARD_H = 'md:h-[340px]';
+                                $IMG_H  = 'h-[240px] md:h-[340px]';
                             @endphp
 
                             <article class="bg-white border border-gray-200 overflow-hidden">
@@ -185,15 +200,26 @@
                                                 @endif
                                             </div>
 
-                                            <div class="">
-                                                @if(!empty($original))
-                                                    <p class="text-sm font-black text-slate-300 line-through">
-                                                        {{ number_format($original,0,' ',' ') }} Ft+áfa
-                                                    </p>
+                                            <div class="space-y-1">
+                                                @if($originalNet > 0)
+                                                    <div class="text-slate-300 line-through leading-tight">
+                                                        <div class="text-sm font-black">
+                                                            {{ $formatHuf($originalGross) }}
+                                                        </div>
+{{--                                                        <div class="text-[11px] font-normal">--}}
+{{--                                                            ({{ $formatHuf($originalNet) }} + {{ $formatHuf($originalVat) }} ÁFA)--}}
+{{--                                                        </div>--}}
+                                                    </div>
                                                 @endif
-                                                <p class="text-base font-black text-slate-800">
-                                                    {{ number_format($current,0,' ',' ') }} Ft+áfa
-                                                </p>
+
+                                                <div class="leading-tight">
+                                                    <div class="text-base font-black text-slate-800">
+                                                        {{ $formatHuf($currentGross) }}
+                                                    </div>
+                                                    <div class="text-xs font-normal text-slate-500">
+                                                        ({{ $formatHuf($currentNet) }} + {{ $formatHuf($currentVat) }} ÁFA)
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -201,7 +227,7 @@
                                             class="mt-6 flex sm:inline-flex w-full sm:w-auto items-stretch bg-[#f2a44a] hover:brightness-95 text-white overflow-hidden add-to-cart"
                                             data-id="video_{{ $video->id }}"
                                             data-name="{{ $video->title }}"
-                                            data-price="{{ $current }}"
+                                            data-price="{{ $currentNet }}"
                                             data-image="{{ $video->thumbnail_url }}">
                                             <span class="flex-1 sm:flex-none px-4 sm:pl-8 sm:pr-6 py-3 font-semibold flex items-center justify-center">
                                                 Kosárba teszem

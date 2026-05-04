@@ -34,10 +34,10 @@ class CourseApplicationResource extends Resource
             Forms\Components\Select::make('status')
                 ->label('Státusz')
                 ->options([
-                    'NEW' => 'NEW',
-                    'PROCESSED' => 'PROCESSED',
-                    'SENT' => 'SENT',
-                    'CANCELLED' => 'CANCELLED',
+                    'NEW' => 'Új',
+                    'PROCESSED' => 'Feldolgozott',
+//                    'SENT' => 'Fizetett',
+                    'CANCELLED' => 'Lemondott',
                 ])
                 ->required(),
 
@@ -102,6 +102,18 @@ class CourseApplicationResource extends Resource
 
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
+                    ->formatStateUsing(fn (?string $state): string => match ($state) {
+                        'NEW' => 'Új',
+                        'PROCESSED' => 'Feldolgozott',
+                        'CANCELLED' => 'Lemondott',
+                        default => $state ?? '-',
+                    })
+                    ->color(fn (?string $state): string => match ($state) {
+                        'NEW' => 'info',
+                        'PROCESSED' => 'success',
+                        'CANCELLED' => 'danger',
+                        default => 'gray',
+                    })
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('created_at')
@@ -112,10 +124,10 @@ class CourseApplicationResource extends Resource
             ->defaultSort('created_at', 'desc')
             ->filters([
                 Tables\Filters\SelectFilter::make('status')->options([
-                    'NEW' => 'NEW',
-                    'PROCESSED' => 'PROCESSED',
-                    'SENT' => 'SENT',
-                    'CANCELLED' => 'CANCELLED',
+                    'NEW' => 'Új',
+                    'PROCESSED' => 'Feldolgozott',
+//                    'SENT' => 'Fizetett',
+                    'CANCELLED' => 'Lemondott',
                 ]),
             ])
             ->actions([
