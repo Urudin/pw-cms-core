@@ -108,9 +108,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 ? item.image
                 : (item.image ? `/storage/${item.image}` : '');
 
-            // MVP: fix kedvezmény 2000 → eredeti = current + 2000
+            console.log(item);
             const current = Number(item.price) || 0;
-            const original = current + 2000;
+            const original = Number(item.originalPrice) || 0;
 
             const wrapper = document.createElement('div');
             wrapper.className = 'bg-[#efeff2] border border-gray-200 p-3 mb-4';
@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
                     <div class="mt-3 space-y-1">
                         <div class="text-slate-400 line-through font-extrabold text-[13px]">
-                            ${formatHuf(grossFromNet(original))}
+                            ${original !== 0 ? formatHuf(grossFromNet(original)) : ""}
                         </div>
 
                         <div class="text-slate-800 leading-tight">
@@ -177,10 +177,10 @@ document.addEventListener('DOMContentLoaded', function () {
     addToCartButtons.forEach(button => {
         button.addEventListener('click', (e) => {
             e.preventDefault();
-
             const id = button.dataset.id;
             const name = button.dataset.name;
             const price = parseFloat(button.dataset.price || '0');
+            const originalPrice = parseFloat(button.dataset.original_price || '0');
             const image = button.dataset.image || '';
 
             const existing = cart.find(i => i.id === id);
@@ -192,7 +192,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            cart.push({ id, name, price, image, quantity: 1 });
+            cart.push({ id, name, price, image, originalPrice, quantity: 1 });
             saveCart();
             openCart();
         });
