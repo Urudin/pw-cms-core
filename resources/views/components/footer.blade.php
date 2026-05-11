@@ -121,7 +121,7 @@
         </div>
     @endif
         <div class="p-5 bg-white flex justify-center">
-            <a href="https://simplepay.hu" target="_blank">
+            <a href="https://simplepartner.hu/PaymentService/Fizetesi_tajekoztato.pdf" target="_blank">
                 <img
                     src="{{ asset('images/payments/checkout_simplepay_hu_v2_1.png') }}"
                     alt="SimplePay támogatott fizetési módok"

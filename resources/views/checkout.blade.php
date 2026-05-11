@@ -352,7 +352,7 @@
                                                 </div>
 
                                                 @if($key === 'card')
-                                                    <a href="https://simplepay.hu/" target="_blank">
+                                                    <a href="https://simplepartner.hu/PaymentService/Fizetesi_tajekoztato.pdf" target="_blank">
                                                         <img
                                                             src="{{ asset('images/payments/checkout_simplepay_hu_v2_1.png') }}"
                                                             alt="SimplePay támogatott fizetési módok"
@@ -361,6 +361,20 @@
                                                     </a>
                                                 @endif
                                             </div>
+                                            @if($key === 'card')
+                                                <div class="text-sm text-[#1f4fd6] mt-1">
+                                                    Tudomásul veszem, hogy a Glósz és Tsa. Kft., 1051 Budapest, Arany János u. 15. III.
+                                                    lph. III./5. adatkezelő által a https://imakademia.hu/ felhasználói adatbázisában
+                                                    tárolt alábbi személyes adataim átadásra kerülnek a SimplePay Zrt., mint
+                                                    adatfeldolgozó részére. Az adatkezelő által továbbított adatok köre az alábbi: név,
+                                                    telefonszám, email cím, számlázási cím
+
+
+                                                    Az adatfeldolgozó által végzett adatfeldolgozási tevékenység jellege és célja a
+                                                    SimplePay Adatkezelési tájékoztatóban, az alábbi linken tekinthető meg:
+                                                    <a target="_blank" href="https://simplepay.hu/adatkezelesi-tajekoztatok/">https://simplepay.hu/adatkezelesi-tajekoztatok/</a>
+                                                </div>
+                                            @endif
                                         </div>
                                     </label>
                                 @endforeach

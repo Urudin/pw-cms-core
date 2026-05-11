@@ -49,6 +49,7 @@ Route::get('/payment/failed', [VideoShopController::class, 'paymentFailed'])
 Route::get('/order/success/{orderRef}', [VideoShopController::class, 'orderSuccessfulByOrderRef'])
     ->name('order-successful-by-order-ref');
 
+// SimplePay merchant dashboard is configured to post IPN messages to this custom route.
 Route::post('/simplepay/ipn-glosz', [SimplePayIpnController::class, 'handle'])
     ->middleware(\App\Http\Middleware\VerifySimplePaySignature::class)
     ->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class)

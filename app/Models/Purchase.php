@@ -28,6 +28,13 @@ class Purchase extends Model
 
         // payment
         'payment_method',
+        'payment_provider',
+        'payment_transaction_id',
+        'payment_started_at',
+        'payment_paid_at',
+        'payment_failed_at',
+        'payment_payload',
+        'payment_error_message',
 
         // declarations
         'terms_accepted',

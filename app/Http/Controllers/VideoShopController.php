@@ -231,6 +231,7 @@ class VideoShopController extends Controller
             'videos' => $videos,
             'bankName' => 'K&H Bank',
             'bankAccount' => '10200823-22223649-00000000',
+            'paymentPending' => $purchase->payment_method === 'card' && $purchase->status !== 'paid',
         ]);
     }
 
@@ -247,13 +248,17 @@ class VideoShopController extends Controller
             'videos' => $videos,
             'bankName' => 'K&H Bank',
             'bankAccount' => '10200823-22223649-00000000',
+            'paymentPending' => $purchase->payment_method === 'card' && $purchase->status !== 'paid',
         ]);
     }
     public function paymentFailed(Request $request)
     {
         $purchase = Purchase::query()->findOrFail($request->integer('purchaseId'));
+        $paymentResult = in_array($request->query('paymentResult'), ['failed', 'cancelled', 'timeout'], true)
+            ? $request->query('paymentResult')
+            : 'failed';
+        $orderRef = $purchase->order_number;
 
-        return view('videos.order-failed', compact('purchase'));
+        return view('videos.order-failed', compact('purchase', 'paymentResult', 'orderRef'));
     }
 }
-

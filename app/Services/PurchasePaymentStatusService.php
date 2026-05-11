@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Mail\PurchaseAccessMail;
 use App\Models\Purchase;
 use App\Models\UserSetting;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class PurchasePaymentStatusService
@@ -12,6 +13,13 @@ class PurchasePaymentStatusService
     public function markPaid(Purchase $purchase, array $payload = [], ?string $transactionId = null): void
     {
         if ($purchase->status === 'paid') {
+            Log::info('SimplePay payment status update skipped', [
+                'purchase_id' => $purchase->id,
+                'order_ref' => $purchase->order_number,
+                'status' => $purchase->status,
+                'target_status' => 'paid',
+            ]);
+
             return;
         }
 
@@ -36,11 +44,25 @@ class PurchasePaymentStatusService
         $purchase->update([
             'access_sent' => now(),
         ]);
+
+        Log::info('SimplePay payment status updated', [
+            'purchase_id' => $purchase->id,
+            'order_ref' => $purchase->order_number,
+            'transaction_id' => $purchase->payment_transaction_id,
+            'status' => 'paid',
+        ]);
     }
 
     public function markFailed(Purchase $purchase, array $payload = [], ?string $transactionId = null, ?string $message = null): void
     {
         if ($purchase->status === 'paid') {
+            Log::info('SimplePay payment status update skipped', [
+                'purchase_id' => $purchase->id,
+                'order_ref' => $purchase->order_number,
+                'status' => $purchase->status,
+                'target_status' => 'failed',
+            ]);
+
             return;
         }
 
@@ -54,11 +76,25 @@ class PurchasePaymentStatusService
                 'ipn' => $payload,
             ]),
         ]);
+
+        Log::info('SimplePay payment status updated', [
+            'purchase_id' => $purchase->id,
+            'order_ref' => $purchase->order_number,
+            'transaction_id' => $purchase->payment_transaction_id,
+            'status' => 'failed',
+        ]);
     }
 
     public function markCancelled(Purchase $purchase, array $payload = [], ?string $transactionId = null, ?string $message = null): void
     {
         if ($purchase->status === 'paid') {
+            Log::info('SimplePay payment status update skipped', [
+                'purchase_id' => $purchase->id,
+                'order_ref' => $purchase->order_number,
+                'status' => $purchase->status,
+                'target_status' => 'cancelled',
+            ]);
+
             return;
         }
 
@@ -71,6 +107,13 @@ class PurchasePaymentStatusService
             'payment_payload' => array_merge($purchase->payment_payload ?? [], [
                 'ipn' => $payload,
             ]),
+        ]);
+
+        Log::info('SimplePay payment status updated', [
+            'purchase_id' => $purchase->id,
+            'order_ref' => $purchase->order_number,
+            'transaction_id' => $purchase->payment_transaction_id,
+            'status' => 'cancelled',
         ]);
     }
 }

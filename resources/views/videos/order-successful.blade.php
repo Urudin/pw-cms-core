@@ -13,6 +13,7 @@
 
         $bankName = $bankName ?? 'K&H Bank';
         $bankAccount = $bankAccount ?? '10200823-22223649-00000000';
+        $paymentPending = $paymentPending ?? false;
 
         $accentBlue = '#2f46d6';
         $accentPink = '#d63b73';
@@ -25,10 +26,18 @@
             {{-- HEADER --}}
             <div class="text-center space-y-2">
                 <h1 class="text-3xl sm:text-4xl font-black tracking-tight" style="color: {{ $accentBlue }};">
+                    @if($paymentPending)
+                        Fizetés feldolgozás alatt
+                    @else
                     Köszönjük megrendelését!
+                    @endif
                 </h1>
                 <p class="text-slate-600 text-sm sm:text-base">
+                    @if($paymentPending)
+                        A bankkártyás fizetés visszaigazolása folyamatban van.
+                    @else
                     Köszönjük az érdeklődést és a digitális/video tartalmunk megrendelését!
+                    @endif
                 </p>
             </div>
 
@@ -117,12 +126,21 @@
             @elseif($purchase->payment_method === 'card')
                 <div class="bg-[{{ $cardBg }}] border-b-2 px-6 py-5 space-y-3" style="border-color: {{ $accentPink }};">
                     <div class="flex flex-col items-center gap-2 text-slate-700 text-sm leading-relaxed text-center">
+                        @if($paymentPending)
+                            <div>
+                                A fizetés feldolgozása folyamatban van. A hozzáférést a SimplePay visszaigazolása után küldjük meg.
+                            </div>
+                            <div>
+                                Kérjük, ellenőrizd az e-mail fiókodat a további információkért.
+                            </div>
+                        @else
                         <div>
                             Sikeres bankkártyás fizetés, rendelésed feldolgozása folyamatban van.
                         </div>
                         <div>
                             A hozzáférést és a további információkat e-mailben küldjük meg.
                         </div>
+                        @endif
                     </div>
                 </div>
             @endif
