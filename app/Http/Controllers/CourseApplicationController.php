@@ -109,10 +109,10 @@ class CourseApplicationController extends Controller
         Mail::to($application->participant_email)
             ->send(new CourseApplicationConfirmationMail($application));
 
-        $adminEmail = UserSetting::getValueByName('admin-email-address');
+        $adminEmails = UserSetting::getAdminEmailAddresses();
 
-        if (! empty($adminEmail)) {
-            Mail::to($adminEmail)
+        if (! empty($adminEmails)) {
+            Mail::to($adminEmails)
                 ->send(new CourseApplicationAdminNotificationMail($application));
         }
 

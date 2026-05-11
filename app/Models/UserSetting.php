@@ -25,6 +25,25 @@ class UserSetting extends Model
         return self::query()->where('name', $name)->first()?->value;
     }
 
+    public static function getArrayValueByName(string $name): array
+    {
+        $value = self::getValueByName($name);
+
+        if (blank($value)) {
+            return [];
+        }
+
+        return array_values(array_filter(
+            array_map('trim', explode(',', $value)),
+            fn (string $item): bool => $item !== ''
+        ));
+    }
+
+    public static function getAdminEmailAddresses(): array
+    {
+        return self::getArrayValueByName('admin-email-address');
+    }
+
     public static function getHeaderUrl(): string
     {
         $mediaRecord = Media::query()

@@ -37,7 +37,7 @@ class CourseApplicationNotificationTest extends TestCase
 
         UserSetting::query()->create([
             'name' => 'admin-email-address',
-            'value' => 'admin@example.com',
+            'value' => 'admin@example.com, second-admin@example.com',
         ]);
 
         $category = CourseCategory::query()->create([
@@ -94,6 +94,7 @@ class CourseApplicationNotificationTest extends TestCase
             $body = $mail->render();
 
             return $mail->hasTo('admin@example.com')
+                && $mail->hasTo('second-admin@example.com')
                 && str_contains($body, 'Példa Kft.')
                 && str_contains($body, 'Teszt Elek')
                 && str_contains($body, 'applicant@example.com')
@@ -112,6 +113,19 @@ class CourseApplicationNotificationTest extends TestCase
             ->assertSee('action="/jelentkezes"', false)
             ->assertSee('name="_token"', false)
             ->assertDontSee('action="https://', false);
+    }
+
+    public function test_admin_email_addresses_are_split_and_trimmed(): void
+    {
+        UserSetting::query()->create([
+            'name' => 'admin-email-address',
+            'value' => ' a@example.com , b@example.com ,, ',
+        ]);
+
+        $this->assertSame(
+            ['a@example.com', 'b@example.com'],
+            UserSetting::getAdminEmailAddresses()
+        );
     }
 
     public function test_invalid_course_application_does_not_send_emails(): void

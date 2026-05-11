@@ -139,7 +139,7 @@ class VideoShopController extends Controller
         });
 
         if ($purchase->payment_method === 'forward_payment') {
-            Mail::to([$purchase->personal_email, UserSetting::query()->firstWhere('name', 'admin-email-address')->value])
+            Mail::to(array_merge([$purchase->personal_email], UserSetting::getAdminEmailAddresses()))
                 ->send(new PurchaseThankYouMail(
                     purchase: $purchase,
                     bankName: 'K&H Bank',

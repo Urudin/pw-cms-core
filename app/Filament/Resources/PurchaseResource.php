@@ -367,10 +367,8 @@ class PurchaseResource extends Resource
                             return;
                         }
 
-                        Mail::to([
-                            $record->personal_email,
-                            UserSetting::query()->firstWhere('name', 'admin-email-address')->value,
-                        ])->send(new PurchaseAccessMail($record));
+                        Mail::to(array_merge([$record->personal_email], UserSetting::getAdminEmailAddresses()))
+                            ->send(new PurchaseAccessMail($record));
 
                         // boolean mező esetén:
                         //$record->update(['access_sent' => true]);

@@ -36,10 +36,8 @@ class PurchasePaymentStatusService
 
         app(BillingService::class)->issueInvoice($purchase);
 
-        Mail::to([
-            $purchase->personal_email,
-            UserSetting::query()->firstWhere('name', 'admin-email-address')->value,
-        ])->send(new PurchaseAccessMail($purchase));
+        Mail::to(array_merge([$purchase->personal_email], UserSetting::getAdminEmailAddresses()))
+            ->send(new PurchaseAccessMail($purchase));
 
         $purchase->update([
             'access_sent' => now(),
