@@ -3,15 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserSettingResource\Pages;
-use App\Filament\Resources\UserSettingResource\RelationManagers;
 use App\Models\UserSetting;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class UserSettingResource extends Resource
 {
@@ -23,15 +20,32 @@ class UserSettingResource extends Resource
     protected static ?string $pluralModelLabel = 'Beállítások';
     protected static ?string $modelLabel = 'Beállítás';
 
+    private const LEGAL_DOCUMENTS_CSS_SETTING = 'legal-documents-css';
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label('Kulcs')
                     ->disabled()
+                    ->dehydrated(false)
                     ->required(),
+
                 Forms\Components\TextInput::make('value')
-                    ->required(),
+                    ->label('Érték')
+                    ->required()
+                    ->visible(fn (?UserSetting $record): bool => $record?->name !== self::LEGAL_DOCUMENTS_CSS_SETTING)
+                    ->dehydrated(fn (?UserSetting $record): bool => $record?->name !== self::LEGAL_DOCUMENTS_CSS_SETTING),
+
+                Forms\Components\Textarea::make('value')
+                    ->label('CSS tartalom')
+                    ->required()
+                    ->rows(30)
+                    ->columnSpanFull()
+                    ->helperText('Ez a CSS a jogi dokumentum oldalakhoz kerül betöltésre.')
+                    ->visible(fn (?UserSetting $record): bool => $record?->name === self::LEGAL_DOCUMENTS_CSS_SETTING)
+                    ->dehydrated(fn (?UserSetting $record): bool => $record?->name === self::LEGAL_DOCUMENTS_CSS_SETTING),
             ]);
     }
 
@@ -39,9 +53,20 @@ class UserSettingResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('value')->sortable(),
-                Tables\Columns\TextColumn::make('updated_at')->label('Last Updated')->sortable(),
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Kulcs')
+                    ->sortable()
+                    ->searchable(),
+
+                Tables\Columns\TextColumn::make('value')
+                    ->label('Érték')
+                    ->limit(80)
+                    ->tooltip(fn (Tables\Columns\TextColumn $column): ?string => $column->getState()),
+
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Utolsó módosítás')
+                    ->dateTime('Y-m-d H:i')
+                    ->sortable(),
             ])
             ->filters([])
             ->actions([
@@ -52,9 +77,7 @@ class UserSettingResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function canCreate(): bool

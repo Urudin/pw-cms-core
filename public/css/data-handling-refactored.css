@@ -1,0 +1,152 @@
+#content {
+    /*display: table-cell;*/
+    vertical-align: top;
+    /*width: 825px;*/
+    padding: 0px 10px 30px 25px;
+    line-height: 140%;
+    position: relative;
+    height: auto ! important;
+}
+
+#content #akademia a {
+    color: #00d4fb;
+}
+
+#content #akademia a:hover {
+    color: #00c1e6;
+}
+
+#akademia h2 strong {
+    color: #3d3d55;
+}
+
+#akademia > h1 {
+    margin-top: 0;
+}
+
+#content #akademia h3, #content #akademia h2, #content #akademia h1 {
+    clear: both;
+}
+
+#content #akademia ul {
+    padding: 0;
+    margin: 10px 0;
+}
+
+#content #akademia ul li {
+    list-style: none;
+    line-height: 1.5;
+    margin: 2px 0;
+    text-indent: -20px;
+    margin-left: 20px;
+}
+
+#content #akademia ul li:before {
+    content: "";
+    width: 0;
+    height: 0;
+    border-bottom: 12px #00d4fb solid;
+    border-right: 12px solid transparent;
+    vertical-align: top;
+    margin: 5px 8px 0 0;
+    display: inline-block;
+}
+
+#akademia table:not(.no-akademia-style) td h2 {
+    margin: 0;
+}
+
+#akademia table:not(.no-akademia-style) {
+    width: 100%;
+    margin: 20px 0;
+}
+
+#akademia table:not(.no-akademia-style) td {
+    padding: 0;
+    vertical-align: top;
+}
+
+#content #akademia table:not(.no-akademia-style) td ul {
+    margin: 0;
+}
+
+#akademia strong + strong, #akademia h2 span + span {
+    color: #00d4fb;
+}
+
+.highlighted-contact-information {
+    font-weight: 600;
+    border-left: 5px #5035e6 solid;
+    margin-left: 0 ! important;
+    padding: 10px 20px;
+}
+
+@media only screen and (max-width: 1199px) {
+    #content #akademia h1 {
+        font-size: 25px;
+    }
+
+    #content #akademia h2 {
+        font-size: 19px;
+    }
+}
+
+#content {
+    background-color: #ffffff;
+    padding: 20px;
+}
+
+#akademia h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+    font-weight: bold;
+}
+
+.data-related-rights
+{
+    font-weight: 600;
+    border-left: 5px #5035e6 solid;
+    margin-left: 0 ! important;
+    padding: 10px 20px;
+    background-color: #dd5346;
+}
+
+#akademia h2 {
+    font-size: 1.5em;
+    margin: 0.83em 0;
+    font-weight: bold;
+}
+
+#akademia h3 {
+    font-size: 1.17em;
+    margin: 1em 0;
+    font-weight: bold;
+}
+
+.header-bg-gray {
+    background-color: #ADBCCF
+}
+
+#akademia p {
+    margin: 1em 0;
+    line-height: 1.6;
+}
+
+#akademia table:not(.no-akademia-style) {
+    width: 100%;
+    border-collapse: collapse !important;
+    margin: 1.25em 0;
+    font-size: 0.95rem;
+    border: 2px solid #000 !important;
+}
+
+#akademia table:not(.no-akademia-style) td {
+    border: 2px solid #000 !important;
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    vertical-align: top;
+}
+
+#akademia table:not(.no-akademia-style) tbody tr:nth-child(even) {
+    background: #f8fafc;
+}
