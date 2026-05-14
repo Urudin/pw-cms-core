@@ -56,6 +56,8 @@
                     </div>
                     <div class="text-sm font-black text-slate-700">Megrendelés azonosító:</div>
                     <div class="mt-1 text-slate-700 text-sm">#{{ $orderId }}</div>
+                    <div class="text-sm font-black text-slate-700">SimplePay tranzakció azonosító:</div>
+                    <div class="mt-1 text-slate-700 text-sm">{{ $purchase->payment_transaction_id ?? '-' }}</div>
                 </div>
 
                 {{-- BOX 2 --}}

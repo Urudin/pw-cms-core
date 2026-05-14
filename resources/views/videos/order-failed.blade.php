@@ -17,9 +17,9 @@
                 'body' => 'A fizetési folyamat időtúllépés miatt lezárult. Kérjük, indítsa újra a fizetést a pénztárból.',
             ],
             'failed' => [
-                'title' => 'Sikertelen fizetés',
-                'lead' => 'A fizetés nem sikerült.',
-                'body' => 'Kérjük, próbálja meg újra a fizetést, vagy válasszon másik fizetési módot.',
+                'title' => 'Sikertelen tranzakció',
+                'lead' => 'SimplePay tranzakció azonosító:',
+                'body' => 'Kérjük, ellenőrizze a tranzakció során megadott adatok helyességét. Amennyiben minden adatot helyesen adott meg, a visszautasítás okának kivizsgálása kapcsán kérjük, szíveskedjen kapcsolatba lépni kártyakibocsátó bankjával.',
             ],
         ];
 
@@ -34,7 +34,7 @@
                 </h1>
 
                 <p class="text-slate-600 text-sm sm:text-base">
-                    {!! $message['lead'] !!}
+                    {!! $message['lead'] !!} @if($paymentResult !== 'cancelled' && $paymentResult !== 'timeout') {{ $purchase->payment_transaction_id ?? '-' }} @endif
                 </p>
 
                 @if($orderRef)
