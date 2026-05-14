@@ -3,17 +3,13 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\LegalContentResource\Pages;
-use App\Filament\Resources\LegalContentResource\RelationManagers;
 use App\Models\LegalContent;
-use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Kahusoftware\FilamentCkeditorField\CKEditor;
 
 class LegalContentResource extends Resource
@@ -29,8 +25,16 @@ class LegalContentResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name'),
+                TextInput::make('name')
+                    ->required()
+                    ->maxLength(255),
+                TextInput::make('url')
+                    ->required()
+                    ->maxLength(255)
+                    ->rules(['regex:/^[a-z0-9-]+$/'])
+                    ->unique(ignoreRecord: true),
                 CKEditor::make('content')
+                    ->required()
                     ->columnSpanFull()
                     ->uploadUrl(null)
             ]);
@@ -41,6 +45,8 @@ class LegalContentResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name'),
+                TextColumn::make('url')
+                    ->searchable(),
             ])
             ->filters([
                 //

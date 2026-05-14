@@ -8,8 +8,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\VideoShopController;
 
 Route::get('/', [PageController::class, 'show'])->name('home');
-Route::get('/adatkezelesi-tajekoztato-kepzes', [LegalContentController::class, 'dataHandlingCourse'])->name('data-handling-courses');
-Route::get('/innovacio-menedzsment-aszf', [LegalContentController::class, 'aszf'])->name('aszf');
 
 
 //Route::get('/tanfolyami-resztvevo-hallgatoink', fn() => view('references'));
@@ -30,8 +28,6 @@ Route::get('/sikeres-rendeles', [VideoShopController::class, 'orderSuccessful'])
 Route::get('/video/{video}', [VideoShopController::class, 'show'])
     ->middleware('video.auth')
     ->name('video.show');
-
-Route::get('/{slug}', [PageController::class, 'show'])->name('pages.show');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -58,3 +54,11 @@ Route::post('/simplepay/ipn-glosz', [SimplePayIpnController::class, 'handle'])
 Route::post('/contact', [\App\Http\Controllers\ContactController::class, 'submit'])->name('contact')->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class);
 
 require __DIR__.'/auth.php';
+
+Route::get('/{url}', [LegalContentController::class, 'showByUrl'])
+    ->name('legal-content')
+    ->where('url', '[a-z0-9\-]+');
+
+Route::get('/{slug}', [PageController::class, 'show'])
+    ->name('pages.show')
+    ->where('slug', '[a-z0-9\-]+');

@@ -100,9 +100,9 @@
                             <li><a href="https://imakademia.hu/" target="_blank" class="hover:underline">Innovációmenedzsment
                                     oktatás</a></li>
                             <li>
-                                <a href="{{route('aszf')}}"
+                                <a href="{{ route('legal-content', ['url' => 'innovacio-menedzsment-aszf']) }}"
                                    target="_blank" class="hover:underline">Felhasználási feltételeink</a></li>
-                            <li><a href="{{route('data-handling-courses')}}"
+                            <li><a href="{{ route('legal-content', ['url' => 'adatkezelesi-tajekoztato-kepzes']) }}"
                                    target="_blank" class="hover:underline">Adatvédelmi tájékoztató</a></li>
                         </ul>
                     </div>

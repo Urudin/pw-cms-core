@@ -578,8 +578,8 @@
                                 <span class="text-[#D21243]">*</span>
                                 Hozzájárulok, hogy az Innovációmenedzsment Akadémia (mint Adatkezelő) a most megadott személyes adataimat az Adatvédelmi Rendelet, továbbá a weboldal
                                 <a href="https://innovacio-menedzsment.hu/innovacio-menedzsment-adatvedelem" target="_blank" class="text-blue-500 underline">Adatkezelési tájékoztatójának</a>
-                                a tanfolyamokkal kapcsolatos <a href="/adatkezelesi-tajekoztato-kepzes" target="_blank" class="text-blue-500 underline">Adatkezelési tájékoztatójának</a> és a
-                                <a href="/innovacio-menedzsment-aszf" target="_blank" class="text-blue-500 underline">Felhasználási feltételeiben</a>
+                                a tanfolyamokkal kapcsolatos <a href="{{ route('legal-content', ['url' => 'adatkezelesi-tajekoztato-kepzes']) }}" target="_blank" class="text-blue-500 underline">Adatkezelési tájékoztatójának</a> és a
+                                <a href="{{ route('legal-content', ['url' => 'innovacio-menedzsment-aszf']) }}" target="_blank" class="text-blue-500 underline">Felhasználási feltételeiben</a>
                                 leírtaknak megfelelően kezelje és információt, üzleti ajánlatot, hírlevelet küldjön a számomra.
                             </span>
                             </label>

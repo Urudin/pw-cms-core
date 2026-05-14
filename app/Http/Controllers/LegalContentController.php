@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\LegalContent;
-use Illuminate\Http\Request;
 
 class LegalContentController extends Controller
 {
@@ -12,13 +11,16 @@ class LegalContentController extends Controller
         return view('legal-content', compact('legalContent'));
     }
 
-    public function dataHandlingCourse()
+    public function showByUrl(string $url)
     {
-        return $this->show(LegalContent::query()->findOrFail(1));
-    }
+        $legalContent = LegalContent::query()
+            ->where('url', $url)
+            ->first();
 
-    public function aszf()
-    {
-        return $this->show(LegalContent::query()->findOrFail(2));
+        if ($legalContent) {
+            return $this->show($legalContent);
+        }
+
+        return app(PageController::class)->show($url);
     }
 }

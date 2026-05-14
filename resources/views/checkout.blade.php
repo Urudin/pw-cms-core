@@ -404,7 +404,7 @@
                                     <span class="text-slate-700">
                                         Elolvastam és elfogadom, hogy az adatkezelő a most megadott személyes adataimat az <a class="text-blue-600 hover:underline" target="_blank" href="https://innovacio-menedzsment.hu/innovacio-menedzsment-adatvedelem">Adatkezelési tájékoztatójának</a> feltételei
                                         és az oldal
-                                        <a class="text-blue-600 hover:underline" target="_blank" href="{{ route('aszf') }}">Szerződési feltételeiben</a>
+                                        <a class="text-blue-600 hover:underline" target="_blank" href="{{ route('legal-content', ['url' => 'innovacio-menedzsment-aszf']) }}">Szerződési feltételeiben</a>
                                         leírtak szerint kezelje.*
                                     </span>
                                 </label>
