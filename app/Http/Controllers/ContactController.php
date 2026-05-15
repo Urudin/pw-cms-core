@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\FormSubmitRequest;
 use App\Mail\ContactMessage;
 use App\Mail\MessageReceived;
+use App\Models\UserSetting;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Mail;
 
@@ -15,7 +16,7 @@ class ContactController
         $validated = $request->validated();
 
         $customerEmail = $validated['email'];
-        $administratorEmails = ['glosz@glosz.hu', 'baccbela@gmail.com'];
+        $administratorEmails = UserSetting::getAdminEmailAddresses();
 
         Mail::to($customerEmail)
             ->send(new MessageReceived($validated));
