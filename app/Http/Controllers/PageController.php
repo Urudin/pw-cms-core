@@ -37,7 +37,7 @@ class PageController extends Controller
         if(!$slug) {
             $slug = $startPageSlug;
         } else if($slug == $startPageSlug) {
-            return redirect()->route('home');
+            return redirect()->route('home', status: 301);
         }
         $page = Page::query()->firstWhere('slug', $slug);
         if(!$page) {
