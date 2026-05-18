@@ -110,14 +110,13 @@
                                 $originalNet = (int) $video->original_price_huf;
                                 $currentNet = (int) $video->price_huf;
 
-                                $originalVat = $vatFromNet($originalNet);
                                 $originalGross = $grossFromNet($originalNet);
 
                                 $currentVat = $vatFromNet($currentNet);
                                 $currentGross = $grossFromNet($currentNet);
 
-                                $CARD_H = 'md:min-h-[340px]';
-                                $IMG_H  = 'h-[240px] md:h-auto md:min-h-[340px]';
+                                $CARD_H = '';
+                                $IMG_H  = 'h-[240px] md:h-auto md:aspect-video';
                             @endphp
 
                             <article class="bg-white border border-gray-200 overflow-hidden">
@@ -152,9 +151,9 @@
                                     </div>
                                     {{-- TEXT --}}
                                     <div
-                                        class="{{ $even ? 'md:order-1' : '' }} md:col-span-4 bg-[#efeff2] p-5 lg:p-6 flex flex-col">
+                                        class="{{ $even ? 'md:order-1' : '' }} md:col-span-4 bg-[#efeff2] p-5 flex flex-col justify-between">
 
-                                        <div class="space-y-3 lg:space-y-4">
+                                        <div class="flex flex-1 flex-col justify-between">
                                             <div class="flex justify-between items-start gap-3">
                                             <span
                                                 class="text-[11px] font-bold bg-slate-800 text-[#69b7ff] px-3 py-1 uppercase leading-tight">
@@ -181,40 +180,37 @@
                                             </span>
                                             </div>
 
-                                            <h2 class="text-[22px] font-black leading-tight text-[#1f4fd6] max-w-[260px] line-clamp-2">
+                                            <h2 class="text-[21px] font-black leading-[1.05] text-[#1f4fd6] max-w-[260px] line-clamp-2">
                                                 {{ $video->title }}
                                             </h2>
 
-                                            <div class="flex gap-2 flex-wrap">
+                                            <div class="flex flex-col items-start gap-1.5">
                                                 @if($video->topic)
                                                     <span
-                                                        class="text-[10px] px-2 py-[2px] border-2 border-slate-900/60 text-slate-700 bg-white font-bold">
+                                                        class="text-[10px] px-2 py-px border-2 border-slate-900/60 text-slate-700 bg-white font-bold">
                                                     {{ strtoupper($video->topic->name) }}
                                                 </span>
                                                 @endif
                                                 @if($video->domain)
                                                     <span
-                                                        class="text-[10px] px-2 py-[2px] border-2 border-slate-900/60 text-slate-700 bg-white font-bold">
+                                                        class="text-[10px] px-2 py-px border-2 border-slate-900/60 text-slate-700 bg-white font-bold">
                                                     {{ strtoupper($video->domain->name) }}
                                                 </span>
                                                 @endif
                                             </div>
 
                                             <div class="space-y-1 leading-tight">
-                                                @if($originalNet > 0)
-                                                    <div class="text-slate-300 line-through">
-                                                        <div class="text-[13px] font-black">
-                                                            {{ $formatHuf($originalGross) }}
-                                                        </div>
-{{--                                                        <div class="text-[11px] font-normal">--}}
-{{--                                                            ({{ $formatHuf($originalNet) }} + {{ $formatHuf($originalVat) }} ÁFA)--}}
-{{--                                                        </div>--}}
-                                                    </div>
-                                                @endif
 
                                                 <div>
-                                                    <div class="text-base font-black text-slate-800">
-                                                        {{ $formatHuf($currentGross) }}
+                                                    <div class="flex items-baseline gap-3">
+                                                        <span class="text-base font-black text-slate-800">
+                                                            {{ $formatHuf($currentGross) }}
+                                                        </span>
+                                                        @if($originalNet > 0)
+                                                            <span class="text-[13px] font-black text-slate-500 line-through">
+                                                                {{ $formatHuf($originalGross) }}
+                                                            </span>
+                                                        @endif
                                                     </div>
                                                     <div class="text-[11px] sm:text-xs font-normal text-slate-500">
                                                         ({{ $formatHuf($currentNet) }} + {{ $formatHuf($currentVat) }} ÁFA)
@@ -224,16 +220,16 @@
                                         </div>
 
                                         <button
-                                            class="mt-5 lg:mt-6 flex sm:inline-flex w-full sm:w-auto items-stretch bg-[#f2a44a] hover:brightness-95 text-white overflow-hidden add-to-cart"
+                                            class="mt-4 grid grid-cols-[1fr_3.1rem] sm:inline-grid sm:grid-cols-[auto_3.1rem] text-white overflow-hidden add-to-cart"
                                             data-id="video_{{ $video->id }}"
                                             data-name="{{ $video->title }}"
                                             data-price="{{ $currentNet }}"
                                             data-original_price="{{ $originalNet }}"
                                             data-image="{{ $video->thumbnail_url }}">
-                                            <span class="flex-1 sm:flex-none px-4 sm:pl-8 sm:pr-6 py-3 font-semibold flex items-center justify-center">
+                                            <span class="px-4 sm:pl-8 sm:pr-6 py-[10px] font-semibold flex items-center justify-center bg-[#f2a44a] hover:brightness-95">
                                                 Kosárba teszem
                                             </span>
-                                            <span class="shrink-0 flex items-center justify-center w-[3.1rem] bg-[#c7802f] !text-white group-hover:!text-white">
+                                            <span class="flex items-center justify-center bg-[#c7802f] !text-white hover:brightness-95">
                                                 <svg
                                                     viewBox="0 0 14 14"
                                                     class="h-4 w-4 translate-x-[-5px]"
