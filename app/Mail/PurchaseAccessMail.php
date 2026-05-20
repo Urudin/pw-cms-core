@@ -53,16 +53,16 @@ class PurchaseAccessMail extends Mailable
                 'items'    => $items,
                 'accesses' => $accesses,
             ]);
-
-        if (! empty($this->purchase->invoice_file_path) && Storage::exists($this->purchase->invoice_file_path)) {
-            $mail->attach(
-                Storage::path($this->purchase->invoice_file_path),
-                [
-                    'as'   => basename($this->purchase->invoice_file_path),
-                    'mime' => 'application/pdf',
-                ]
-            );
-        }
+//        There's nothing to attach
+//        if (! empty($this->purchase->invoice_file_path) && Storage::exists($this->purchase->invoice_file_path)) {
+//            $mail->attach(
+//                Storage::path($this->purchase->invoice_file_path),
+//                [
+//                    'as'   => basename($this->purchase->invoice_file_path),
+//                    'mime' => 'application/pdf',
+//                ]
+//            );
+//        }
 
         return $mail;
     }

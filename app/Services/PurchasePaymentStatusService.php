@@ -33,8 +33,8 @@ class PurchasePaymentStatusService
                 'ipn' => $payload,
             ]),
         ]);
-
-        app(BillingService::class)->issueInvoice($purchase);
+//      Mark paid but do not issue invoice
+//        app(BillingService::class)->issueInvoice($purchase);
 
         Mail::to(array_merge([$purchase->personal_email]))
             ->send(new PurchaseAccessMail($purchase));
