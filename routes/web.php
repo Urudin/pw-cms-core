@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SimplePayIpnController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\VideoShopController;
+use App\Http\Middleware\VerifySimplePaySignature;
 
 Route::get('/', [PageController::class, 'show'])->name('home');
 

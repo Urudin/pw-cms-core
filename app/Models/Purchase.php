@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Services\BillingService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use zoparga\SzamlazzHu\Invoice;
 
 class Purchase extends Model
 {
@@ -101,7 +100,7 @@ class Purchase extends Model
         return $total;
     }
 
-    public function issueInvoice(Purchase $purchase): Invoice|array
+    public function issueInvoice(Purchase $purchase): array
     {
         return (new BillingService())->issueInvoice($purchase);
     }
