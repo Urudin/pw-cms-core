@@ -2,6 +2,7 @@
 
 namespace App\Models\Concerns;
 
+use App\Models\ActualCourse;
 use App\Models\Course;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -21,24 +22,27 @@ trait InteractsWithActualCourseInfo
 
     protected function renderActualCourseInfoHtml(Course $course): string
     {
-        $onlineCourse = $course->onlineVersion;
+        $displayActualCourse = $this->resolveDisplayActualCourse($course);
+        $displayActualCourses = $displayActualCourse ? collect([$displayActualCourse]) : collect();
+        $onlineActualCourse = $this->resolveNearestUpcomingActualCourse($course->onlineVersion?->actualCourses ?? collect());
+        $onlineActualCourses = $onlineActualCourse ? collect([$onlineActualCourse]) : collect();
 
         $items = [
             [
                 'Aktuális tanfolyam időpontok:',
-                $this->formatActualCourseDates($course->actualCourses),
+                $this->formatActualCourseDates($displayActualCourses) ?: 'Hamarosan',
             ],
             [
                 'Oktatási napok:',
-                $this->formatTeachingDays($course->actualCourses),
+                $this->formatTeachingDays($displayActualCourses),
             ],
             [
                 'Aktuális online tanfolyam időpontok:',
-                $this->formatActualCourseDates($onlineCourse?->actualCourses ?? collect()),
+                $this->formatActualCourseDates($onlineActualCourses),
             ],
             [
                 'Online Oktatási napok:',
-                $this->formatTeachingDays($onlineCourse?->actualCourses ?? collect()),
+                $this->formatTeachingDays($onlineActualCourses),
             ],
         ];
 
@@ -60,24 +64,57 @@ trait InteractsWithActualCourseInfo
             ->implode(PHP_EOL);
     }
 
+    public function displayActualCourseDateText(Course $course, string $fallback = 'Hamarosan'): string
+    {
+        $actualCourse = $this->resolveDisplayActualCourse($course);
+
+        return $actualCourse
+            ? $this->formatActualCourseDates(collect([$actualCourse]))
+            : $fallback;
+    }
+
+    public function displayActualCourseTeachingDaysText(Course $course): string
+    {
+        $actualCourse = $this->resolveDisplayActualCourse($course);
+
+        return $actualCourse
+            ? $this->formatTeachingDays(collect([$actualCourse]))
+            : '';
+    }
+
+    public function resolveDisplayActualCourse(Course $course): ?ActualCourse
+    {
+        return $this->resolveNearestUpcomingActualCourse($course->actualCourses ?? collect())
+            ?? $this->resolveNearestUpcomingActualCourse($course->onlineVersion?->actualCourses ?? collect());
+    }
+
+    protected function resolveNearestUpcomingActualCourse(Collection $actualCourses): ?ActualCourse
+    {
+        $today = now()->startOfDay();
+
+        return $actualCourses
+            ->filter(function ($actualCourse) use ($today) {
+                $candidateDate = $this->actualCourseDisplayDate($actualCourse);
+
+                if (! $candidateDate) {
+                    return false;
+                }
+
+                $endDate = filled($actualCourse->end_date)
+                    ? Carbon::parse($actualCourse->end_date)->startOfDay()
+                    : null;
+
+                return $candidateDate->greaterThanOrEqualTo($today)
+                    || $endDate?->greaterThanOrEqualTo($today);
+            })
+            ->sortBy(fn ($actualCourse) => $this->actualCourseDisplayDate($actualCourse)?->timestamp ?? PHP_INT_MAX)
+            ->first();
+    }
+
     protected function formatActualCourseDates(Collection $actualCourses): string
     {
         return $actualCourses
-            ->map(function ($actualCourse) {
-                if (! empty($actualCourse->start_date)) {
-                    return Carbon::parse($actualCourse->start_date)->format('Y.m.d.');
-                }
-
-                $firstDay = $actualCourse->days
-                    ->pluck('day')
-                    ->filter()
-                    ->sort()
-                    ->first();
-
-                return $firstDay
-                    ? Carbon::parse($firstDay)->format('Y.m.d.')
-                    : null;
-            })
+            ->map(fn ($actualCourse) => $this->actualCourseDisplayDate($actualCourse)?->format('Y.m.d.'))
             ->filter()
             ->unique()
             ->implode(', ');
@@ -91,5 +128,22 @@ trait InteractsWithActualCourseInfo
             ->map(fn ($day) => Carbon::parse($day)->format('Y.m.d.'))
             ->unique()
             ->implode(', ');
+    }
+
+    protected function actualCourseDisplayDate(ActualCourse $actualCourse): ?Carbon
+    {
+        if (! empty($actualCourse->start_date)) {
+            return Carbon::parse($actualCourse->start_date)->startOfDay();
+        }
+
+        $firstDay = $actualCourse->days
+            ->pluck('day')
+            ->filter()
+            ->sort()
+            ->first();
+
+        return $firstDay
+            ? Carbon::parse($firstDay)->startOfDay()
+            : null;
     }
 }

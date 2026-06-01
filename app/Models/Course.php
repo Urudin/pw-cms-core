@@ -50,4 +50,11 @@ class Course extends Model
             $description
         );
     }
+
+    public function getDisplayActualCourseDateTextAttribute(): string
+    {
+        $this->loadMissing($this->actualCourseInfoRelations());
+
+        return $this->displayActualCourseDateText($this);
+    }
 }

@@ -144,7 +144,7 @@
                                         </div>
 
                                         <div class="absolute left-8 top-16 text-white">
-                                            <p class="text-sm font-bold leading-relaxed opacity-95 max-w-[85%] xl:max-w-[325px] line-clamp-4">
+                                            <p class="text-sm font-bold leading-relaxed opacity-95 max-w-[85%] line-clamp-4">
                                                 {{ $video->description }}
                                             </p>
                                         </div>

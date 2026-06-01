@@ -41,7 +41,19 @@ class CourseApplicationController extends Controller
             ->get();
 
         $categories = \App\Models\CourseCategory::query()
-            ->with(['courses' => fn ($q) => $q->where('is_active', true)->orderBy('name')])
+            ->with([
+                'courses' => fn ($q) => $q
+                    ->where('is_active', true)
+                    ->where('listed', true)
+                    ->with([
+                        'page',
+                        'actualCourses' => fn ($query) => $query->orderBy('start_date'),
+                        'actualCourses.days' => fn ($query) => $query->orderBy('day'),
+                        'onlineVersion.actualCourses' => fn ($query) => $query->orderBy('start_date'),
+                        'onlineVersion.actualCourses.days' => fn ($query) => $query->orderBy('day'),
+                    ])
+                    ->orderBy('name'),
+            ])
             ->orderBy('sort_order')
             ->get();
 

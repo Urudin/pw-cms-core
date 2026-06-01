@@ -26,7 +26,7 @@
                     {{-- CATEGORIES --}}
                     <div class="space-y-14">
                         @foreach($categories as $category)
-                            @if($category->courses()->where('listed', 1)->where('is_active', 1)->count() == 0)
+                            @if($category->courses->isEmpty())
                                 @continue
                             @endif
 
@@ -38,22 +38,9 @@
                                 </h3>
 
                                 <div x-data="{ open: null }" class="space-y-0">
-                                    @foreach($category->courses()->where('listed', 1)->where('is_active', 1)->get() as $course)
+                                    @foreach($category->courses as $course)
                                         @php
-                                            $today = now()->startOfDay();
-
-                                            $nearestActualCourse = ($course->actualCourses ?? collect())
-                                                ->filter(function ($actualCourse) use ($today) {
-                                                    return filled($actualCourse->start_date)
-                                                        && \Carbon\Carbon::parse($actualCourse->start_date)->greaterThanOrEqualTo($today);
-                                                })
-                                                ->sortBy('start_date')
-                                                ->first();
-
-                                            $nextStartText = $nearestActualCourse?->start_date
-                                                ? \Carbon\Carbon::parse($nearestActualCourse->start_date)->format('Y.m.d.')
-                                                : 'hamarosan';
-
+                                            $nextStartText = $course->display_actual_course_date_text;
                                             $courseTitle = $course->title ?: $course->name;
                                         @endphp
 

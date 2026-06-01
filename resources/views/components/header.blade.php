@@ -109,14 +109,14 @@
 
     @foreach($menu->menu_items as $menuItem)
         @if($menuItem->children->count())
-            <div class="flex flex-col">
+            <div class="mobile-menu-item flex flex-col">
                 <!-- Főmenü + Nyitó ikon egy sorban -->
                 <div class="flex justify-between items-center pr-6">
                     <a href="{{!empty($menuItem->menuable) ? route('pages.show', ['slug' => $menuItem->menuable->slug]) : $menuItem->url}}"
                        class="py-2 text-lg hover:text-gray-400"
                        title="{{ $menuItem->link_title ?? $menuItem->name }}">{{$menuItem->name}}</a>
-                    <button id="mobile-menu-toggle" class="focus:outline-none">
-                        <svg id="mobile-menu-icon" class="h-5 w-5 transform transition-transform duration-300"
+                    <button type="button" class="mobile-menu-toggle focus:outline-none">
+                        <svg class="mobile-menu-icon h-5 w-5 transform transition-transform duration-300"
                              xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
@@ -124,7 +124,7 @@
                 </div>
 
                 <!-- Almenü -->
-                <div id="mobile-submenu" class="hidden pl-4 transition-all duration-300">
+                <div class="mobile-submenu hidden pl-4 transition-all duration-300">
                     @foreach($menuItem->children as $subMenuItem)
                         <a target="{{$subMenuItem->target}}"
                            href="{{!empty($subMenuItem->menuable) ? route('pages.show', ['slug' => $subMenuItem->menuable->slug]) : $subMenuItem->url}}"
@@ -137,7 +137,7 @@
         @else
             <a href="{{!empty($menuItem->menuable) ? route('pages.show', ['slug' => $menuItem->menuable->slug]) : $menuItem->url}}"
                class="py-2 text-lg hover:text-gray-400">{{$menuItem->name}}</a>
-        @endempty
+        @endif
     @endforeach
 
 </div>
@@ -197,18 +197,24 @@
     });
 
     document.addEventListener("DOMContentLoaded", function () {
-        let menuToggle = document.getElementById("mobile-menu-toggle");
-        let submenu = document.getElementById("mobile-submenu");
-        let menuIcon = document.getElementById("mobile-menu-icon");
+        document.querySelectorAll(".mobile-menu-item").forEach(function (item) {
+            let menuToggle = item.querySelector(".mobile-menu-toggle");
+            let submenu = item.querySelector(".mobile-submenu");
+            let menuIcon = item.querySelector(".mobile-menu-icon");
 
-        menuToggle.addEventListener("click", function () {
-            submenu.classList.toggle("hidden");
-
-            if (!submenu.classList.contains("hidden")) {
-                menuIcon.classList.add("rotate-180");
-            } else {
-                menuIcon.classList.remove("rotate-180");
+            if (!menuToggle || !submenu || !menuIcon) {
+                return;
             }
+
+            menuToggle.addEventListener("click", function () {
+                submenu.classList.toggle("hidden");
+
+                if (!submenu.classList.contains("hidden")) {
+                    menuIcon.classList.add("rotate-180");
+                } else {
+                    menuIcon.classList.remove("rotate-180");
+                }
+            });
         });
     });
 
@@ -250,4 +256,3 @@
         });
     });
 </script>
-
