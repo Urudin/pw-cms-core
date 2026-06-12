@@ -20,8 +20,11 @@ class Co3BillingTest extends TestCase
         Cache::flush();
         config([
             'co3.base_url' => 'https://eventrix.hu/apitest',
+            'co3.api_key' => 'api-key-from-env',
             'co3.username' => 'integracio',
             'co3.password_hash' => 'hash-from-env',
+            'co3.contact_owner' => 'contact-owner-from-env',
+            'co3.selected_account' => 'selected-account-from-env',
             'co3.language' => 'hu_HU',
             'co3.currency' => 'HUF',
         ]);
@@ -53,15 +56,11 @@ class Co3BillingTest extends TestCase
     {
         Storage::fake('public');
         Http::fake([
-            'https://eventrix.hu/apitest/authenticate' => Http::response(['response' => ['session_key' => 'session-1']]),
-            'https://eventrix.hu/apitest/crm' => Http::response(['response' => ['contacts' => [[
-                'contact_id' => '77',
-                'contact_tax' => '12345678-1-12',
-                'contact_email' => 'customer@example.test',
-            ]]]]),
+            'https://eventrix.hu/apitest/authenticate' => $this->xmlResponse('<response><session_key>session-1</session_key></response>'),
+            'https://eventrix.hu/apitest/crm' => $this->xmlResponse('<response><contacts><item><contact_id>77</contact_id><contact_tax>12345678-1-12</contact_tax><contact_email>customer@example.test</contact_email></item></contacts></response>'),
             'https://eventrix.hu/apitest/finance' => Http::sequence()
-                ->push(['response' => ['invoice_id' => '123', 'invoice_number' => 'INV-123']])
-                ->push(['response' => ['success' => true]]),
+                ->push('<response><invoice_id>123</invoice_id><invoice_number>INV-123</invoice_number></response>', 200, $this->xmlHeaders())
+                ->push('<response><success>true</success></response>', 200, $this->xmlHeaders()),
         ]);
 
         $purchase = $this->purchase([
@@ -75,21 +74,36 @@ class Co3BillingTest extends TestCase
         $this->assertSame(1, (int) $purchase->billed);
         $this->assertSame('co3/invoice-INV-123', $purchase->invoice_file_path);
 
-        Http::assertSent(fn ($request) => $request->url() === 'https://eventrix.hu/apitest/crm'
-            && isset($request['command']['getContactList'])
-            && $request['command']['getContactList']['contact_tax'] === '12345678-1-12');
+        Http::assertSent(fn ($request) => $this->assertXmlRequest($request, 'https://eventrix.hu/apitest/crm', 'getContactList')
+            && $this->xmlValue($request, 'getContactList/search_term') === 'customer@example.test'
+            && $this->xmlValue($request, 'getContactList/contact_tax') === '12345678-1-12'
+            && $this->xmlValue($request, 'getContactList/contact_address') === '1111, Budapest Fo utca 1.'
+            && $this->xmlValue($request, 'getContactList/api_key') === 'api-key-from-env'
+            && $this->xmlValue($request, 'getContactList/session_key') === 'session-1');
+
+        Http::assertSent(fn ($request) => $this->assertXmlRequest($request, 'https://eventrix.hu/apitest/finance', 'setInvoice')
+            && $this->xmlValue($request, 'setInvoice/contact_id') === '77'
+            && $this->xmlValue($request, 'setInvoice/selected_account') === 'selected-account-from-env'
+            && $this->xmlValue($request, 'setInvoice/api_key') === 'api-key-from-env'
+            && $this->xmlValue($request, 'setInvoice/session_key') === 'session-1');
+
+        Http::assertSent(fn ($request) => $this->assertXmlRequest($request, 'https://eventrix.hu/apitest/finance', 'generateInvoice')
+            && $this->xmlValue($request, 'generateInvoice/invoice_id') === '123'
+            && $this->xmlValue($request, 'generateInvoice/api_key') === 'api-key-from-env'
+            && $this->xmlValue($request, 'generateInvoice/session_key') === 'session-1');
     }
 
     public function test_customer_creation_path_uses_set_contact(): void
     {
         Http::fake([
-            'https://eventrix.hu/apitest/authenticate' => Http::response(['response' => ['session_key' => 'session-1']]),
+            'https://eventrix.hu/apitest/authenticate' => $this->xmlResponse('<response><session_key>session-1</session_key></response>'),
             'https://eventrix.hu/apitest/crm' => Http::sequence()
-                ->push(['response' => ['contacts' => []]])
-                ->push(['response' => ['contact_id' => '88']]),
+                ->push('<response><contacts></contacts></response>', 200, $this->xmlHeaders())
+                ->push('<response><contact_id>88</contact_id></response>', 200, $this->xmlHeaders())
+                ->push('<response><contact><contact_id>88</contact_id><contact_firm>Acme Kft.</contact_firm><contact_tax>12345678-1-12</contact_tax><contact_email>customer@example.test</contact_email></contact></response>', 200, $this->xmlHeaders()),
             'https://eventrix.hu/apitest/finance' => Http::sequence()
-                ->push(['response' => ['invoice_id' => '123']])
-                ->push(['response' => ['success' => true]]),
+                ->push('<response><invoice_id>123</invoice_id></response>', 200, $this->xmlHeaders())
+                ->push('<response><success>true</success></response>', 200, $this->xmlHeaders()),
         ]);
 
         $result = (new BillingService())->issueInvoice($this->purchase([
@@ -99,10 +113,24 @@ class Co3BillingTest extends TestCase
 
         $this->assertSame('123', $result['invoice_id']);
 
-        Http::assertSent(fn ($request) => $request->url() === 'https://eventrix.hu/apitest/crm'
-            && isset($request['command']['setContact'])
-            && $request['command']['setContact']['contact_type'] === 1
-            && $request['command']['setContact']['contact_firm'] === 'Acme Kft.');
+        Http::assertSent(fn ($request) => $this->assertXmlRequest($request, 'https://eventrix.hu/apitest/crm', 'setContact')
+            && $this->xmlValue($request, 'setContact/contact_type') === '1'
+            && $this->xmlValue($request, 'setContact/contact_owner') === 'contact-owner-from-env'
+            && $this->xmlValue($request, 'setContact/contact_firm') === 'Acme Kft.'
+            && $this->xmlValue($request, 'setContact/contact_address') === '1111, Budapest Fo utca 1.'
+            && $this->xmlValue($request, 'setContact/contact_postal_address') === '1111, Budapest Fo utca 1.'
+            && $this->xmlValue($request, 'setContact/api_key') === 'api-key-from-env'
+            && $this->xmlValue($request, 'setContact/session_key') === 'session-1');
+
+        $crmRequests = collect(Http::recorded())
+            ->map(fn ($record) => $record[0])
+            ->filter(fn ($request) => $request->url() === 'https://eventrix.hu/apitest/crm');
+
+        $this->assertSame(3, $crmRequests->count());
+        $this->assertSame('getContactList', $this->requestMethodName($crmRequests->values()[0]));
+        $this->assertSame('setContact', $this->requestMethodName($crmRequests->values()[1]));
+        $this->assertSame('getContact', $this->requestMethodName($crmRequests->values()[2]));
+        $this->assertSame('88', $this->xmlValue($crmRequests->values()[2], 'getContact/contact_id'));
     }
 
     public function test_card_payment_maps_to_bankcard_and_vat_maps_to_domestic_company(): void
@@ -162,14 +190,11 @@ class Co3BillingTest extends TestCase
     public function test_billed_is_only_set_after_generate_invoice_success(): void
     {
         Http::fake([
-            'https://eventrix.hu/apitest/authenticate' => Http::response(['response' => ['session_key' => 'session-1']]),
-            'https://eventrix.hu/apitest/crm' => Http::response(['response' => ['contacts' => [[
-                'contact_id' => '77',
-                'contact_email' => 'customer@example.test',
-            ]]]]),
+            'https://eventrix.hu/apitest/authenticate' => $this->xmlResponse('<response><session_key>session-1</session_key></response>'),
+            'https://eventrix.hu/apitest/crm' => $this->xmlResponse('<response><contacts><item><contact_id>77</contact_id><contact_email>customer@example.test</contact_email></item></contacts></response>'),
             'https://eventrix.hu/apitest/finance' => Http::sequence()
-                ->push(['response' => ['invoice_id' => '123']])
-                ->push(['response' => ['success' => 'failed']]),
+                ->push('<response><invoice_id>123</invoice_id></response>', 200, $this->xmlHeaders())
+                ->push('<response><success>failed</success></response>', 200, $this->xmlHeaders()),
         ]);
 
         $purchase = $this->purchase();
@@ -183,10 +208,8 @@ class Co3BillingTest extends TestCase
     public function test_api_error_returns_error_array(): void
     {
         Http::fake([
-            'https://eventrix.hu/apitest/authenticate' => Http::response(['response' => ['session_key' => 'session-1']]),
-            'https://eventrix.hu/apitest/crm' => Http::response([
-                'error' => ['code' => 5001, 'message' => 'CRM failure'],
-            ]),
+            'https://eventrix.hu/apitest/authenticate' => $this->xmlResponse('<response><session_key>session-1</session_key></response>'),
+            'https://eventrix.hu/apitest/crm' => $this->xmlResponse('<response><error><code>5001</code><description><![CDATA[CRM failure]]></description></error></response>'),
         ]);
 
         $result = (new BillingService())->issueInvoice($this->purchase());
@@ -195,17 +218,69 @@ class Co3BillingTest extends TestCase
         $this->assertStringContainsString('CRM failure', $result['error']);
     }
 
-    public function test_client_sends_json_and_does_not_hash_password_hash(): void
+    public function test_client_sends_xml_and_does_not_hash_password_hash(): void
     {
         Http::fake([
-            'https://eventrix.hu/apitest/authenticate' => Http::response(['response' => ['session_key' => 'session-1']]),
+            'https://eventrix.hu/apitest/authenticate' => Http::response('plain-text-session-key'),
         ]);
 
-        (new Co3Client())->authenticate();
+        $sessionKey = (new Co3Client())->authenticate();
 
-        Http::assertSent(fn ($request) => $request->hasHeader('Content-Type', 'application/json')
-            && $request['command']['authenticate']['username'] === 'integracio'
-            && $request['command']['authenticate']['password'] === 'hash-from-env');
+        $this->assertSame('plain-text-session-key', $sessionKey);
+
+        Http::assertSent(fn ($request) => $this->assertXmlRequest($request, 'https://eventrix.hu/apitest/authenticate', 'authenticate')
+            && $this->xmlValue($request, 'authenticate/api_key') === 'api-key-from-env'
+            && $this->xmlValue($request, 'authenticate/username') === 'integracio'
+            && $this->xmlValue($request, 'authenticate/password') === 'hash-from-env');
+    }
+
+    public function test_xml_error_response_is_detected_with_http_200(): void
+    {
+        Http::fake([
+            'https://eventrix.hu/apitest/authenticate' => $this->xmlResponse('<response><session_key>session-1</session_key></response>'),
+            'https://eventrix.hu/apitest/crm' => $this->xmlResponse('<response><error><code>2</code><description><![CDATA[XML syntax error Start tag expected, \'<\' not found Line: 1 Column: 1]]></description></error></response>'),
+        ]);
+
+        $result = (new BillingService())->issueInvoice($this->purchase());
+
+        $this->assertArrayHasKey('error', $result);
+        $this->assertStringContainsString('XML syntax error', $result['error']);
+    }
+
+    public function test_postman_collection_contains_required_co3_xml_fields(): void
+    {
+        $collection = json_decode(file_get_contents(base_path('docs/postman/co3-eventrix.postman_collection.json')), true);
+        $environment = json_decode(file_get_contents(base_path('docs/postman/co3-eventrix-test.postman_environment.json')), true);
+
+        $environmentKeys = collect($environment['values'])->pluck('key')->all();
+
+        foreach (['baseUrl', 'username', 'passwordHash', 'apiKey', 'sessionKey', 'searchTerm', 'contactOwner', 'selectedAccount', 'contactId', 'invoiceId'] as $key) {
+            $this->assertContains($key, $environmentKeys);
+        }
+
+        $requests = collect($collection['item'])->keyBy('name');
+
+        $authenticateScript = implode("\n", $requests['01 Authenticate']['event'][0]['script']['exec']);
+        $this->assertStringContainsString('pm.response.text().trim()', $authenticateScript);
+        $this->assertStringNotContainsString("response is XML", $authenticateScript);
+        $this->assertStringContainsString("pm.environment.set('sessionKey', raw)", $authenticateScript);
+
+        $searchXml = $requests['02 CRM - Search contact - getContactList']['request']['body']['raw'];
+        $this->assertXmlBodyContains($searchXml, 'getContactList', 'search_term', '{{searchTerm}}');
+
+        $contactXml = $requests['03 CRM - Create contact - setContact']['request']['body']['raw'];
+        $this->assertXmlBodyContains($contactXml, 'setContact', 'contact_owner', '{{contactOwner}}');
+
+        $getContactXml = $requests['04 CRM - Get contact - getContact']['request']['body']['raw'];
+        $this->assertXmlBodyContains($getContactXml, 'getContact', 'contact_id', '{{contactId}}');
+
+        $invoiceXml = $requests['05 Finance - Create invoice - setInvoice']['request']['body']['raw'];
+        $this->assertXmlBodyContains($invoiceXml, 'setInvoice', 'selected_account', '{{selectedAccount}}');
+
+        $generateEvents = collect($requests['06 Finance - Generate invoice / send to NAV - generateInvoice']['event']);
+        $preRequest = $generateEvents->firstWhere('listen', 'prerequest');
+        $this->assertNotNull($preRequest);
+        $this->assertStringContainsString("Missing required Postman environment variable: invoiceId", implode("\n", $preRequest['script']['exec']));
     }
 
     private function purchase(array $overrides = []): Purchase
@@ -225,5 +300,73 @@ class Co3BillingTest extends TestCase
                 ['id' => 10, 'title' => 'Teszt video', 'price' => 5000],
             ],
         ], $overrides));
+    }
+
+    private function xmlResponse(string $body)
+    {
+        return Http::response($body, 200, $this->xmlHeaders());
+    }
+
+    private function xmlHeaders(): array
+    {
+        return ['Content-Type' => 'text/xml; charset=utf-8'];
+    }
+
+    private function assertXmlRequest($request, string $url, string $method): bool
+    {
+        if ($request->url() !== $url) {
+            return false;
+        }
+
+        if (! $request->hasHeader('Content-Type', 'text/xml; charset=utf-8')
+            || ! $request->hasHeader('Accept', 'text/xml')
+            || ! $request->hasHeader('Connection', 'close')) {
+            return false;
+        }
+
+        $document = $this->requestDocument($request);
+
+        return $document !== null
+            && $document->documentElement?->nodeName === 'command'
+            && $document->getElementsByTagName($method)->length === 1
+            && ! str_contains($request->body(), '"command"');
+    }
+
+    private function xmlValue($request, string $path): ?string
+    {
+        $document = $this->requestDocument($request);
+
+        if ($document === null) {
+            return null;
+        }
+
+        $xpath = new \DOMXPath($document);
+        $node = $xpath->query('/command/' . $path)->item(0);
+
+        return $node?->textContent;
+    }
+
+    private function requestDocument($request): ?\DOMDocument
+    {
+        $document = new \DOMDocument();
+
+        return @$document->loadXML($request->body()) ? $document : null;
+    }
+
+    private function requestMethodName($request): ?string
+    {
+        $document = $this->requestDocument($request);
+
+        return $document?->documentElement?->firstElementChild?->nodeName;
+    }
+
+    private function assertXmlBodyContains(string $xml, string $method, string $field, string $value): void
+    {
+        $document = new \DOMDocument();
+        $this->assertTrue($document->loadXML($xml));
+
+        $xpath = new \DOMXPath($document);
+        $this->assertSame('command', $document->documentElement?->nodeName);
+        $this->assertSame($value, $xpath->query("/command/{$method}/{$field}")->item(0)?->textContent);
     }
 }

@@ -32,18 +32,55 @@ class BillingService
         }
 
         try {
+            Log::info('CO3 invoice issue started', [
+                'purchase_id' => $purchase->id,
+                'purchase_reference' => $this->purchaseReference($purchase),
+                'payment_method' => $purchase->payment_method,
+                'billing_email_present' => filled($purchase->personal_email),
+                'billing_vat_present' => filled($purchase->billing_vat_number),
+                'billing_company_present' => filled($purchase->billing_company_name),
+            ]);
+
             $items = $this->validInvoiceItems($purchase);
             $total = $items->sum(fn ($item) => (int) ($item['price'] ?? 0));
 
+            Log::debug('CO3 invoice items prepared', [
+                'purchase_id' => $purchase->id,
+                'item_count' => $items->count(),
+                'total' => $total,
+            ]);
+
             if ($total <= 0) {
-                Log::info('Negative or zero invoice skipped, purchase id: ' . $purchase->id);
+                Log::info('CO3 invoice skipped because total is not positive', [
+                    'purchase_id' => $purchase->id,
+                    'total' => $total,
+                    'item_count' => $items->count(),
+                ]);
 
                 return ['error' => 'Negative or Zero invoice'];
             }
 
             $contactId = $this->findContactForPurchase($purchase);
+            Log::info('CO3 invoice contact resolved', [
+                'purchase_id' => $purchase->id,
+                'contact_id' => $contactId,
+            ]);
+
             $invoice = $this->createInvoiceFromPurchase($purchase, $contactId, $items->all());
+            Log::info('CO3 invoice draft created', [
+                'purchase_id' => $purchase->id,
+                'invoice_id' => $invoice['invoice_id'] ?? null,
+                'invoice_number' => $invoice['invoice_number'] ?? null,
+            ]);
+
             $generatedInvoice = $this->generateInvoice((string) $invoice['invoice_id']);
+            Log::info('CO3 invoice generated', [
+                'purchase_id' => $purchase->id,
+                'invoice_id' => $invoice['invoice_id'],
+                'invoice_number' => $generatedInvoice['invoice_number'] ?? null,
+                'pdf_content_present' => filled($generatedInvoice['pdf_content'] ?? null),
+                'pdf_url_present' => filled($generatedInvoice['pdf_url'] ?? null),
+            ]);
 
             $invoiceNumber = $generatedInvoice['invoice_number'] ?? $invoice['invoice_number'] ?? null;
             $invoiceReference = $invoiceNumber ?: $invoice['invoice_id'];
@@ -51,7 +88,12 @@ class BillingService
 
             $this->markPurchaseBilled($purchase, $invoiceFilePath);
 
-            Log::info('CO3 invoice issued for purchase id: ' . $purchase->id . ', invoice id: ' . $invoice['invoice_id']);
+            Log::info('CO3 invoice issued for purchase', [
+                'purchase_id' => $purchase->id,
+                'invoice_id' => $invoice['invoice_id'],
+                'invoice_number' => $invoiceNumber,
+                'invoice_file_path' => $invoiceFilePath,
+            ]);
 
             return [
                 'invoice_id' => $invoice['invoice_id'],
@@ -62,6 +104,7 @@ class BillingService
             Log::error('CO3 invoice creation issue: ' . $e->getMessage(), [
                 'purchase_id' => $purchase->id,
                 'exception' => get_class($e),
+                'purchase_reference' => $this->purchaseReference($purchase),
             ]);
 
             return ['error' => $e->getMessage()];
@@ -72,17 +115,36 @@ class BillingService
 
     public function findContactForPurchase(Purchase $purchase): string
     {
-        $response = $this->co3->crm('getContactList', $this->contactSearchPayload($purchase));
-        $contacts = $this->extractContacts($response);
+        Log::info('CO3 contact search started', [
+            'purchase_id' => $purchase->id,
+            'search_term' => $this->contactSearchTerm($purchase),
+            'billing_address' => $this->billingAddress($purchase),
+        ]);
+
+        $contacts = $this->searchContactsForPurchase($purchase);
+        Log::debug('CO3 contact search completed', [
+            'purchase_id' => $purchase->id,
+            'contact_count' => count($contacts),
+        ]);
+
         $match = $this->selectBestContactMatch($contacts, $purchase);
 
         if ($match !== null) {
             $contactId = $this->extractId($match, ['contact_id', 'id']);
 
             if ($contactId !== null) {
+                Log::info('CO3 existing contact selected', [
+                    'purchase_id' => $purchase->id,
+                    'contact_id' => $contactId,
+                ]);
+
                 return $contactId;
             }
         }
+
+        Log::info('CO3 contact not found, creating contact', [
+            'purchase_id' => $purchase->id,
+        ]);
 
         return $this->createContactFromPurchase($purchase);
     }
@@ -90,7 +152,8 @@ class BillingService
     public function createContactFromPurchase(Purchase $purchase): string
     {
         $isCompany = filled($purchase->billing_company_name);
-        $response = $this->co3->crm('setContact', [
+        $payload = [
+            'contact_owner' => (string) config('co3.contact_owner', ''),
             'contact_id' => '',
             'contact_type' => $isCompany ? 1 : 0,
             'contact_firstname' => (string) $purchase->billing_first_name,
@@ -98,22 +161,48 @@ class BillingService
             'contact_firm' => $isCompany ? (string) $purchase->billing_company_name : '',
             'contact_postal_code' => (string) $purchase->billing_postal_code,
             'contact_city' => (string) $purchase->billing_city,
-            'contact_address' => (string) $purchase->billing_street_address,
+            'contact_address' => $this->billingAddress($purchase),
             'contact_postal_address' => $this->billingAddress($purchase),
             'contact_email' => (string) $purchase->personal_email,
             'contact_tax' => (string) $purchase->billing_vat_number,
             'contact_note' => 'Purchase #' . $this->purchaseReference($purchase),
+        ];
+
+        if (blank($payload['contact_owner'])) {
+            unset($payload['contact_owner']);
+        }
+
+        Log::info('CO3 contact creation request prepared', [
+            'purchase_id' => $purchase->id,
+            'is_company' => $isCompany,
+            'contact_owner_configured' => isset($payload['contact_owner']),
+            'contact_email_present' => filled($payload['contact_email']),
+            'contact_tax_present' => filled($payload['contact_tax']),
+            'contact_address' => $payload['contact_address'],
         ]);
 
-        $contactId = $this->extractId($response, ['contact_id', 'id']);
+        $response = $this->co3->crm('setContact', $payload);
+        $createdContactId = $this->extractId($response, ['contact_id', 'id']);
+        Log::info('CO3 contact creation response received', [
+            'purchase_id' => $purchase->id,
+            'created_contact_id' => $createdContactId,
+            'response_keys' => $this->responseKeys($response),
+        ]);
 
-        if ($contactId === null) {
+        $contact = $createdContactId ? $this->getContactById($createdContactId) : null;
+
+        if ($contact === null) {
             $this->logUnparseableResponse('CO3 setContact response did not contain contact_id.', $response);
 
             throw new RuntimeException('CO3 setContact response did not contain contact_id.');
         }
 
-        return $contactId;
+        Log::info('CO3 created contact resolved', [
+            'purchase_id' => $purchase->id,
+            'contact_id' => $contact,
+        ]);
+
+        return (string) $contact;
     }
 
     public function createInvoiceFromPurchase(Purchase $purchase, string|int $contactId, ?array $items = null): array
@@ -155,6 +244,16 @@ class BillingService
             unset($payload['selected_account']);
         }
 
+        Log::info('CO3 invoice draft request prepared', [
+            'purchase_id' => $purchase->id,
+            'contact_id' => (string) $contactId,
+            'item_count' => count($payload['items']),
+            'selected_account_configured' => isset($payload['selected_account']),
+            'currency' => $payload['currency'],
+            'customer_vat_type' => $payload['customer_vat_type'],
+            'payment_method' => $payload['method'],
+        ]);
+
         $response = $this->co3->finance('setInvoice', $payload);
         $invoiceId = $this->extractId($response, ['invoice_id', 'id']);
 
@@ -164,6 +263,13 @@ class BillingService
             throw new RuntimeException('CO3 setInvoice response did not contain invoice_id.');
         }
 
+        Log::info('CO3 invoice draft response parsed', [
+            'purchase_id' => $purchase->id,
+            'invoice_id' => $invoiceId,
+            'invoice_number' => $this->extractId($response, ['invoice_number', 'number']),
+            'response_keys' => $this->responseKeys($response),
+        ]);
+
         return [
             'invoice_id' => $invoiceId,
             'invoice_number' => $this->extractId($response, ['invoice_number', 'number']),
@@ -172,13 +278,29 @@ class BillingService
 
     public function generateInvoice(string $invoiceId): array
     {
-        $response = $this->co3->generateInvoice([
+        $payload = [
             'invoice_id' => $invoiceId,
             'language' => (string) config('co3.language', 'hu_HU'),
             'proforma' => (int) config('co3.proforma', 0),
+        ];
+
+        Log::info('CO3 invoice generation request prepared', [
+            'invoice_id' => $invoiceId,
+            'language' => $payload['language'],
+            'proforma' => $payload['proforma'],
         ]);
 
+        $response = $this->co3->generateInvoice($payload);
+
         $this->assertSuccessfulResponse($response, 'CO3 generateInvoice did not confirm success.');
+
+        Log::info('CO3 invoice generation response parsed', [
+            'invoice_id' => $invoiceId,
+            'invoice_number' => $this->extractId($response, ['invoice_number', 'number']),
+            'pdf_content_present' => filled($this->extractPdfContent($response)),
+            'pdf_url_present' => filled($this->extractId($response, ['pdf_url', 'url', 'file_url'])),
+            'response_keys' => $this->responseKeys($response),
+        ]);
 
         return [
             'invoice_id' => $invoiceId,
@@ -191,15 +313,64 @@ class BillingService
     private function contactSearchPayload(Purchase $purchase): array
     {
         $payload = [
+            'search_term' => $this->contactSearchTerm($purchase),
             'contact_tax' => (string) $purchase->billing_vat_number,
             'contact_email' => (string) $purchase->personal_email,
             'contact_name' => $this->customerName($purchase),
             'contact_postal_code' => (string) $purchase->billing_postal_code,
             'contact_city' => (string) $purchase->billing_city,
-            'contact_address' => (string) $purchase->billing_street_address,
+            'contact_address' => $this->billingAddress($purchase),
         ];
 
         return array_filter($payload, fn ($value) => filled($value));
+    }
+
+    private function contactSearchTerm(Purchase $purchase): string
+    {
+        return (string) ($purchase->personal_email ?: $purchase->billing_vat_number ?: $this->customerName($purchase));
+    }
+
+    private function searchContactsForPurchase(Purchase $purchase): array
+    {
+        $payload = $this->contactSearchPayload($purchase);
+
+        Log::debug('CO3 getContactList payload prepared', [
+            'purchase_id' => $purchase->id,
+            'search_term' => $payload['search_term'] ?? null,
+            'payload_keys' => array_keys($payload),
+        ]);
+
+        $response = $this->co3->crm('getContactList', $payload);
+        $contacts = $this->extractContacts($response);
+
+        Log::debug('CO3 getContactList response parsed', [
+            'purchase_id' => $purchase->id,
+            'contact_count' => count($contacts),
+            'response_keys' => $this->responseKeys($response),
+        ]);
+
+        return $contacts;
+    }
+
+    private function getContactById(string $contactId): ?string
+    {
+        Log::debug('CO3 getContact request prepared', [
+            'contact_id' => $contactId,
+        ]);
+
+        $response = $this->co3->crm('getContact', [
+            'contact_id' => $contactId,
+        ]);
+
+        $resolvedContactId = $this->extractId($response, ['contact_id', 'id']) ?? $contactId;
+
+        Log::debug('CO3 getContact response parsed', [
+            'requested_contact_id' => $contactId,
+            'resolved_contact_id' => $resolvedContactId,
+            'response_keys' => $this->responseKeys($response),
+        ]);
+
+        return $resolvedContactId;
     }
 
     private function selectBestContactMatch(array $contacts, Purchase $purchase): ?array
@@ -271,6 +442,12 @@ class BillingService
             return;
         }
 
+        Log::warning('CO3 invoice generation did not confirm success', [
+            'message' => $message,
+            'success_value' => $success,
+            'response_keys' => $this->responseKeys($response),
+        ]);
+
         throw new RuntimeException($message);
     }
 
@@ -282,14 +459,28 @@ class BillingService
             $invoiceFilePath = "co3/{$fileName}.pdf";
             Storage::disk('public')->put($invoiceFilePath, $generatedInvoice['pdf_content']);
 
+            Log::info('CO3 invoice PDF content stored', [
+                'invoice_reference' => $invoiceReference,
+                'invoice_file_path' => $invoiceFilePath,
+            ]);
+
             return $invoiceFilePath;
         }
 
         if (filled($generatedInvoice['pdf_url'] ?? null)) {
+            Log::info('CO3 invoice PDF URL stored', [
+                'invoice_reference' => $invoiceReference,
+                'invoice_file_path' => $generatedInvoice['pdf_url'],
+            ]);
+
             return (string) $generatedInvoice['pdf_url'];
         }
 
         // TODO: Add CO3 PDF download once the production API exposes the final document endpoint/field.
+        Log::warning('CO3 invoice generated without PDF content or URL, storing placeholder reference', [
+            'invoice_reference' => $invoiceReference,
+        ]);
+
         return "co3/invoice-{$fileName}";
     }
 
@@ -299,6 +490,11 @@ class BillingService
             $purchase->forceFill([
                 'invoice_file_path' => $invoiceFilePath,
                 'billed' => 1,
+            ]);
+
+            Log::info('CO3 invoice marked billed on in-memory purchase', [
+                'purchase_id' => $purchase->id,
+                'invoice_file_path' => $invoiceFilePath,
             ]);
 
             return;
@@ -318,6 +514,11 @@ class BillingService
             $purchase->forceFill([
                 'invoice_file_path' => $invoiceFilePath,
                 'billed' => 1,
+            ]);
+
+            Log::info('CO3 invoice marked billed in database', [
+                'purchase_id' => $purchase->id,
+                'invoice_file_path' => $invoiceFilePath,
             ]);
         });
     }
@@ -345,10 +546,14 @@ class BillingService
 
     private function billingAddress(Purchase $purchase): string
     {
+        $postalCode = trim((string) $purchase->billing_postal_code);
+        $city = trim((string) $purchase->billing_city);
+        $address = trim((string) $purchase->billing_street_address);
+        $cityAddress = trim(collect([$city, $address])->filter(fn ($part) => filled($part))->implode(' '));
+
         return trim(collect([
-            $purchase->billing_postal_code,
-            $purchase->billing_city,
-            $purchase->billing_street_address,
+            $postalCode ? $postalCode . ',' : null,
+            $cityAddress,
         ])->filter(fn ($part) => filled($part))->implode(' '));
     }
 
@@ -383,7 +588,12 @@ class BillingService
     private function logUnparseableResponse(string $message, array $response): void
     {
         Log::debug($message, [
-            'response_keys' => array_slice(array_keys($response), 0, 10),
+            'response_keys' => $this->responseKeys($response),
         ]);
+    }
+
+    private function responseKeys(array $response): array
+    {
+        return array_slice(array_keys($response), 0, 10);
     }
 }
