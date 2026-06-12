@@ -8,6 +8,7 @@ return [
     'password_hash' => env('CO3_PASSWORD_HASH', env('EVENTRIX_PASSWORD_HASH')),
 
     'contact_owner' => env('CO3_CONTACT_OWNER'),
+    'contact_category' => env('CO3_CONTACT_CATEGORY', 'None'),
     'selected_account' => env('CO3_SELECTED_ACCOUNT'),
 
     'language' => env('CO3_LANGUAGE', 'hu_HU'),

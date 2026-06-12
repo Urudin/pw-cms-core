@@ -24,6 +24,7 @@ class Co3BillingTest extends TestCase
             'co3.username' => 'integracio',
             'co3.password_hash' => 'hash-from-env',
             'co3.contact_owner' => 'contact-owner-from-env',
+            'co3.contact_category' => 'Client',
             'co3.selected_account' => 'selected-account-from-env',
             'co3.language' => 'hu_HU',
             'co3.currency' => 'HUF',
@@ -116,6 +117,7 @@ class Co3BillingTest extends TestCase
         Http::assertSent(fn ($request) => $this->assertXmlRequest($request, 'https://eventrix.hu/apitest/crm', 'setContact')
             && $this->xmlValue($request, 'setContact/contact_type') === '1'
             && $this->xmlValue($request, 'setContact/contact_owner') === 'contact-owner-from-env'
+            && $this->xmlValue($request, 'setContact/contact_categories') === 'Client'
             && $this->xmlValue($request, 'setContact/contact_firm') === 'Acme Kft.'
             && $this->xmlValue($request, 'setContact/contact_address') === '1111, Budapest Fo utca 1.'
             && $this->xmlValue($request, 'setContact/contact_postal_address') === '1111, Budapest Fo utca 1.'
@@ -254,7 +256,7 @@ class Co3BillingTest extends TestCase
 
         $environmentKeys = collect($environment['values'])->pluck('key')->all();
 
-        foreach (['baseUrl', 'username', 'passwordHash', 'apiKey', 'sessionKey', 'searchTerm', 'contactOwner', 'selectedAccount', 'contactId', 'invoiceId'] as $key) {
+        foreach (['baseUrl', 'username', 'passwordHash', 'apiKey', 'sessionKey', 'searchTerm', 'contactOwner', 'contactCategory', 'selectedAccount', 'contactId', 'invoiceId'] as $key) {
             $this->assertContains($key, $environmentKeys);
         }
 
@@ -270,6 +272,7 @@ class Co3BillingTest extends TestCase
 
         $contactXml = $requests['03 CRM - Create contact - setContact']['request']['body']['raw'];
         $this->assertXmlBodyContains($contactXml, 'setContact', 'contact_owner', '{{contactOwner}}');
+        $this->assertXmlBodyContains($contactXml, 'setContact', 'contact_categories', '{{contactCategory}}');
 
         $getContactXml = $requests['04 CRM - Get contact - getContact']['request']['body']['raw'];
         $this->assertXmlBodyContains($getContactXml, 'getContact', 'contact_id', '{{contactId}}');

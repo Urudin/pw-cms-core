@@ -154,6 +154,7 @@ class BillingService
         $isCompany = filled($purchase->billing_company_name);
         $payload = [
             'contact_owner' => (string) config('co3.contact_owner', ''),
+            'contact_categories' => (string) config('co3.contact_category', 'None'),
             'contact_id' => '',
             'contact_type' => $isCompany ? 1 : 0,
             'contact_firstname' => (string) $purchase->billing_first_name,
@@ -172,10 +173,15 @@ class BillingService
             unset($payload['contact_owner']);
         }
 
+        if (blank($payload['contact_categories'])) {
+            $payload['contact_categories'] = 'None';
+        }
+
         Log::info('CO3 contact creation request prepared', [
             'purchase_id' => $purchase->id,
             'is_company' => $isCompany,
             'contact_owner_configured' => isset($payload['contact_owner']),
+            'contact_category' => $payload['contact_categories'],
             'contact_email_present' => filled($payload['contact_email']),
             'contact_tax_present' => filled($payload['contact_tax']),
             'contact_address' => $payload['contact_address'],
