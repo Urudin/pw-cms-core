@@ -138,7 +138,7 @@ class BillingService
                     'contact_id' => $contactId,
                 ]);
 
-                return $contactId;
+                return $this->updateContactFromPurchase($purchase, $contactId);
             }
         }
 
@@ -151,35 +151,11 @@ class BillingService
 
     public function createContactFromPurchase(Purchase $purchase): string
     {
-        $isCompany = filled($purchase->billing_company_name);
-        $payload = [
-            'contact_owner' => (string) config('co3.contact_owner', ''),
-            'contact_categories' => (string) config('co3.contact_category', 'None'),
-            'contact_id' => '',
-            'contact_type' => $isCompany ? 1 : 0,
-            'contact_firstname' => (string) $purchase->billing_first_name,
-            'contact_lastname' => (string) $purchase->billing_last_name,
-            'contact_firm' => $isCompany ? (string) $purchase->billing_company_name : '',
-            'contact_postal_code' => (string) $purchase->billing_postal_code,
-            'contact_city' => (string) $purchase->billing_city,
-            'contact_address' => $this->billingAddress($purchase),
-            'contact_postal_address' => $this->billingAddress($purchase),
-            'contact_email' => (string) $purchase->personal_email,
-            'contact_tax' => (string) $purchase->billing_vat_number,
-            'contact_note' => 'Purchase #' . $this->purchaseReference($purchase),
-        ];
-
-        if (blank($payload['contact_owner'])) {
-            unset($payload['contact_owner']);
-        }
-
-        if (blank($payload['contact_categories'])) {
-            $payload['contact_categories'] = 'None';
-        }
+        $payload = $this->contactPayloadFromPurchase($purchase);
 
         Log::info('CO3 contact creation request prepared', [
             'purchase_id' => $purchase->id,
-            'is_company' => $isCompany,
+            'is_company' => filled($purchase->billing_company_name),
             'contact_owner_configured' => isset($payload['contact_owner']),
             'contact_category' => $payload['contact_categories'],
             'contact_email_present' => filled($payload['contact_email']),
@@ -209,6 +185,33 @@ class BillingService
         ]);
 
         return (string) $contact;
+    }
+
+    private function updateContactFromPurchase(Purchase $purchase, string $contactId): string
+    {
+        $payload = $this->contactPayloadFromPurchase($purchase, $contactId);
+
+        Log::info('CO3 contact update request prepared', [
+            'purchase_id' => $purchase->id,
+            'contact_id' => $contactId,
+            'is_company' => filled($purchase->billing_company_name),
+            'contact_owner_configured' => isset($payload['contact_owner']),
+            'contact_category' => $payload['contact_categories'],
+            'contact_email_present' => filled($payload['contact_email']),
+            'contact_tax_present' => filled($payload['contact_tax']),
+            'contact_address' => $payload['contact_address'],
+        ]);
+
+        $response = $this->co3->crm('setContact', $payload);
+        $updatedContactId = $this->extractId($response, ['contact_id', 'id']) ?? $contactId;
+
+        Log::info('CO3 contact update response received', [
+            'purchase_id' => $purchase->id,
+            'contact_id' => $updatedContactId,
+            'response_keys' => $this->responseKeys($response),
+        ]);
+
+        return (string) $updatedContactId;
     }
 
     public function createInvoiceFromPurchase(Purchase $purchase, string|int $contactId, ?array $items = null): array
@@ -329,6 +332,37 @@ class BillingService
         ];
 
         return array_filter($payload, fn ($value) => filled($value));
+    }
+
+    private function contactPayloadFromPurchase(Purchase $purchase, string $contactId = ''): array
+    {
+        $isCompany = filled($purchase->billing_company_name);
+        $payload = [
+            'contact_owner' => (string) config('co3.contact_owner', ''),
+            'contact_categories' => (string) config('co3.contact_category', 'None'),
+            'contact_id' => $contactId,
+            'contact_type' => $isCompany ? 1 : 0,
+            'contact_firstname' => (string) $purchase->billing_first_name,
+            'contact_lastname' => (string) $purchase->billing_last_name,
+            'contact_firm' => $isCompany ? (string) $purchase->billing_company_name : '',
+            'contact_postal_code' => (string) $purchase->billing_postal_code,
+            'contact_city' => (string) $purchase->billing_city,
+            'contact_address' => $this->billingAddress($purchase),
+            'contact_postal_address' => $this->billingAddress($purchase),
+            'contact_email' => (string) $purchase->personal_email,
+            'contact_tax' => (string) $purchase->billing_vat_number,
+            'contact_note' => 'Purchase #' . $this->purchaseReference($purchase),
+        ];
+
+        if (blank($payload['contact_owner'])) {
+            unset($payload['contact_owner']);
+        }
+
+        if (blank($payload['contact_categories'])) {
+            $payload['contact_categories'] = 'None';
+        }
+
+        return $payload;
     }
 
     private function contactSearchTerm(Purchase $purchase): string

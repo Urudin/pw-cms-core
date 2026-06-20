@@ -58,7 +58,9 @@ class Co3BillingTest extends TestCase
         Storage::fake('public');
         Http::fake([
             'https://eventrix.hu/apitest/authenticate' => $this->xmlResponse('<response><session_key>session-1</session_key></response>'),
-            'https://eventrix.hu/apitest/crm' => $this->xmlResponse('<response><contacts><item><contact_id>77</contact_id><contact_tax>12345678-1-12</contact_tax><contact_email>customer@example.test</contact_email></item></contacts></response>'),
+            'https://eventrix.hu/apitest/crm' => Http::sequence()
+                ->push('<response><contacts><item><contact_id>77</contact_id><contact_tax>12345678-1-12</contact_tax><contact_email>customer@example.test</contact_email><contact_firstname>Old</contact_firstname><contact_lastname>Name</contact_lastname></item></contacts></response>', 200, $this->xmlHeaders())
+                ->push('<response><contact_id>77</contact_id></response>', 200, $this->xmlHeaders()),
             'https://eventrix.hu/apitest/finance' => Http::sequence()
                 ->push('<response><invoice_id>123</invoice_id><invoice_number>INV-123</invoice_number></response>', 200, $this->xmlHeaders())
                 ->push('<response><success>true</success></response>', 200, $this->xmlHeaders()),
@@ -81,6 +83,16 @@ class Co3BillingTest extends TestCase
             && $this->xmlValue($request, 'getContactList/contact_address') === '1111, Budapest Fo utca 1.'
             && $this->xmlValue($request, 'getContactList/api_key') === 'api-key-from-env'
             && $this->xmlValue($request, 'getContactList/session_key') === 'session-1');
+
+        Http::assertSent(fn ($request) => $this->assertXmlRequest($request, 'https://eventrix.hu/apitest/crm', 'setContact')
+            && $this->xmlValue($request, 'setContact/contact_id') === '77'
+            && $this->xmlValue($request, 'setContact/contact_firstname') === 'Elek'
+            && $this->xmlValue($request, 'setContact/contact_lastname') === 'Teszt'
+            && $this->xmlValue($request, 'setContact/contact_tax') === '12345678-1-12'
+            && $this->xmlValue($request, 'setContact/contact_email') === 'customer@example.test'
+            && $this->xmlValue($request, 'setContact/contact_address') === '1111, Budapest Fo utca 1.'
+            && $this->xmlValue($request, 'setContact/api_key') === 'api-key-from-env'
+            && $this->xmlValue($request, 'setContact/session_key') === 'session-1');
 
         Http::assertSent(fn ($request) => $this->assertXmlRequest($request, 'https://eventrix.hu/apitest/finance', 'setInvoice')
             && $this->xmlValue($request, 'setInvoice/contact_id') === '77'
