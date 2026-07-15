@@ -143,10 +143,20 @@
                                             </svg>
                                         </div>
 
-                                        <div class="absolute left-8 top-16 text-white">
-                                            <p class="text-sm font-bold leading-relaxed opacity-95 max-w-[85%] line-clamp-4">
+                                        <div class="absolute left-8 top-16 text-white" x-data="{ expanded: false }">
+                                            <p class="text-sm font-bold leading-relaxed opacity-95 max-w-[85%]"
+                                               :class="{ 'line-clamp-4': !expanded }"
+                                               title="{{ $video->description }}">
                                                 {{ $video->description }}
                                             </p>
+                                            <button
+                                                type="button"
+                                                x-show="!expanded"
+                                                @click="expanded = true"
+                                                class="mt-2 text-xs font-bold text-white underline underline-offset-2 hover:text-[#f2a44a]"
+                                            >
+                                                Tovább Olvasom
+                                            </button>
                                         </div>
                                     </div>
                                     {{-- TEXT --}}
