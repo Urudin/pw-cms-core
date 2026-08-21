@@ -1,0 +1,569 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "Moodle LMS",
+        "description": "REST API for Moodle LMS",
+        "summary": "Moodle LMS REST API",
+        "license": {
+            "name": "GNU GPL v3 or later",
+            "url": "https://www.gnu.org/licenses/gpl-3.0.html"
+        },
+        "version": "2024100711"
+    },
+    "servers": [
+        {
+            "url": "https://elearning.imakademia.hu/r.php/api/rest/v2",
+            "description": "Innov\u00e1ci\u00f3 Menedzsment Akad\u00e9mia"
+        }
+    ],
+    "paths": {
+        "/user/{user}/preferences/{preference}": {
+            "get": {
+                "description": "Fetch one user preference, or all user preferences",
+                "summary": "Fetch user preferences",
+                "tags": [
+                    "core_user"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/core--router--parameters--path_user"
+                    },
+                    {
+                        "name": "preference",
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/core--router--schema--objects--array_of_strings"
+                                },
+                                "examples": {
+                                    "A single preference value": {
+                                        "summary": "A json response containing a single preference",
+                                        "value": {
+                                            "drawers-open-index": "1"
+                                        }
+                                    },
+                                    "A set of preference values": {
+                                        "summary": "A json response containing a set of preferences",
+                                        "value": {
+                                            "drawers-open-index": "1",
+                                            "login_failed_count_since_success": "1",
+                                            "coursesectionspreferences_2": "{\"contentcollapsed\":[]}"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/core--router--response--invalid_parameter_response"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/core--router--response--not_found_response"
+                    }
+                }
+            },
+            "post": {
+                "description": "Set a single user preference",
+                "summary": "Set a single user preference",
+                "tags": [
+                    "core_user"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/core--router--parameters--path_user"
+                    },
+                    {
+                        "name": "preference",
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/core--router--schema--objects--array_of_strings"
+                                },
+                                "examples": {
+                                    "A single preference value": {
+                                        "summary": "A json response containing a single preference",
+                                        "value": {
+                                            "drawers-open-index": "1"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/core--router--response--invalid_parameter_response"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/core--router--response--not_found_response"
+                    }
+                },
+                "requestBody": {
+                    "description": "",
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "value": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user/{user}/preferences": {
+            "get": {
+                "description": "Fetch one user preference, or all user preferences",
+                "summary": "Fetch user preferences",
+                "tags": [
+                    "core_user"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/core--router--parameters--path_user"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/core--router--schema--objects--array_of_strings"
+                                },
+                                "examples": {
+                                    "A single preference value": {
+                                        "summary": "A json response containing a single preference",
+                                        "value": {
+                                            "drawers-open-index": "1"
+                                        }
+                                    },
+                                    "A set of preference values": {
+                                        "summary": "A json response containing a set of preferences",
+                                        "value": {
+                                            "drawers-open-index": "1",
+                                            "login_failed_count_since_success": "1",
+                                            "coursesectionspreferences_2": "{\"contentcollapsed\":[]}"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/core--router--response--invalid_parameter_response"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/core--router--response--not_found_response"
+                    }
+                }
+            },
+            "post": {
+                "description": "",
+                "summary": "Set or update multiple user preferences",
+                "tags": [
+                    "core_user"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/core--router--parameters--path_user"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/core--router--schema--objects--array_of_strings"
+                                },
+                                "examples": {
+                                    "A single preference value": {
+                                        "summary": "A json response containing a single preference",
+                                        "value": {
+                                            "drawers-open-index": "1"
+                                        }
+                                    },
+                                    "A set of preference values": {
+                                        "summary": "A json response containing a set of preferences",
+                                        "value": {
+                                            "drawers-open-index": "1",
+                                            "login_failed_count_since_success": "1",
+                                            "coursesectionspreferences_2": "{\"contentcollapsed\":[]}"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/core--router--response--invalid_parameter_response"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/core--router--response--not_found_response"
+                    }
+                },
+                "requestBody": {
+                    "description": "",
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "preferences": {
+                                        "$ref": "#/components/schemas/core--router--schema--objects--array_of_strings"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/core/templates/{themename}/{component}/{identifier}": {
+            "get": {
+                "description": "Fetch a single template for a component in a theme",
+                "summary": "Fetch a single template",
+                "tags": [
+                    "core"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/core--router--parameters--path_themename"
+                    },
+                    {
+                        "$ref": "#/components/parameters/core--router--parameters--path_component"
+                    },
+                    {
+                        "name": "identifier",
+                        "in": "path",
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[a-zA-Z0-9\\/_\\-]*$"
+                        },
+                        "required": true
+                    },
+                    {
+                        "name": "includecomments",
+                        "in": "query",
+                        "description": "Include comments in the template",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "$ref": "#/components/parameters/core--router--parameters--header_language"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "templates": {
+                                            "$ref": "#/components/schemas/core--router--schema--objects--array_of_strings"
+                                        },
+                                        "strings": {
+                                            "$ref": "#/components/schemas/core--router--schema--objects--array_of_strings"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "Single template value": {
+                                        "summary": "A json response containing the template for a single template",
+                                        "value": {
+                                            "templates": {
+                                                "mod_example/template_identifier": "<div class=\"example\">Hello World</div>",
+                                                "mod_example/other_template": "<div class=\"example\">Hello World</div>"
+                                            },
+                                            "strings": {
+                                                "core/loading": "Loading"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/core--router--response--invalid_parameter_response"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/core--router--response--not_found_response"
+                    }
+                },
+                "security": []
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "core--router--schema--objects--array_of_strings": {
+                "type": "object",
+                "additionalProperties": {
+                    "type": "string"
+                }
+            },
+            "core--router--schema--objects--stacktrace": {
+                "examples": [
+                    {
+                        "value": [
+                            {
+                                "file": "/Users/example/Sites/moodle/lib/classes/router/schema/objects/array_of_strings.php",
+                                "line": 48,
+                                "function": "validate_param",
+                                "args": [
+                                    "string",
+                                    "int",
+                                    false,
+                                    "The value 'string' was not of type string."
+                                ]
+                            },
+                            {
+                                "file": "/Users/example/Sites/moodle/lib/classes/router/schema/objects/schema_object.php",
+                                "line": 85,
+                                "function": "validate_data",
+                                "class": "core\\router\\schema\\objects\\array_of_strings",
+                                "type": "->",
+                                "args": [
+                                    {
+                                        "additionalProp1": "string",
+                                        "additionalProp2": "string",
+                                        "additionalProp3": "string"
+                                    }
+                                ]
+                            },
+                            {
+                                "file": "/Users/example/Sites/moodle/lib/classes/router/route.php",
+                                "line": 264,
+                                "function": "validate_data",
+                                "class": "core\\router\\schema\\objects\\schema_object",
+                                "type": "->",
+                                "args": [
+                                    {
+                                        "preferences": {
+                                            "additionalProp1": "string",
+                                            "additionalProp2": "string",
+                                            "additionalProp3": "string"
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "file": {
+                            "type": "string"
+                        },
+                        "line": {
+                            "type": "integer"
+                        },
+                        "function": {
+                            "type": "string"
+                        },
+                        "args": {
+                            "type": "object",
+                            "additionalProperties": true
+                        },
+                        "class": {
+                            "type": "string"
+                        },
+                        "type": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "responses": {
+            "core--router--response--invalid_parameter_response": {
+                "description": "The parameter provided was invalid in some way.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "pattern": "^[a-zA-Z0-9_\\-]*$"
+                                },
+                                "errorcode": {
+                                    "type": "string",
+                                    "pattern": "^[a-zA-Z0-9_\\-]*$"
+                                },
+                                "stacktrace": {
+                                    "$ref": "#/components/schemas/core--router--schema--objects--stacktrace"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "core--router--response--not_found_response": {
+                "description": "The item was not found.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "pattern": "^[a-zA-Z0-9_\\-]*$"
+                                },
+                                "errorcode": {
+                                    "type": "string",
+                                    "pattern": "^[a-zA-Z0-9_\\-]*$"
+                                },
+                                "stacktrace": {
+                                    "$ref": "#/components/schemas/core--router--schema--objects--stacktrace"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "parameters": {
+            "core--router--parameters--path_user": {
+                "name": "user",
+                "in": "path",
+                "description": "The user identifier.\n\nThis can be the magic string 'current', or the user's id, idnumber, or username.\n\nIf specifying an id, the value should be in the format `id:[id]`.\n\nIf specifying an idnumber, the value should be in the format `idnumber:[idnumber]`.\n\nIf specifying a username, the value should be in the format `username:[username]`.",
+                "schema": {
+                    "type": "string",
+                    "pattern": "^(current|\\d+|idnumber:.+|username:.+)$"
+                },
+                "examples": {
+                    "The current user": {
+                        "value": "current"
+                    },
+                    "A user specified by their user id": {
+                        "value": "94853"
+                    },
+                    "A user specified by their idnumber": {
+                        "value": "idnumber:some-student-idnumber               "
+                    },
+                    "A user specified by their username": {
+                        "value": "username:lyona1"
+                    }
+                },
+                "required": true
+            },
+            "core--router--parameters--path_themename": {
+                "name": "themename",
+                "in": "path",
+                "description": "The name of a Moodle theme.",
+                "schema": {
+                    "type": "string",
+                    "pattern": "^[a-zA-Z0-9_\\-]*$"
+                },
+                "examples": {
+                    "The Boost theme": {
+                        "value": "boost"
+                    },
+                    "The Classic theme": {
+                        "value": "classic"
+                    }
+                },
+                "required": true
+            },
+            "core--router--parameters--path_component": {
+                "name": "component",
+                "in": "path",
+                "description": "The name of a Moodle component, in frankenstyle format.",
+                "schema": {
+                    "type": "string",
+                    "pattern": "^[a-z][a-z0-9]*(_(?:[a-z][a-z0-9_](?!__))*)?[a-z0-9]+$"
+                },
+                "examples": {
+                    "The core subsystem": {
+                        "value": "core"
+                    },
+                    "The Course subsystem": {
+                        "value": "core_course"
+                    },
+                    "An activity module": {
+                        "value": "mod_assign"
+                    },
+                    "An assignment subplugin": {
+                        "value": "assignsubmission_file"
+                    }
+                },
+                "required": true
+            },
+            "core--router--parameters--header_language": {
+                "name": "language",
+                "in": "header",
+                "description": "The language of the requested response.",
+                "schema": {
+                    "type": "string"
+                },
+                "examples": {
+                    "Site default": {},
+                    "English": {
+                        "value": "en"
+                    },
+                    "Deutsch (kids)": {
+                        "value": "de_kids"
+                    }
+                }
+            }
+        },
+        "examples": {},
+        "requestBodies": {},
+        "headers": {},
+        "securitySchemes": {
+            "api_key": {
+                "type": "apiKey",
+                "name": "api_key",
+                "in": "header"
+            },
+            "cookie": {
+                "type": "apiKey",
+                "name": "MoodleSession",
+                "in": "cookie"
+            }
+        }
+    },
+    "security": [
+        {
+            "api_key": [],
+            "cookie": []
+        }
+    ],
+    "externalDocs": {
+        "description": "Moodle Developer Docs",
+        "url": "https://moodledev.io"
+    }
+}

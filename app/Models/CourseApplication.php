@@ -10,6 +10,8 @@ class CourseApplication extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
+        'moodle_user_id' => 'integer',
+        'moodle_last_synced_at' => 'datetime',
         'newsletter_opt_in' => 'boolean',
         'privacy_accepted' => 'boolean',
     ];

@@ -11,6 +11,11 @@ class ActualCourse extends Model
 {
     protected $guarded = ['id'];
 
+    protected $casts = [
+        'moodle_course_id' => 'integer',
+        'moodle_last_synced_at' => 'datetime',
+    ];
+
     public function course() : BelongsTo
     {
         return $this->belongsTo(Course::class);
