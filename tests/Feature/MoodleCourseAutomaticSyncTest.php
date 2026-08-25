@@ -6,6 +6,7 @@ use App\Jobs\SyncMoodleCourse;
 use App\Models\ActualCourse;
 use App\Models\Course;
 use App\Models\CourseCategory;
+use App\Services\Moodle\CourseSyncDispatcher;
 use App\Services\Moodle\CourseSyncService;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
@@ -35,6 +36,13 @@ class MoodleCourseAutomaticSyncTest extends TestCase
         Queue::fake();
     }
 
+    protected function tearDown(): void
+    {
+        config(['moodle.enabled' => false]);
+
+        parent::tearDown();
+    }
+
     public function test_creating_actual_course_dispatches_when_moodle_is_enabled(): void
     {
         $actualCourse = $this->createActualCourse();
@@ -43,6 +51,7 @@ class MoodleCourseAutomaticSyncTest extends TestCase
             SyncMoodleCourse::class,
             fn (SyncMoodleCourse $job) => $job->actualCourseId === $actualCourse->id,
         );
+        $this->assertSame(CourseSyncService::STATUS_PENDING, $actualCourse->fresh()->moodle_sync_status);
     }
 
     public function test_creating_actual_course_does_not_dispatch_or_change_state_when_disabled(): void
@@ -128,6 +137,7 @@ class MoodleCourseAutomaticSyncTest extends TestCase
         $mapped = $this->createActualCourse($course, ['moodle_course_id' => 111]);
         $attempted = $this->createActualCourse($course, ['moodle_sync_status' => 'failed']);
         $historical = $this->createActualCourse($course);
+        $historical->forceFill(['moodle_sync_status' => null])->saveQuietly();
         Queue::fake();
 
         $course->update(['name' => 'Frissitett kepzesnev']);
@@ -204,6 +214,30 @@ class MoodleCourseAutomaticSyncTest extends TestCase
         $this->assertNotSame($firstMiddleware[0]->key, $otherCourseMiddleware[0]->key);
         $this->assertSame(30, $firstMiddleware[0]->releaseAfter);
         $this->assertSame(300, $firstMiddleware[0]->expiresAfter);
+    }
+
+    public function test_job_has_limited_increasing_retry_policy(): void
+    {
+        $job = new SyncMoodleCourse(41);
+
+        $this->assertSame(3, $job->tries);
+        $this->assertSame([60, 300], $job->backoff);
+    }
+
+    public function test_failed_course_can_be_manually_requeued_without_recursive_dispatch(): void
+    {
+        $actualCourse = $this->createActualCourse();
+        $actualCourse->forceFill([
+            'moodle_sync_status' => CourseSyncService::STATUS_FAILED,
+            'moodle_sync_error' => 'Safe previous error',
+        ])->saveQuietly();
+        Queue::fake();
+
+        app(CourseSyncDispatcher::class)->dispatch($actualCourse);
+
+        $this->assertSame(CourseSyncService::STATUS_PENDING, $actualCourse->fresh()->moodle_sync_status);
+        $this->assertSame('Safe previous error', $actualCourse->fresh()->moodle_sync_error);
+        Queue::assertPushed(SyncMoodleCourse::class, 1);
     }
 
     private function assertJobWasDispatchedFor(ActualCourse $actualCourse): void

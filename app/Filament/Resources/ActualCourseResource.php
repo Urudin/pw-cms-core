@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ActualCourseResource\Pages;
 use App\Models\ActualCourse;
+use App\Services\Moodle\CourseSyncService;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
@@ -13,15 +14,20 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\HtmlString;
 
 class ActualCourseResource extends Resource
 {
     protected static ?string $model = ActualCourse::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
+
     protected static ?string $navigationGroup = 'Tanfolyamok';
+
     protected static ?string $navigationLabel = 'Aktuális Tanfolyamok';
+
     protected static ?string $pluralModelLabel = 'Aktuális Tanfolyamok';
+
     protected static ?string $modelLabel = 'Aktuális Tanfolyam';
 
     public static function form(Form $form): Form
@@ -99,7 +105,6 @@ class ActualCourseResource extends Resource
                         ->required()
                         ->default(15),
 
-
                     Repeater::make('days')
                         ->label('Oktatási napok')
                         ->relationship('days')
@@ -126,6 +131,28 @@ class ActualCourseResource extends Resource
                         ->reorderable()
                         ->columns()
                         ->defaultItems(0)
+                        ->columnSpanFull(),
+                ]),
+            Forms\Components\Section::make('Moodle szinkronizálás')
+                ->visible(fn (?ActualCourse $record): bool => $record !== null)
+                ->columns(2)
+                ->schema([
+                    Forms\Components\Placeholder::make('moodle_status_display')
+                        ->label('Állapot')
+                        ->content(fn (?ActualCourse $record): HtmlString => new HtmlString(sprintf(
+                            '<span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset %s">%s</span>',
+                            static::moodleStatusClasses($record?->moodle_sync_status),
+                            e(static::moodleStatusLabel($record?->moodle_sync_status)),
+                        ))),
+                    Forms\Components\Placeholder::make('moodle_course_id_display')
+                        ->label('Moodle kurzusazonosító')
+                        ->content(fn (?ActualCourse $record): string => $record?->moodle_course_id !== null ? (string) $record->moodle_course_id : '—'),
+                    Forms\Components\Placeholder::make('moodle_last_synced_at_display')
+                        ->label('Utolsó sikeres szinkronizálás')
+                        ->content(fn (?ActualCourse $record): string => $record?->moodle_last_synced_at?->format('Y-m-d H:i') ?? '—'),
+                    Forms\Components\Placeholder::make('moodle_sync_error_display')
+                        ->label('Utolsó hiba')
+                        ->content(fn (?ActualCourse $record): string => filled($record?->moodle_sync_error) ? $record->moodle_sync_error : '—')
                         ->columnSpanFull(),
                 ]),
         ]);
@@ -169,6 +196,17 @@ class ActualCourseResource extends Resource
                     ->badge()
                     ->color(fn ($state) => filled($state) && Carbon::parse($state)->lt(today()) ? 'danger' : 'success')
                     ->sortable(),
+
+                Tables\Columns\TextColumn::make('moodle_sync_status')
+                    ->label('Moodle')
+                    ->badge()
+                    ->formatStateUsing(fn (?string $state): string => static::moodleStatusLabel($state))
+                    ->color(fn (?string $state): string => match ($state) {
+                        CourseSyncService::STATUS_PENDING => 'warning',
+                        CourseSyncService::STATUS_SYNCED => 'success',
+                        CourseSyncService::STATUS_FAILED => 'danger',
+                        default => 'gray',
+                    }),
 
                 Tables\Columns\TextColumn::make('place_of_event')
                     ->label('Oktatás helyszíne')
@@ -217,6 +255,26 @@ class ActualCourseResource extends Resource
         return [
             //
         ];
+    }
+
+    public static function moodleStatusLabel(?string $status): string
+    {
+        return match ($status) {
+            CourseSyncService::STATUS_PENDING => 'Függőben',
+            CourseSyncService::STATUS_SYNCED => 'Szinkronizálva',
+            CourseSyncService::STATUS_FAILED => 'Sikertelen',
+            default => 'Még nem szinkronizált',
+        };
+    }
+
+    private static function moodleStatusClasses(?string $status): string
+    {
+        return match ($status) {
+            CourseSyncService::STATUS_PENDING => 'bg-warning-50 text-warning-700 ring-warning-600/20',
+            CourseSyncService::STATUS_SYNCED => 'bg-success-50 text-success-700 ring-success-600/20',
+            CourseSyncService::STATUS_FAILED => 'bg-danger-50 text-danger-700 ring-danger-600/20',
+            default => 'bg-gray-50 text-gray-600 ring-gray-500/20',
+        };
     }
 
     public static function getPages(): array

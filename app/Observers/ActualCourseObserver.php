@@ -2,11 +2,13 @@
 
 namespace App\Observers;
 
-use App\Jobs\SyncMoodleCourse;
 use App\Models\ActualCourse;
+use App\Services\Moodle\CourseSyncDispatcher;
 
 class ActualCourseObserver
 {
+    public function __construct(private readonly CourseSyncDispatcher $dispatcher) {}
+
     private const SYNCHRONIZED_FIELDS = [
         'course_id',
         'start_date',
@@ -31,6 +33,6 @@ class ActualCourseObserver
             return;
         }
 
-        SyncMoodleCourse::dispatch($actualCourse->getKey())->afterCommit();
+        $this->dispatcher->dispatch($actualCourse);
     }
 }

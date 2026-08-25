@@ -2,12 +2,14 @@
 
 namespace App\Observers;
 
-use App\Jobs\SyncMoodleCourse;
 use App\Models\ActualCourse;
 use App\Models\Course;
+use App\Services\Moodle\CourseSyncDispatcher;
 
 class CourseObserver
 {
+    public function __construct(private readonly CourseSyncDispatcher $dispatcher) {}
+
     public function updated(Course $course): void
     {
         if (! config('moodle.enabled') || ! $course->wasChanged('name')) {
@@ -21,7 +23,7 @@ class CourseObserver
             })
             ->select('actual_courses.id')
             ->eachById(function (ActualCourse $actualCourse) {
-                SyncMoodleCourse::dispatch($actualCourse->getKey())->afterCommit();
+                $this->dispatcher->dispatch($actualCourse);
             });
     }
 }

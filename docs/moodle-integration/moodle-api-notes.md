@@ -1428,3 +1428,93 @@ On this target, successful `core_course_update_courses` calls returned a JSON ob
 ```
 
 This differs from the Moodle 4.5 source-based expectation previously recorded as `null`. `MoodleClient` and `CourseSyncService` correctly accept this successful response because synchronization does not depend on a specific success body. No application change is required.
+
+---
+
+# 25. Controlled Live Participant Synchronization Smoke Test (2026-08-25)
+
+## 25.1. Scope and retained test data
+
+The authorized participant smoke test used only newly created local test data and the retained hidden Moodle smoke-test course ID `12`. The Moodle course was read before and after the test and remained unchanged: category ID `5`, `visible=0`, shortname `IMA-5`, historical idnumber `imakademia-actual-course-5`, and manual enrolment advertised in `enrollmentmethods`.
+
+Retained local records:
+
+* local test category ID: `1`;
+* local test `Course` ID: `1`;
+* local test `ActualCourse` ID: `1`, explicitly mapped to Moodle course ID `12` with model events suppressed;
+* local test `CourseApplication` ID: `1`;
+* final application status: `PROCESSED`;
+* final local Moodle user ID: `15`;
+* final synchronization status: `synced` with no synchronization error.
+
+Retained Moodle data:
+
+* Moodle course ID: `12`;
+* Moodle user ID: `15`;
+* requested username/email: `kirtap9408@gmail.com`;
+* final verified name: `MoodleUpdated SmokeTeszt`;
+* one course enrolment with role ID `5`, shortname `student`.
+
+No Moodle user, enrolment or course was deleted during cleanup. The Laravel `jobs` table was left empty. Historical failed job ID `1` was retained; it was not altered as part of the follow-up.
+
+## 25.2. NEW state and user creation
+
+Before any participant write, exact email lookup returned zero users and course ID `12` had zero enrolments. Creating the local application with status `NEW` left `moodle_user_id` and `moodle_sync_status` null and queued no job.
+
+Changing `NEW` to `PROCESSED` set the application to `pending` and queued exactly one `SyncMoodleApplication`. The queue worker was not running during the initial attempt. The earlier queue-connectivity diagnosis is therefore discarded; it was not a PHP/runtime/network difference.
+
+The same exact-email read call continued to work from the interactive application process. For diagnosis, the existing `SyncMoodleApplication` job handler was executed in that process; `ParticipantSyncService` was not invoked directly. The normal implementation flow then successfully looked up zero users, called `core_user_create_users`, persisted returned Moodle user ID `15`, and enrolled it in course ID `12`.
+
+The accepted creation request used normalized email `kirtap9408@gmail.com` as username, `auth=manual`, and `createpassword=true`. Moodle accepted this request and returned user ID `15`, verifying that the target accepts the email-format username and this password-generation option.
+
+The recipient later manually confirmed the resulting Moodle credential email. It contained the email address as the username, a Moodle-generated password, and a requirement to change the password on first login. This is externally/manual-verified target behavior; the application does not need to send a separate credential email.
+
+## 25.3. User read-back limitation
+
+`core_user_get_users_by_field` with `field=id`, value `15`, returned the new user and exposed ID, first name, last name and `suspended=false`, but omitted username, email and auth from the response available to this token. Consequently those fields could not be independently compared by read-back, even though the accepted creation request contained them.
+
+More importantly, an exact `field=email` lookup for `kirtap9408@gmail.com` returned zero records after successful creation, while ID lookup and course-enrolment lookup both proved that user ID `15` exists. This target/token behavior means email lookup does not currently rediscover this integration-created user. Persisted Moodle user IDs remain safe for retries of the same application, but email-based reuse across a separate application is not live-verified and may create a duplicate. This must be resolved through Moodle capabilities/privacy configuration or another verified lookup strategy before relying on cross-application email deduplication in production.
+
+A follow-up exact `field=username` lookup also returned zero, while `field=id` still returned user ID `15` with only the limited fields above. Moodle 4.5's `core_user_get_users_by_field` implementation first finds the database record, builds the caller-visible user details, and returns the record only when the searched field is present in those visible details. The zero-result email and username searches are therefore visibility filtering, not evidence that the stored values are absent.
+
+The relevant Moodle 4.5 visibility checks are:
+
+* `moodle/user:viewdetails` permits access to another user's profile details;
+* `moodle/user:viewalldetails` exposes restricted fields including `username` and `auth`;
+* `moodle/site:viewuseridentity`, together with `email` selected in the site's `showuseridentity` setting, exposes email as an identity field. This identity-field path also overrides ordinary email display/hidden-field restrictions for the authorized viewer.
+
+For the dedicated Web Service role, these capabilities must be assigned at system context and the site identity-field setting must include email. Granting an administrator role is neither required nor appropriate. The current Web Service API access cannot administer role capabilities or the site identity-field setting, so no target configuration was changed during this follow-up.
+
+## 25.4. Enrolment, update and idempotency
+
+`enrol_manual_enrol_users` accepted role ID `5`, user ID `15`, course ID `12` and `suspend=0`. Default `core_enrol_get_enrolled_users` read-back showed exactly one user in the course with role ID `5` / `student`.
+
+Changing the local first name queued synchronization and set `pending`. Diagnostic job-handler execution retained Moodle user ID `15`, updated the visible first name to `MoodleUpdated`, returned to `synced`, and left exactly one course enrolment.
+
+A centralized manual resynchronization also retained user ID `15`, produced no second user mapping, and left exactly one course enrolment. At that stage the identity-visibility limitation prevented counting the user by email; the subsequent permission correction and successful exact-email verification are recorded in section 25.7.
+
+## 25.5. Suspension and reactivation
+
+Changing the application to `CANCELLED` queued synchronization. Moodle accepted `enrol_manual_enrol_users` with `suspend=1`; local synchronization completed as `synced`, user ID `15` continued to exist, and the default enrolment read still showed exactly one historical course enrolment. No unenrol or user-delete function was called.
+
+The token was denied when `core_enrol_get_enrolled_users` was called with `onlyactive` or `onlysuspended`, returning the Hungarian access error `Ehhez (Kurzusfelvétel ellenőrzése) jelenleg nincs engedélye.` Therefore the suspension flag could not be independently classified through the available read API, even though the suspension write returned success.
+
+Changing the same application back to `PROCESSED` sent `suspend=0`, retained user ID `15`, returned local state to `synced`, and left exactly one course enrolment. The user account remained globally unsuspended. As with suspension, active enrolment status could not be independently filtered because of the read-capability restriction.
+
+## 25.6. Follow-up queued execution verification
+
+With `php artisan queue:work` running, synchronization was requested through `ParticipantSyncDispatcher` for the existing mapped application. The dispatcher changed the local state from `synced` to `pending` and inserted one `SyncMoodleApplication`; the background worker consumed it without interactive job/service execution.
+
+The completed job returned the application to `synced`, cleared the error, updated `moodle_last_synced_at` to 2026-08-25 10:01:49 UTC, and retained Moodle user ID `15`. Read-back still showed exactly one enrolment in course ID `12`, for user ID `15` with role ID `5`; no duplicate user mapping or enrolment was created. This verifies the normal asynchronous participant path. The prior queue-worker connectivity concern is closed.
+
+## 25.7. User identity visibility correction and verification
+
+After the dedicated Web Service role's user-identity permissions/configuration were corrected, read-only live verification was repeated for `kirtap9408@gmail.com`:
+
+* exact `core_user_get_users_by_field` lookup by `email` returned exactly one user;
+* the returned Moodle user ID was `15`;
+* the response exposed username `kirtap9408@gmail.com`, email `kirtap9408@gmail.com` and `auth=manual` as expected;
+* lookup by persisted ID `15` returned exactly the same user and fields;
+* there was no second result for the test email.
+
+This verifies on the target installation that exact email lookup can safely rediscover an existing participant after the required identity-visibility configuration is present. Cross-application email-based participant reuse is therefore live-verified. Together with the successful queued execution in section 25.6, no remaining module B production blocker was identified by the controlled smoke test.

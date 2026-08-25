@@ -6,7 +6,9 @@ use App\Http\Livewire\MediaPicker;
 use App\Http\Responses\SimplePayBackResponse;
 use App\Models\ActualCourse;
 use App\Models\Course;
+use App\Models\CourseApplication;
 use App\Observers\ActualCourseObserver;
+use App\Observers\CourseApplicationObserver;
 use App\Observers\CourseObserver;
 use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
@@ -29,6 +31,7 @@ class AppServiceProvider extends ServiceProvider
     {
         ActualCourse::observe(ActualCourseObserver::class);
         Course::observe(CourseObserver::class);
+        CourseApplication::observe(CourseApplicationObserver::class);
 
         Livewire::component('media-picker', MediaPicker::class);
 
